@@ -1,1 +1,7 @@
 Problem statement (first draft): 
+
+Explain SPAC (security protocols and attacks as choreographies), and how crypto_chor parses it.
+Analyse and test visualisation methods of security protocols and attacks, and discuss perfomance based on usability.
+Design a visualisation method based upon previous analysis and tests. 
+Explain your design of your program’s use of crypto_chor’s output. 
+Explain how to use your program. 
