@@ -1,0 +1,50 @@
+- What are (your) the expectations of us?
+
+
+	- How frequent would you like meetings? 
+(Weekly or biweekly depending on meathing length. Alessandro is usually flexible if needed. Otherwise) 
+(Send him a mail with what we have accomplsihed during the week and what we should talk during the meeting)
+(It is also up to us, and supervisors are here to advice us, and they will push us and not take complete control. Take it as a service. They are facilitates.) (30-45 min 60 max in 1 meeting per week)
+(Send a brief agenda) 
+	
+
+	- How would you imagine a plan for the project development period would look?
+
+
+- How many standard pages do you expect us to write? (no recommendations for computer science. 100 pages sound crazy, dont write it too long. Keep in mind the reader (someone who is seeing this for the first time. Someone with the same background as us, swu bachelor. Don't put anything more than neccesary but nothling less either.)
+
+first part brainstorm and try out (first 3 month. Why do you do stuff? Reflect and write down thoughts/reflections. We will be evauluated on what type of thinking was made. Why these choices and not these choices? This will be the substance of the repport)
+second part do it
+third / last month writing thesis
+
+
+- What topics should be covered in depth in the report?
+
+
+Results and the background. What is the state of the art??
+One thing we should start with is what is crpyto_chor and what is out there? What type of security protocols and what is out there already? 
+
+
+- What do you think about our problem formulation?
+
+
+- GitHub
+
+
+How to set up a problem definition (see wiki.itu.dk/computerscience/index.php/Research_Project_and_Thesis)
+What is the problem
+
+Why is it important
+
+What can be done about it
+
+What is the final goal? Is it possible to design a tool/product that can vizualise security protocols
+
+
+
+
+Explain SPAC (security protocols and attacks as choreographies), and how crypto_chor parses it. 					[Why do we do that? WRite down why!]
+Analyse and test visualisation methods of security protocols and attacks, and discuss perfomance based on usability.
+Design a visualisation method based upon previous analysis and tests.
+Explain your design of your program’s use of crypto_chor’s output. 
+Explain how to use your program. 
