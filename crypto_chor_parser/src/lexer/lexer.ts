@@ -10,7 +10,6 @@ export enum LexTypes {
   Special = "special",
   Delimiter = "delimiter",
 }
-
 /*def.define("attribute", "[a-zA-Z-]*=", function (value: string) {
   return value.substring(0, value.length - 1);
 });*/
