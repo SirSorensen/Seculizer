@@ -1,0 +1,5 @@
+//REMOVE: clear_stmt ::= "clear" id ";" /* Example: clear akey; */
+
+participant_stmt ::= id ": " (new_stmt | set_stmt | clear_stmt)
+
+clear_stmt ::= "clear" id ("," id)* ";"

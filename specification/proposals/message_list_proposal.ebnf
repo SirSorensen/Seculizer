@@ -1,0 +1,6 @@
+/* Proposal for having message lists and expression lists for encryption and signing. This will extend scope a bit */
+
+message_send_stmt ::= id "->" id ":" message_expr ("," message_expr)* ";" /* Example: alice -> bob: key, key2*/
+
+encrypt_expr ::= "{" expression ("," expression)* "}" type /* Example: {exp(g,X)}inv(pk(A)); */
+sign_expr ::= "{|" expression ("," expression)*"|}" type /* Example: {|msgA|}aKey; */

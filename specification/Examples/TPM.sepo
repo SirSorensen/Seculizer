@@ -1,0 +1,53 @@
+Participants: Alice, Parent, TPM;
+functions: hash/2, inv/1;
+Knowledge: {
+    Shared: tpmk;
+}
+Protocol:
+    Alice -> TPM: "boot";
+    TPM: pcr := '1';
+    TPM -> Alice: "booted";
+    Alice: new n;
+    Alice: new esk;
+    Alice -> TPM: "session";
+    Alice -> TPM: tpmk;
+    Alice -> TPM: {esk}tpmk;
+    TPM: new sid;
+    TPM -> Alice: sid;
+
+    Alice -> TPM: {"extend", n, sid}esk // THIS DOES NOT WORK WITH THE CURRENT SYNTAX
+    TPM: pcr := hash(n, pcr);
+    TPM -> Alice: "extended"//, pcr; // POSSIBLE Solution for probelm on line 22
+    
+    Alice -> TPM: "Create", hash('obt', pcr); //Hmmm?? How can Alice get hash('obt', pcr)??
+    TPM: new k;
+    TPM -> Alice: {|"Created", k, hash('obt', pcr)|}inv(tpmk);
+
+    Alice: new v;
+    Alice -> Parent: "Envelope", {v}k;
+    clear: sid; //This clears for all? Should it maybe only be for TPM like in figma? Maybe TPM: clear sid;
+    clear: esk; //This clears for all? Should it maybe only be for TPM like in figma? Maybe TPM: clear esk;
+
+    Parent: new esk;
+    Parent -> TPM : "session";
+    Parent -> TPM : {esk}tpmk;
+    TPM: new sid;
+    TPM -> Parent: sid;
+
+    Parent -> TPM: match {
+        "Refuse":{
+            Parent -> TPM: {"Extend", "ref", sid}esk
+            TPM: pcr := hash('ref', pcr);
+            TPM -> Parent: "extended";
+            Parent -> TPM: "Quote", {v}k;
+            TPM -> Parent: {|"Quoted", pcr, {v}k|}inv(tpmk);
+        };
+        "Obtain":{
+            Parent -> TPM: {"Extend", "obt", sid}esk
+            TPM: pcr := hash('obt', pcr);
+            TPM -> Parent: "extended";
+            Parent -> TPM: "Decrypt",{v}k, pcr
+            TPM -> Parent: v;
+        }
+
+    }

@@ -22,7 +22,7 @@ stmt ::=
     | match_stmt
     | clear_stmt
     | call_stmt
-    | new_stmt
+    | participant_stmt
 
 expression ::= type | encrypt_expr | sign_expr
 
@@ -42,7 +42,10 @@ clear_stmt ::= "clear" id ";" /* Example: clear akey; */
 
 call_stmt ::= function ";" /* Example: f(x); */
 
-new_stmt ::= id ":" " new " id ";" /* Example: Alice: new msgA; */
+participant_stmt ::= id ": " (new_stmt | set_stmt)
+
+new_stmt ::= "new " id ";" /* Example: Alice: new msgA; */
+set_stmt ::= id ":=" type ";" /* Example: TPM: pid := "1" ; */
 
 /* ---- Principles ---- */
 principles ::= principle ("," principle)* /* Example: alice, bob */
