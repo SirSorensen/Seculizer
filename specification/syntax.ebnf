@@ -26,7 +26,7 @@ stmt ::=
 
 expression ::= type | encrypt_expr | sign_expr
 
-message_send_stmt ::= id "->" id ":" message_expr ";" /* Example: alice -> bob: key*/
+message_send_stmt ::= id "->" id ":" message_expr ("," message_expr)* ";" /* Example: alice -> bob: key, key2*/
 
 message_expr ::= /* Could have id "=" id as well, but it creates confusion in what it is saved as what */
 	expression "as" id
@@ -35,8 +35,8 @@ message_expr ::= /* Could have id "=" id as well, but it creates confusion in wh
 match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";" /* Example: alice -> bob: match { "refuse": { ... }; }; */
 match_case ::= type ":" "{" stmt "}" ";" /* Example: "refuse": { ... }; */
 
-encrypt_expr ::= "{" expression "}" type /* Example: {exp(g,X)}inv(pk(A)); */
-sign_expr ::= "{|" expression "|}" type /* Example: {|msgA|}aKey; */
+encrypt_expr ::= "{" expression ("," expression)* "}" type /* Example: {exp(g,X)}inv(pk(A)); */
+sign_expr ::= "{|" expression ("," expression)* "|}" type /* Example: {|msgA|}aKey; */
 
 clear_stmt ::= "clear" id ";" /* Example: clear akey; */
 

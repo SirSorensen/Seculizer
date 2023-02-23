@@ -22,7 +22,7 @@ export class Parser {
           break;
         }
         case LexTypes.topLevel: {
-          this.parseTopLevel(token, token.value);
+          this.parseTopLevel(token);
           break;
         }
         default: {
@@ -32,8 +32,8 @@ export class Parser {
     }
   }
 
-  parseTopLevel = (token: Token, value: string): void => {
-    switch (value) {
+  parseTopLevel = (token: Token): void => {
+    switch (token.value) {
       case "Protocol": {
         this.parseProtocol(token);
         break;
