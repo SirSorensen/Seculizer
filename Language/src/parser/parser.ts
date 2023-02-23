@@ -43,7 +43,7 @@ export class Parser {
         break;
       }
       case "Format": {
-        this.parseFormat(token);
+        this.parseFormat();
         break;
       }
       case "Knowledge": {
@@ -99,7 +99,52 @@ export class Parser {
 
   parseProtocol = (token: Token): void => {};
 
-  parseFormat = (token: Token): void => {};
+  parseFormat = (): void => {
+    let token = this.lexer.next();
+    this.checkNull(token);
+    this.checkType(token, LexTypes.id);
+    let tokenHead = token.value;
+
+    token = this.lexer.next();
+    this.checkNull(token);
+    this.checkTypeValue(token, LexTypes.delimiter, "(");
+
+    token = this.lexer.next();
+    this.checkNull(token);
+    let format: Array<string> = [];
+    while(token.value !== ")") {
+        this.checkType(token, LexTypes.id);
+        format.push(token.value);
+        token = this.lexer.next();
+        this.checkNull(token);
+        this.checkTypeValue(token, LexTypes.delimiter, ",");
+        token = this.lexer.next();
+        this.checkNull(token);
+    }
+
+    token = this.lexer.next();
+    this.checkNull(token);
+    this.checkTypeValue(token, LexTypes.delimiter, "=");
+
+    token = this.lexer.next();
+    this.checkNull(token);
+    this.checkTypeValue(token, LexTypes.delimiter, "$");
+    
+    token = this.lexer.next();
+    this.checkNull(token);
+    this.checkType(token, LexTypes.latex);
+    let latex = token.value;
+
+    token = this.lexer.next();
+    this.checkNull(token);
+    this.checkTypeValue(token, LexTypes.delimiter, "$");
+
+    token = this.lexer.next();
+    this.checkNull(token);
+    this.checkTypeValue(token, LexTypes.delimiter, ";");
+
+    console.log("NEW FORMAT: " + tokenHead + "(" + format.join(", ") + ") = $" + latex + "$");
+  };
 
   parseKnowledge = (token: Token): void => {};
 
@@ -177,9 +222,15 @@ export class Parser {
     }
   }
 
-  checkTokenType(token: Token, type: string){
+  checkType(token: Token, type: string){
     if(token.type !== type) {
         return this.throwError(`Unexpected type ${token.type}:${token.value}! Expected a ${type}`, token);
+    }
+  }
+
+  checkTypeValue(token: Token, type: string, value: string){
+    if (token.type !== type || token.value !== value) {
+      return this.throwError(`Expected a ${value} but got ${token.type}:${token.value}`, token);
     }
   }
 

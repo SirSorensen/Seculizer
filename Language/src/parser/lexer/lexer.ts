@@ -9,6 +9,7 @@ export enum LexTypes {
   newline = "newline",
   number = "number",
   delimiter = "delimiter",
+  latex = "latex",
 }
 /*def.define("attribute", "[a-zA-Z-]*=", function (value: string) {
   return value.substring(0, value.length - 1);
@@ -21,7 +22,8 @@ def.define(LexTypes.id, idRegex);
 def.define(LexTypes.number, "[0-9][0-9]*");
 def.defineText(LexTypes.string, '"', '"');
 def.define(LexTypes.newline, "\n");
-def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ",", "/"]);
+def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ",", "/", "$"]);
+def.define(LexTypes.latex, "[^$]");
 
 def.defineComment("//");
 def.defineComment("/*", "*/");
