@@ -11,17 +11,15 @@ export interface Token {
     seek: (newposition: number) => void;
     char: (char: string) => Token | null;
   }
-  
-  export interface CompileOutput {
-    html: string;
-    script: string;
-    style: string;
+
+  export interface Scanner {
+    position: () => number;
+    peek: (length:number) => string | null;
+    scan: () => string | null;
   }
   
-  export interface ParseOutput {
-    ast: Node;
-    js: string;
-    warnings: string[];
-    style: string;
+  export interface Rule {
+    first(): Rule;
+    next(scanner:Scanner): any;
   }
   
