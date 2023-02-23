@@ -40,7 +40,7 @@ sign_expr ::= "{|" expression ("," expression)* "|}" type /* Example: {|msgA|}aK
 
 clear_stmt ::= "clear" id ";" /* Example: clear akey; */
 
-call_stmt ::= function ";" /* Example: f(x); */
+call_stmt ::= function ("," function)*";" /* Example: f(x); */
 
 participant_stmt ::= id ": " (new_stmt | set_stmt)
 
