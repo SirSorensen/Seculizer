@@ -18,10 +18,10 @@ def.define(LexTypes.topLevel, idRegex + ":", function (value: string) {
   return value.substring(0, value.length - 1);
 });
 def.define(LexTypes.id, idRegex);
-def.define(LexTypes.number, "[0-9]+");
+def.define(LexTypes.number, "[0-9][0-9]*");
 def.defineText(LexTypes.string, '"', '"');
 def.define(LexTypes.newline, "\n");
-def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ","]);
+def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ",", "/"]);
 
 def.defineComment("//");
 def.defineComment("/*", "*/");

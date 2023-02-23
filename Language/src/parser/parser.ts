@@ -51,7 +51,7 @@ export class Parser {
         break;
       }
       case "Functions": {
-        this.parseFunctions(token);
+        this.parseFunctions();
         break;
       }
       case "Equations": {
@@ -103,7 +103,55 @@ export class Parser {
 
   parseKnowledge = (token: Token): void => {};
 
-  parseFunctions = (token: Token): void => {};
+  parseFunctions = (): void => {
+    let token = this.lexer.next();
+    if (token === null) {
+      this.throwError(`Unexpected end of file`, token);
+      return;
+    }
+    if (token.type !== LexTypes.id) {
+      this.throwError(`Expected an id but got ${token.type}:${token.value}`, token);
+      return;
+    }
+    let functionName = token.value;
+    token = this.lexer.next();
+    if (token === null) {
+      this.throwError(`Unexpected end of file`, token);
+      return;
+    }
+    if (token.type !== LexTypes.delimiter || token.value !== "/") {
+      this.throwError(`Expected a / but got ${token.type}:${token.value}`, token);
+      return;
+    }
+    token = this.lexer.next();
+    if (token === null) {
+      this.throwError(`Unexpected end of file`, token);
+      return;
+    }
+    if (token.type !== LexTypes.number) {
+      this.throwError(`Expected a number but got ${token.type}:${token.value}`, token);
+      return;
+    }
+    let numArgs = parseInt(token.value);
+    console.log("NEW FUNCTION: " + functionName + " with " + numArgs + " args");
+
+    token = this.lexer.next();
+    if(token === null) {
+        this.throwError(`Unexpected end of file`, token);
+        return;
+    }
+    if(token.type !== LexTypes.delimiter) {
+        this.throwError(`Unexpected type ${token.type}:${token.value}`, token);
+        return;
+    }
+    if(token.value === ",") {
+        return this.parseFunctions();
+    }
+    if(token.value === ";") {
+        return;
+    }
+    this.throwError(`Unexpected delimiter ${token.value}`, token);
+  };
 
   parseEquations = (token: Token): void => {};
 
