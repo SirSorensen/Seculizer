@@ -9,12 +9,12 @@ program ::= top_level_stmt* end
 
 end ::= "eof"
 
-top_level_stmt ::= "Protocol:" stmt* ";" /* Example: Perticipants: { ... }; */
-                 | "Participants:" principles ";" /* Example: principles: alice, bob; */
-                 | "Format:" formats ";" /* Example: formats: exp(x,y) = $x^y$; */
-                 | "Knowledge:" (knowledge_list | knowledge) ";" /* Example Knowledge: {Alice: X, msgA; Bob: Y, msgB; Shared: g;};*/
-                 | "Functions:" functions_def ";" /* Example: Functions: f/1, g/2; */
-                 | "Equations:" equations ";" /* Example: Equations: f(x) = x + 1; */
+top_level_stmt ::= "Protocol:" stmt*                                /* Example: Protocol: A -> B : msgA; B -> A: msgB; */
+                 | "Participants:" participants ";"                 /* Example: Participants: alice, bob; */
+                 | "Format:" formats ";"                            /* Example: formats: exp(x,y) = $x^y$; */
+                 | "Knowledge:" (knowledge_list | knowledge) ";"    /* Example Knowledge: {Alice: X, msgA; Bob: Y, msgB; Shared: g;};*/
+                 | "Functions:" functions_def ";"                   /* Example: Functions: f/1, g/2; */
+                 | "Equations:" equations ";"                       /* Example: Equations: f(x) = x + 1; */
 
 /* ---- Protocol ---- */
 stmt ::=
@@ -24,49 +24,50 @@ stmt ::=
     | call_stmt
     | participant_stmt
 
-expression ::= type | encrypt_expr | sign_expr
+message_send_stmt ::= id "->" id ":" message_expr ("," message_expr)* ";"   /* Example: alice -> bob: key, key2*/
 
-message_send_stmt ::= id "->" id ":" message_expr ("," message_expr)* ";" /* Example: alice -> bob: key, key2*/
-
-message_expr ::= /* Could have id "=" id as well, but it creates confusion in what it is saved as what */
+message_expr ::=    /* Could have id "=" id as well, but it creates confusion in what it is saved as what */
 	expression "as" id
 	| expression
 
-match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";" /* Example: alice -> bob: match { "refuse": { ... }; }; */
-match_case ::= type ":" "{" stmt "}" ";" /* Example: "refuse": { ... }; */
+expression ::= type | encrypt_expr | sign_expr
 
-encrypt_expr ::= "{" expression ("," expression)* "}" type /* Example: {exp(g,X)}inv(pk(A)); */
-sign_expr ::= "{|" expression ("," expression)* "|}" type /* Example: {|msgA|}aKey; */
+encrypt_expr ::= "{" expression ("," expression)* "}" type  /* Example: {exp(g,X)}inv(pk(A)); */
+sign_expr ::= "{|" expression ("," expression)* "|}" type   /* Example: {|msgA|}aKey; */
 
-clear_stmt ::= "clear" id ";" /* Example: clear akey; */
+match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: alice -> bob: match { "refuse": { ... }; }; */
+match_case ::= type ":" "{" stmt "}" ";"                            /* Example: "refuse": { ... }; */
 
-call_stmt ::= function ("," function)*";" /* Example: f(x); */
+clear_stmt ::= "clear" id ";"   /* Example: clear akey; */
 
-participant_stmt ::= id ": " (new_stmt | set_stmt)
+call_stmt ::= function ("," function)*";"   /* Example: f(x); */
 
-new_stmt ::= "new " id ";" /* Example: Alice: new msgA; */
-set_stmt ::= id ":=" type ";" /* Example: TPM: pid := "1" ; */
+participant_stmt ::= id ": " (new_stmt | set_stmt) ";"  /* Example: Alice: new msgA; */
 
-/* ---- Principles ---- */
-principles ::= principle ("," principle)* /* Example: alice, bob */
-principle ::= id /* Example: alice */
+new_stmt ::= "new " id      /* Example: Alice: new msgA; */
+set_stmt ::= id ":=" type   /* Example: TPM: pid := "1" ; */
+
+/* ---- Participants ---- */
+participants ::= participant ("," participant)* /* Example: alice, bob */
+participant ::= id                              /* Example: alice */
 
 /* ---- Formats ---- */
-formats ::= format ("," format)* /* Example: exp(x,y) = $x^y$ */
-format ::= id "(" id ("," id)* ")" "=" string | latex /* Example: exp(x,y) = $x^y$ */
+formats ::= format ("," format)*                        /* Example: exp(x,y) = $x^y$ */
+format ::= id "(" id ("," id)* ")" "=" string | latex   /* Example: exp(x,y) = $x^y$ */
 
 /* --- Latex ---  */
 latex ::= "$" [^$]* "$"
 
 /* ---- Knowledge ---- */
-knowledge_list ::= "{" knowledge+ "}" ";" /* Example: {Alice: X, msgA; Bob: Y, msgB; Shared: g; }; */
-knowledge ::= principle ":" knowledge_item ("," knowledge_item)* ";" /* Example: Alice: X, msgA; */
-knowledge_item ::= id | function /* Example: X, msgA; */
+knowledge_list ::= "{" knowledge+ "}" ";"                               /* Example: {Alice: X, msgA; Bob: Y, msgB; Shared: g; }; */
+knowledge ::= principle ":" knowledge_item ("," knowledge_item)* ";"    /* Example: Alice: X, msgA; */
+knowledge_item ::= id | function                                        /* Example: X, msgA; */
 
 /* ---- Functions ---- */
-functions_def ::= function_def ("," function_def)* /* Example: f/1, g/2 */
-function_def ::= id "/" number /* Example: f/1 */
+functions_def ::= function_def ("," function_def)*  /* Example: f/1, g/2 */
+function_def ::= id "/" number                      /* Example: f/1 */
 
 /* ---- Equations ---- */
-equations ::= equation ("," equation)* /* Example: f(x) = x + 1, g(x, y) = x + y */
-equation ::= id "(" id ("," id)* ")" "=" id "(" id ("," id)* ")" /* Example: f(x) = x + 1 */
+equations ::= equation ("," equation)*              /* Example: f(x) = x + 1, g(x, y) = x + y */
+equation ::= value "=" value                        /* Example: exp(exp(g,X),Y) = exp(exp(g,Y),X) */
+value ::= id "(" (id|value) ("," (id|value))* ")"   /* Example: exp(exp(g,X),Y) */

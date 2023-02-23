@@ -171,6 +171,18 @@ export class Parser {
     return null;
   };
 
+  checkNull(token: Token){
+    if(token === null) {
+        return this.throwError(`Unexpected end of file`, token);
+    }
+  }
+
+  checkTokenType(token: Token, type: string){
+    if(token.type !== type) {
+        return this.throwError(`Unexpected type ${token.type}:${token.value}! Expected a ${type}`, token);
+    }
+  }
+
   newline(token: Token) {
     this.line.number =  LineCalc(this.template, token.end),
     this.line.startIndex = token.end + 1
