@@ -25,8 +25,8 @@ Protocol:
 
     Alice: new v;
     Alice -> Parent: "Envelope", {v}k;
-    clear: sid; //This clears for all? Should it maybe only be for TPM like in figma? Maybe TPM: clear sid;
-    clear: esk; //This clears for all? Should it maybe only be for TPM like in figma? Maybe TPM: clear esk;
+    clear: sid;
+    clear: esk;
 
     Parent: new esk;
     Parent -> TPM : "session";
