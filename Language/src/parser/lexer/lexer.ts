@@ -22,7 +22,7 @@ def.define(LexTypes.id, idRegex);
 def.define(LexTypes.number, "[0-9][0-9]*");
 def.defineText(LexTypes.string, '"', '"');
 def.define(LexTypes.newline, "\n");
-def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ",", "/", "$"]);
+def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ",", "/", "$", "="]);
 def.define(LexTypes.latex, "[^$]");
 
 def.defineComment("//");

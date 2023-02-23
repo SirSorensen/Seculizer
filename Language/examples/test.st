@@ -1,5 +1,6 @@
 Participants: Alice, Bob;
 Functions: exp/2;
+Format: exp(X,Y) = $X^Y$;
 Knowledge: {
             Alice: X, msgA;
             Bob: Y, msgB;

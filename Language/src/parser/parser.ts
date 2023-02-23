@@ -117,6 +117,7 @@ export class Parser {
         format.push(token.value);
         token = this.lexer.next();
         this.checkNull(token);
+        if(token.value === ")") break;
         this.checkTypeValue(token, LexTypes.delimiter, ",");
         token = this.lexer.next();
         this.checkNull(token);
