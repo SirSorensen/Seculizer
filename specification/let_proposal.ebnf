@@ -1,0 +1,11 @@
+/* Proposal for having function definitions. This will extend scope a lot */
+
+type ::= ... function
+
+function ::= id "(" id ("," id)* ")"
+
+stmt ::=
+    ...
+    | let_stmt
+
+let_stmt ::= "let " id "(" id ("," id)* ")" "{" stmt* "}"
