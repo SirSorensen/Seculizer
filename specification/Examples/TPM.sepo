@@ -9,9 +9,7 @@ Protocol:
     TPM -> Alice: "booted";
     Alice: new n;
     Alice: new esk;
-    Alice -> TPM: "session";
-    Alice -> TPM: tpmk;
-    Alice -> TPM: {esk}tpmk;
+    Alice -> TPM: "session", tpmk, {esk,tpmk};
     TPM: new sid;
     TPM -> Alice: sid;
 
@@ -25,8 +23,7 @@ Protocol:
 
     Alice: new v;
     Alice -> Parent: "Envelope", {v}k;
-    clear: sid;
-    clear: esk;
+    clear: sid, esk;
 
     Parent: new esk;
     Parent -> TPM : "session";
