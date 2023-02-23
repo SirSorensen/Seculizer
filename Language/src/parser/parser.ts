@@ -132,8 +132,11 @@ export class Parser {
     token.begin - this.line.startIndex;
 
   private readonly throwError = (message: string, token: Token) => {
-    throw new Error(
+    const error = new Error(
       `${message} Line: ${this.line.number}:${this.calculateIndent(token)}`
     );
+    error.name = "ParserError";
+    error.stack = this.template.split("\n")[this.line.number - 1] + "\n" + (" ".repeat(this.calculateIndent(token))) + "^\n" + error.stack;
+    throw error;
   };
 }
