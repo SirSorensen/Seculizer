@@ -15,11 +15,11 @@ Protocol:
     TPM: new sid;
     TPM -> Alice: sid;
 
-    Alice -> TPM: {"extend", n, sid}esk // THIS DOES NOT WORK WITH THE CURRENT SYNTAX
+    Alice -> TPM: {"extend", n, sid}esk
     TPM: pcr := hash(n, pcr);
-    TPM -> Alice: "extended"//, pcr; // POSSIBLE Solution for probelm on line 22
+    TPM -> Alice: "extended", pcr;
     
-    Alice -> TPM: "Create", hash('obt', pcr); //Hmmm?? How can Alice get hash('obt', pcr)??
+    Alice -> TPM: "Create", hash('obt', pcr);
     TPM: new k;
     TPM -> Alice: {|"Created", k, hash('obt', pcr)|}inv(tpmk);
 
@@ -38,14 +38,14 @@ Protocol:
         "Refuse":{
             Parent -> TPM: {"Extend", "ref", sid}esk
             TPM: pcr := hash('ref', pcr);
-            TPM -> Parent: "extended";
+            TPM -> Parent: "extended", pcr;
             Parent -> TPM: "Quote", {v}k;
             TPM -> Parent: {|"Quoted", pcr, {v}k|}inv(tpmk);
         };
         "Obtain":{
             Parent -> TPM: {"Extend", "obt", sid}esk
             TPM: pcr := hash('obt', pcr);
-            TPM -> Parent: "extended";
+            TPM -> Parent: "extended", pcr;
             Parent -> TPM: "Decrypt",{v}k, pcr
             TPM -> Parent: v;
         }
