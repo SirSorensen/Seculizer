@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug npm run example",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceRoot}/Language",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": [
+          "run",
+          "example"
+        ],
+        "console": "integratedTerminal"
+      }
+    ]
+  }
+  

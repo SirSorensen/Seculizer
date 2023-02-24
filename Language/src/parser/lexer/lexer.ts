@@ -21,13 +21,12 @@ def.define(LexTypes.latex, "$[^$]*$");
 //def.defineComment("//");
 //def.defineComment("/*", "*/");
 
-import * as chevrotain from "@chevrotain/types";
-import { createToken, Lexer } from "chevrotain";
+import { createToken, Lexer } from "chevrotain"
+
 export enum LexTypes {
   id = "id",
   topLevel = "toplevel",
   string = "string",
-  newline = "newline",
   number = "number",
   delimiter = "delimiter",
   latex = "latex",
@@ -45,16 +44,10 @@ const string = createToken({
   pattern: /"[^"]*"/,
 })
 
-const newLine = createToken({
-  name: LexTypes.newline,
-  pattern: /\n/,
-  line_breaks: true,
-})
-
 const whiteSpace = createToken({
   name: "WhiteSpace",
   pattern: /\s+/,
-  group: chevrotain.Lexer.SKIPPED
+  group: Lexer.SKIPPED
 })
 
 const number = createToken({
@@ -74,7 +67,6 @@ const latex = createToken({
 
 let allTokens = [
   whiteSpace,
-  newLine,
   topLevel,
   id,
   string,
