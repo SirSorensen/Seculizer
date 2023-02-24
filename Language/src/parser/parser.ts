@@ -12,7 +12,6 @@ export class Parser {
     this.tokens = this.lexer.tokens;
     let token;
     while ((token = this.next(false)) !== null && token) {
-      
       const type = token.tokenType.name;
       switch (type) {
         case LexTypes.topLevel: {
@@ -160,53 +159,17 @@ export class Parser {
   parseFunctions = (): void => {
     let token = this.next();
     this.checkNull(token);
-    if (token.tokenType.name !== LexTypes.id) {
-      this.throwError(
-        `Expected an id but got ${token.tokenType.name}:${token.image}`,
-        token
-      );
-      return;
-    }
+    this.checkType(LexTypes.id);
     let functionName = token.image;
     token = this.next();
-    if (token === null) {
-      this.throwError(`Unexpected end of file`, token);
-      return;
-    }
-    if (token.tokenType.name !== LexTypes.delimiter || token.image !== "/") {
-      this.throwError(
-        `Expected a / but got ${token.tokenType.name}:${token.image}`,
-        token
-      );
-      return;
-    }
+    this.checkTypeValue(LexTypes.delimiter, "/");
     token = this.next();
-    if (token === null) {
-      this.throwError(`Unexpected end of file`, token);
-      return;
-    }
-    if (token.tokenType.name !== LexTypes.number) {
-      this.throwError(
-        `Expected a number but got ${token.tokenType.name}:${token.image}`,
-        token
-      );
-      return;
-    }
+    this.checkType(LexTypes.number);
     let numArgs = parseInt(token.image);
     console.log("NEW FUNCTION: " + functionName + " with " + numArgs + " args");
 
     token = this.next();
-    if (token === null) {
-      this.throwError(`Unexpected end of file`, token);
-      return;
-    }
-    if (token.tokenType.name !== LexTypes.delimiter) {
-      this.throwError(
-        `Unexpected type ${token.tokenType.name}:${token.image}`,
-        token
-      );
-      return;
-    }
+    this.checkType(LexTypes.delimiter);
     if (token.image === ",") {
       return this.parseFunctions();
     }
@@ -328,11 +291,11 @@ export class Parser {
         if (token.image === "|") {
           //SIGN
           token = this.next();
-          this.parseExpression()
+          this.parseExpression();
           token = this.next();
           this.checkValue("|");
         } else {
-          this.parseExpression()
+          this.parseExpression();
         }
         token = this.next();
         this.checkValue("}");
