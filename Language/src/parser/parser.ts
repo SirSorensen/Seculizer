@@ -323,6 +323,19 @@ export class Parser {
       case LexTypes.delimiter: {
         token = this.next();
         this.checkValue("{");
+        token = this.peek();
+        if (token.image === "|") {
+          //SIGN
+          token = this.next();
+          this.parseExpression()
+          token = this.next();
+          this.checkValue("|");
+        } else {
+          this.parseExpression()
+        }
+        token = this.next();
+        this.checkValue("}");
+        this.parseEquations();
         break;
       }
       default: {

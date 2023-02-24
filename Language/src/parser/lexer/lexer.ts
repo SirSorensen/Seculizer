@@ -67,7 +67,7 @@ const number = createToken({
 
 const delimiter = createToken({
   name: LexTypes.delimiter,
-  pattern: /[{()};,\/=:]|(->)/,
+  pattern: /[{()};,\/=:|]|(->)/,
 })
 
 const latex = createToken({
