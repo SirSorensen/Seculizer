@@ -11,7 +11,8 @@ export class Parser {
     this.template = template;
     this.tokens = this.lexer.tokens;
     let token;
-    while ((token = this.next(false)) !== null) {
+    while ((token = this.next(false)) !== null && token) {
+      
       const type = token.tokenType.name;
       switch (type) {
         case LexTypes.topLevel: {
@@ -335,7 +336,7 @@ export class Parser {
         }
         token = this.next();
         this.checkValue("}");
-        this.parseEquations();
+        this.parseExpression();
         break;
       }
       default: {
