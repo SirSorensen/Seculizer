@@ -6,11 +6,12 @@ Knowledge: {
             Bob: Y, msgB;
             Shared: g;
         };
-Equations: exp(exp(g,Y),X) = exp(exp(g,X),Y), exp(exp(g,Y),X) = exp(g,X*Y);
+Equations: exp(exp(g,Y),X) = exp(exp(g,X),Y), exp(exp(g,Y),X) = exp(g,prod(XY));
 
 
-Protocol:
-Alice -> Bob: exp(g,X);
-Bob -> Alice: exp(g,Y);
-Alice-> Bob: {MsgA}exp(exp(g,X),Y);
-Bob -> Alice: {MsgB}exp(exp(g,X),Y);
+Protocol: {
+    Alice -> Bob: exp(g,X);
+    Bob -> Alice: exp(g,Y);
+    Alice-> Bob: {MsgA}exp(exp(g,X),Y);
+    Bob -> Alice: {MsgB}exp(exp(g,X),Y);
+};
