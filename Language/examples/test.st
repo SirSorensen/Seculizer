@@ -6,7 +6,7 @@ Knowledge: {
             Bob: Y, msgB;
             Shared: g;
         };
-Equations: exp(exp(g,Y),X) = exp(exp(g,X),Y), exp(exp(g,Y),X) = exp(g,prod(XY));
+Equations: exp(exp(g,Y),X) = exp(exp(g,X),Y), exp(exp(g,Y),X) = exp(g,prod(X,Y));
 
 
 Protocol: {

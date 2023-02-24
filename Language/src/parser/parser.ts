@@ -312,6 +312,11 @@ this.checkTypeValue(LexTypes.delimiter, ";");
         token = this.next();
         break; 
       }
+      case LexTypes.delimiter: {
+        token = this.next();
+        this.checkValue("{");
+        break;
+      }
       default: {
         token = this.next();
         this.throwError(`Unexpected type ${token.tokenType.name}:${token.image}`, token);
