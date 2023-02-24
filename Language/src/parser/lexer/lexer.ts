@@ -31,12 +31,14 @@ export enum LexTypes {
   delimiter = "delimiter",
   latex = "latex",
 }
-const id = createToken({ name: LexTypes.id, pattern: /[a-zA-Z_][a-zA-Z0-9_]*/ })
+const id = createToken({ 
+  name: LexTypes.id, 
+  pattern: /[a-zA-Z_][a-zA-Z0-9_]*/ 
+})
 
 const topLevel = createToken({
   name: LexTypes.topLevel,
-  pattern: /[a-zA-Z_][a-zA-Z0-9_]*:/,
-  longer_alt: id, //Means that it will first also check id
+  pattern: /((Participants)|(Functions)|(Format)|(Knowledge)|(Equations)):/,
 })
 
 const string = createToken({
@@ -57,7 +59,7 @@ const number = createToken({
 
 const delimiter = createToken({
   name: LexTypes.delimiter,
-  pattern: /[{()};,\/$=]/,
+  pattern: /[{()};,\/=:]/,
 })
 
 const latex = createToken({

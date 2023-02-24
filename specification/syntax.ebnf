@@ -65,6 +65,6 @@ functions_def ::= function_def ("," function_def)*  /* Example: f/1, g/2 */
 function_def ::= id "/" number                      /* Example: f/1 */
 
 /* ---- Equations ---- */
-equations ::= equation ("," equation)*              /* Example: f(x) = x + 1, g(x, y) = x + y */
-equation ::= value "=" value                        /* Example: exp(exp(g,X),Y) = exp(exp(g,Y),X) */
-value ::= id "(" (id|value) ("," (id|value))* ")"   /* Example: exp(exp(g,X),Y) */
+equations ::= equations_element ("," equations_element)*    /* Example: f(x) = x + 1, g(x, y) = x + y */
+equations_element ::= equation "=" equation                 /* Example: exp(exp(g,X),Y) = exp(exp(g,Y),X) */
+equation ::= id "(" (id|equation) ("," (id|equation))* ")"  /* Example: exp(exp(g,X),Y) */
