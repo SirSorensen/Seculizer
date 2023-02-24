@@ -30,6 +30,7 @@ export enum LexTypes {
   number = "number",
   delimiter = "delimiter",
   latex = "latex",
+  functionCall = "functionCall",
 }
 const id = createToken({ 
   name: LexTypes.id, 
@@ -40,6 +41,13 @@ const topLevel = createToken({
   name: LexTypes.topLevel,
   pattern: /((Participants)|(Functions)|(Format)|(Knowledge)|(Equations)):/,
 })
+
+const functionCall = createToken({
+  name: LexTypes.functionCall,
+  pattern: /([a-zA-Z_][a-zA-Z0-9_]*)\(/
+})
+
+  
 
 const string = createToken({
   name: LexTypes.string,
@@ -70,6 +78,7 @@ const latex = createToken({
 let allTokens = [
   whiteSpace,
   topLevel,
+  functionCall,
   id,
   string,
   number,
