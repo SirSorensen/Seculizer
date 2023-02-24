@@ -1,9 +1,9 @@
+import { ILexingResult } from "chevrotain";
 import LineCalc from "../Utils/LineCalc.js";
-import { Lexer, Token } from "./lexer/Interfaces";
 import { getLexer, LexTypes } from "./lexer/lexer.js";
 
 export class Parser {
-  private readonly lexer: Lexer;
+  private readonly lexer: ILexingResult;
   private readonly template: string;
   private readonly line = {
     number: 1,

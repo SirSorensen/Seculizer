@@ -15,16 +15,14 @@ def.define(LexTypes.id, idRegex);
 def.define(LexTypes.number, "[0-9][0-9]*");
 def.defineText(LexTypes.string, '"', '"');
 def.define(LexTypes.newline, "\n");
-def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ",", "/"]);
+def.define(LexTypes.delimiter, ["{", "}", "(", ")", ";", ",", "/", "$", "="]);
+def.define(LexTypes.latex, "$[^$]*$");
+*/
+//def.defineComment("//");
+//def.defineComment("/*", "*/");
 
 import * as chevrotain from "@chevrotain/types";
-import { createToken } from "chevrotain";
-
-/*
-export function getLexer(data: any): Lexer {
-  return def.lexer(data);
-}
-*/
+import { createToken, Lexer } from "chevrotain";
 export enum LexTypes {
   id = "id",
   topLevel = "toplevel",
@@ -73,3 +71,19 @@ const latex = createToken({
   name: LexTypes.latex,
   pattern: /\$[^$]*\$/,
 })
+
+let allTokens = [
+  whiteSpace,
+  newLine,
+  topLevel,
+  id,
+  string,
+  number,
+  delimiter,
+  latex,
+]
+let lexer = new Lexer(allTokens)
+
+export function getLexer(input: any) {
+  return lexer.tokenize(input)
+}
