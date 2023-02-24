@@ -7,7 +7,7 @@ function ::= id "(" id ("," id)* ")"    /* Example: f(x) */
 program ::= top_level_stmt* end
 end ::= "eof"
 
-top_level_stmt ::= "Protocol:" stmt*                                /* Example: Protocol: A -> B : msgA; B -> A: msgB; */
+top_level_stmt ::= "Protocol:" "{" stmt* "};"                               /* Example: Protocol: A -> B : msgA; B -> A: msgB; */
                  | "Participants:" participants ";"                 /* Example: Participants: alice, bob; */
                  | "Format:" formats ";"                            /* Example: Format: exp(x,y) = $x^y$; */
                  | "Knowledge:" (knowledge_list | knowledge) ";"    /* Example: Knowledge: {Alice: X, msgA; Bob: Y, msgB; Shared: g;};*/
