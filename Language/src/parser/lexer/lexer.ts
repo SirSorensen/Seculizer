@@ -39,7 +39,7 @@ const id = createToken({
 
 const topLevel = createToken({
   name: LexTypes.topLevel,
-  pattern: /((Participants)|(Functions)|(Format)|(Knowledge)|(Equations)):/,
+  pattern: /((Protocol)|(Participants)|(Functions)|(Format)|(Knowledge)|(Equations)):/,
 })
 
 const functionCall = createToken({
@@ -67,7 +67,7 @@ const number = createToken({
 
 const delimiter = createToken({
   name: LexTypes.delimiter,
-  pattern: /[{()};,\/=:]/,
+  pattern: /[{()};,\/=:]|(->)/,
 })
 
 const latex = createToken({
