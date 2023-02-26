@@ -1,5 +1,6 @@
 import { ILexingResult, IToken } from "chevrotain";
 import { getLexer, LexTypes } from "./lexer/lexer.js";
+import { ParseError, throwParseError } from "./ParseError.js";
 
 export class Parser {
   private readonly lexer: ILexingResult;
@@ -19,7 +20,7 @@ export class Parser {
           break;
         }
         default: {
-          this.throwError(`Unknown type: ${type}:${token.image}`, token);
+          throwParseError(ParseError.unknown_type(), token, template);
         }
       }
     }
@@ -68,7 +69,7 @@ export class Parser {
         break;
       }
       default: {
-        this.throwError(`Unknown top level token: ${token.image}`, token);
+        throwParseError(ParseError.unexpected_top_level(), token, this.template);
         break;
       }
     }
@@ -93,7 +94,7 @@ export class Parser {
       return;
     }
 
-    this.throwError(`Unexpected delimiter ${token.image}`, token);
+    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
   };
 
   parseFormat = (): void => {
@@ -176,7 +177,7 @@ export class Parser {
     if (token.image === ";") {
       return;
     }
-    this.throwError(`Unexpected delimiter ${token.image}`, token);
+    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
   };
 
   parseEquations = (): void => {
@@ -195,7 +196,7 @@ export class Parser {
     } else if (token.image === ";") {
       return;
     }
-    this.throwError(`Unexpected delimiter ${token.image}`, token);
+    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
   };
 
   parseFunctionCall = (): string => {
@@ -304,9 +305,10 @@ export class Parser {
       }
       default: {
         token = this.next();
-        this.throwError(
-          `Unexpected type ${token.tokenType.name}:${token.image}`,
-          token
+        throwParseError(
+          ParseError.unknown_type(),
+          token,
+          this.template
         );
         break;
       }
@@ -333,26 +335,20 @@ export class Parser {
   };
 
   checkNull(token: IToken = this.getCurrent()) {
-    if (token === null) {
-      return this.throwError(`Unexpected end of file`, token);
+    if (token === null || token === undefined) {
+      return throwParseError(ParseError.unexpected_EOF(), token, this.template);
     }
   }
 
   checkType(type: string, token: IToken = this.getCurrent()) {
     if (token.tokenType.name !== type) {
-      return this.throwError(
-        `Unexpected type ${token.tokenType.name}:${token.image}! Expected a ${type}`,
-        token
-      );
+      return throwParseError(ParseError.unexpected_type(type), token, this.template);
     }
   }
 
   checkValue(value: string, token: IToken = this.getCurrent()) {
     if (token.image !== value) {
-      return this.throwError(
-        `Expected a ${value} but got ${token.tokenType.name}:${token.image}`,
-        token
-      );
+      return throwParseError(ParseError.unexpected_value(token.image), token, this.template);
     }
   }
 
@@ -364,21 +360,4 @@ export class Parser {
     this.checkType(type, token);
     this.checkValue(value, token);
   }
-
-  private readonly getIndent = (token: IToken): number =>
-    token.startColumn ?? -1;
-
-  private readonly throwError = (message: string, token: IToken) => {
-    const error = new Error(
-      `${message} Line: ${token.startLine}:${this.getIndent(token)}`
-    );
-    error.name = "ParserError";
-    error.stack =
-      this.template.split("\n")[(token.startLine ?? 0) - 1] +
-      "\n" +
-      " ".repeat(this.getIndent(token) - 1) +
-      "^\n" +
-      error.stack;
-    throw error;
-  };
 }
