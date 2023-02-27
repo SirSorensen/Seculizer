@@ -26,8 +26,7 @@ Protocol:
     clear: sid, esk;
 
     Parent: new esk;
-    Parent -> TPM : "session";
-    Parent -> TPM : {esk}tpmk;
+    Parent -> TPM : "session", {esk}tpmk;
     TPM: new sid;
     TPM -> Parent: sid;
 
