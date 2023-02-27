@@ -1,65 +1,75 @@
-import LineCalc from "../Utils/LineCalc.js";
-import { Lexer, Token } from "./lexer/Interfaces";
+import { ILexingResult, IToken } from "chevrotain";
 import { getLexer, LexTypes } from "./lexer/lexer.js";
+import { ParseError, throwParseError } from "./ParseError.js";
 
 export class Parser {
-  private readonly lexer: Lexer;
+  private readonly lexer: ILexingResult;
   private readonly template: string;
-  private readonly line = {
-    number: 1,
-    startIndex: 0,
-  };
+  private readonly tokens;
+  private current: number | null = null;
   constructor(template: string) {
     this.lexer = getLexer(template);
     this.template = template;
-    let token: Token;
-    while ((token = this.lexer.next()) !== null) {
-      //if(token.type === "function") console.log(token);
-      const type = token.type;
+    this.tokens = this.lexer.tokens;
+    let token;
+    while ((token = this.next(false)) !== null && token) {
+      const type = token.tokenType.name;
       switch (type) {
-        case LexTypes.newline: {
-          this.newline(token);
-          break;
-        }
         case LexTypes.topLevel: {
           this.parseTopLevel(token);
           break;
         }
         default: {
-          this.throwError(`Unknown type: ${type}:${token.value}`, token);
+          throwParseError(ParseError.unknown_type(), token, template);
         }
       }
     }
   }
 
-  parseTopLevel = (token: Token): void => {
-    switch (token.value) {
-      case "Protocol": {
-        this.parseProtocol(token);
+  private getCurrent = (): IToken => {
+    if (this.current === null) this.current = 0;
+    return this.tokens[this.current];
+  };
+  private next = (checkNull = true): IToken => {
+    if (this.current === null) this.current = 0;
+    else this.current++;
+    if (checkNull) this.checkNull();
+    return this.getCurrent();
+  };
+
+  private peek = (): IToken => {
+    if (this.current === null) this.current = 0;
+    return this.tokens[this.current + 1];
+  };
+
+  parseTopLevel = (token: IToken): void => {
+    switch (token.image) {
+      case "Protocol:": {
+        this.parseProtocol();
         break;
       }
-      case "Participants": {
+      case "Participants:": {
         this.parseParticipants();
         break;
       }
-      case "Format": {
-        this.parseFormat(token);
+      case "Format:": {
+        this.parseFormat();
         break;
       }
-      case "Knowledge": {
-        this.parseKnowledge(token);
+      case "Knowledge:": {
+        this.parseKnowledge();
         break;
       }
-      case "Functions": {
+      case "Functions:": {
         this.parseFunctions();
         break;
       }
-      case "Equations": {
-        this.parseEquations(token);
+      case "Equations:": {
+        this.parseEquations();
         break;
       }
       default: {
-        this.throwError(`Unknown top level token: ${token.value}`, token);
+        throwParseError(ParseError.unexpected_top_level(), token, this.template);
         break;
       }
     }
@@ -67,93 +77,243 @@ export class Parser {
 
   //Participants: Alice, bob
   parseParticipants = (): void => {
-    let token = this.lexer.next();
-    if (token === null) {
-        this.throwError(`Unexpected end of file`, token);
-        return;
-    }
-    if(token.type !== LexTypes.id) {
-        this.throwError(`Expected an id but got ${token.type}:${token.value}`, token);
-        return;
-    }
+    let token = this.next();
+    this.checkType(LexTypes.id);
+
     //DO STUFF WITH NEW PARTICIPANT
-    let participant = token.value;
+    let participant = token.image;
     console.log("NEW PARTICIPANT: " + participant);
-    token = this.lexer.next();
-    if(token === null) {
-        this.throwError(`Unexpected end of file`, token);
-        return;
+
+    token = this.next();
+    this.checkType(LexTypes.delimiter);
+
+    if (token.image === ",") {
+      return this.parseParticipants();
     }
-    if(token.type !== LexTypes.delimiter) {
-        this.throwError(`Unexpected type ${token.type}:${token.value}`, token);
-        return;
+    if (token.image === ";") {
+      return;
     }
-    if(token.value === ",") {
-        return this.parseParticipants();
-    }
-    if(token.value === ";") {
-        return;
-    }
-    this.throwError(`Unexpected delimiter ${token.value}`, token);
+
+    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
   };
 
-  parseProtocol = (token: Token): void => {};
+  parseFormat = (): void => {
+    let s = this.parseFunctionCall();
 
-  parseFormat = (token: Token): void => {};
+    let token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, "=");
 
-  parseKnowledge = (token: Token): void => {};
+    token = this.next();
+    this.checkType(LexTypes.latex);
+    let latex = token.image;
+
+    token = this.next();
+    this.checkType(LexTypes.delimiter);
+
+    console.log("NEW FORMAT: " + s + " = $" + latex + "$");
+
+    if (token.image === ",") {
+      this.parseFormat();
+      return;
+    }
+    this.checkValue(";");
+  };
+
+  parseKnowledge = (): void => {
+    let knowledge = [];
+
+    let token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, "{");
+
+    token = this.next();
+    this.checkNull(token);
+    while (token.tokenType.name !== LexTypes.delimiter || token.image !== "}") {
+      this.checkType(LexTypes.id);
+      let tokenHead = token.image;
+      token = this.next();
+      this.checkTypeValue(LexTypes.delimiter, ":");
+
+      let headerKnowledge = [];
+
+      token = this.next();
+      while (token.image !== ";") {
+        this.checkType(LexTypes.id);
+        headerKnowledge.push(token.image);
+
+        token = this.next();
+        this.checkType(LexTypes.delimiter);
+        if (token.image === ";") break;
+        this.checkValue(",");
+
+        token = this.next();
+      }
+      knowledge.push([tokenHead, headerKnowledge]);
+      token = this.next();
+    }
+
+    token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, ";");
+
+    console.log("NEW KNOWLEDGE: " + JSON.stringify(knowledge));
+  };
 
   parseFunctions = (): void => {
-    let token = this.lexer.next();
-    if (token === null) {
-      this.throwError(`Unexpected end of file`, token);
-      return;
-    }
-    if (token.type !== LexTypes.id) {
-      this.throwError(`Expected an id but got ${token.type}:${token.value}`, token);
-      return;
-    }
-    let functionName = token.value;
-    token = this.lexer.next();
-    if (token === null) {
-      this.throwError(`Unexpected end of file`, token);
-      return;
-    }
-    if (token.type !== LexTypes.delimiter || token.value !== "/") {
-      this.throwError(`Expected a / but got ${token.type}:${token.value}`, token);
-      return;
-    }
-    token = this.lexer.next();
-    if (token === null) {
-      this.throwError(`Unexpected end of file`, token);
-      return;
-    }
-    if (token.type !== LexTypes.number) {
-      this.throwError(`Expected a number but got ${token.type}:${token.value}`, token);
-      return;
-    }
-    let numArgs = parseInt(token.value);
+    let token = this.next();
+    this.checkNull(token);
+    this.checkType(LexTypes.id);
+    let functionName = token.image;
+    token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, "/");
+    token = this.next();
+    this.checkType(LexTypes.number);
+    let numArgs = parseInt(token.image);
     console.log("NEW FUNCTION: " + functionName + " with " + numArgs + " args");
 
-    token = this.lexer.next();
-    if(token === null) {
-        this.throwError(`Unexpected end of file`, token);
-        return;
+    token = this.next();
+    this.checkType(LexTypes.delimiter);
+    if (token.image === ",") {
+      return this.parseFunctions();
     }
-    if(token.type !== LexTypes.delimiter) {
-        this.throwError(`Unexpected type ${token.type}:${token.value}`, token);
-        return;
+    if (token.image === ";") {
+      return;
     }
-    if(token.value === ",") {
-        return this.parseFunctions();
-    }
-    if(token.value === ";") {
-        return;
-    }
-    this.throwError(`Unexpected delimiter ${token.value}`, token);
+    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
   };
 
-  parseEquations = (token: Token): void => {};
+  parseEquations = (): void => {
+    let eq1 = this.parseFunctionCall();
+
+    let token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, "=");
+
+    let eq2 = this.parseFunctionCall();
+
+    token = this.next();
+    this.checkType(LexTypes.delimiter);
+    if (token.image == ",") {
+      this.parseEquations();
+      return;
+    } else if (token.image === ";") {
+      return;
+    }
+    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
+  };
+
+  parseFunctionCall = (): string => {
+    let token = this.next();
+    this.checkType(LexTypes.functionCall);
+    let s = token.image;
+
+    while (token.image !== ")") {
+      if (this.peek().tokenType.name === LexTypes.functionCall) {
+        this.parseFunctionCall();
+      } else if (this.peek().tokenType.name === LexTypes.id) {
+        token = this.next();
+        s += token.image;
+      }
+
+      token = this.next();
+      this.checkType(LexTypes.delimiter);
+      s += token.image;
+    }
+    return s;
+  };
+
+  parseProtocol = (): void => {
+    let token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, "{");
+    while (this.peek().image !== "}") {
+      this.parseMsgSend();
+    }
+    token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, "}");
+    token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, ";");
+  };
+
+  parseMsgSend = (): void => {
+    let token = this.next();
+    this.checkType(LexTypes.id);
+    let sender = token.image;
+    token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, "->");
+    token = this.next();
+    this.checkType(LexTypes.id);
+    let receiver = token.image;
+    token = this.next();
+    this.checkTypeValue(LexTypes.delimiter, ":");
+
+    this.parseExpression();
+
+    token = this.next();
+    this.checkType(LexTypes.delimiter);
+
+    while (token.image === ",") {
+      this.parseExpression();
+      token = this.next();
+      this.checkType(LexTypes.delimiter);
+    }
+
+    this.checkValue(";");
+
+    console.log(sender + " -> " + receiver);
+  };
+
+  parseExpression = (): void => {
+    let token = this.peek();
+    switch (token.tokenType.name) {
+      case LexTypes.functionCall: {
+        console.log(
+          "NEW EXPRESSION: " +
+            this.parseFunctionCall() +
+            " it has type functionCall!"
+        );
+        break;
+      }
+      case LexTypes.id: {
+        console.log("NEW EXPRESSION: " + token.image + " it has type id!");
+        token = this.next();
+        break;
+      }
+      case LexTypes.number: {
+        console.log("NEW EXPRESSION: " + token.image + " it has type number!");
+        token = this.next();
+        break;
+      }
+      case LexTypes.string: {
+        console.log("NEW EXPRESSION: " + token.image + " it has type string!");
+        token = this.next();
+        break;
+      }
+      case LexTypes.delimiter: {
+        token = this.next();
+        this.checkValue("{");
+        token = this.peek();
+        if (token.image === "|") {
+          //SIGN
+          token = this.next();
+          this.parseExpression();
+          token = this.next();
+          this.checkValue("|");
+        } else {
+          this.parseExpression();
+        }
+        token = this.next();
+        this.checkValue("}");
+        this.parseExpression();
+        break;
+      }
+      default: {
+        token = this.next();
+        throwParseError(
+          ParseError.unknown_type(),
+          token,
+          this.template
+        );
+        break;
+      }
+    }
+  };
 
   /**
    * A util method to get the next token until a specific type is found
@@ -161,30 +321,43 @@ export class Parser {
    * @param value the value of the token we are looking for (ex: "}")
    * @returns token or null if not found
    */
-  nextUntil = (type: string, value: string | null = null): Token | null => {
-    let token = this.lexer.next();
+  nextUntil = (type: string, value: string | null = null): IToken | null => {
+    let token = this.next();
     while (token !== null) {
-      if (token.type === type && (value == null || value === token.value))
+      if (
+        token.tokenType.name === type &&
+        (value == null || value === token.image)
+      )
         return token;
-      token = this.lexer.next();
+      token = this.next();
     }
     return null;
   };
 
-  newline(token: Token) {
-    this.line.number =  LineCalc(this.template, token.end),
-    this.line.startIndex = token.end + 1
+  checkNull(token: IToken = this.getCurrent()) {
+    if (token === null || token === undefined) {
+      return throwParseError(ParseError.unexpected_EOF(), token, this.template);
+    }
   }
 
-  private readonly calculateIndent = (token: Token): number =>
-    token.begin - this.line.startIndex;
+  checkType(type: string, token: IToken = this.getCurrent()) {
+    if (token.tokenType.name !== type) {
+      return throwParseError(ParseError.unexpected_type(type), token, this.template);
+    }
+  }
 
-  private readonly throwError = (message: string, token: Token) => {
-    const error = new Error(
-      `${message} Line: ${this.line.number}:${this.calculateIndent(token)}`
-    );
-    error.name = "ParserError";
-    error.stack = this.template.split("\n")[this.line.number - 1] + "\n" + (" ".repeat(this.calculateIndent(token))) + "^\n" + error.stack;
-    throw error;
-  };
+  checkValue(value: string, token: IToken = this.getCurrent()) {
+    if (token.image !== value) {
+      return throwParseError(ParseError.unexpected_value(token.image), token, this.template);
+    }
+  }
+
+  checkTypeValue(
+    type: string,
+    value: string,
+    token: IToken = this.getCurrent()
+  ) {
+    this.checkType(type, token);
+    this.checkValue(value, token);
+  }
 }
