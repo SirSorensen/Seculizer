@@ -32,14 +32,14 @@ Protocol:
 
     Parent -> TPM: match {
         "Refuse":{
-            Parent -> TPM: {"Extend", "ref", sid}esk
+            Parent -> TPM: {"Extend", 'ref', sid}esk
             TPM: pcr := hash('ref', pcr);
             TPM -> Parent: "Extended", pcr;
             Parent -> TPM: "Quote", {v}k;
             TPM -> Parent: {|"Quoted", pcr, {v}k|}inv(tpmk);
         };
         "Obtain":{
-            Parent -> TPM: {"Extend", "obt", sid}esk
+            Parent -> TPM: {"Extend", 'obt', sid}esk
             TPM: pcr := hash('obt', pcr);
             TPM -> Parent: "Extended", pcr;
             Parent -> TPM: "Decrypt",{v}k, pcr
