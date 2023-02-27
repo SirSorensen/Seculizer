@@ -9,7 +9,7 @@ Protocol:
     TPM -> Alice: "booted";
     Alice: new n;
     Alice: new esk;
-    Alice -> TPM: "session", tpmk, {esk,tpmk};
+    Alice -> TPM: "session", {esk}tpmk;
     TPM: new sid;
     TPM -> Alice: sid;
 
