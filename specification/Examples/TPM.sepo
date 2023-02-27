@@ -21,9 +21,9 @@ Protocol:
     TPM: new k;
     TPM -> Alice: {|"Created", k, hash('obt', pcr)|}inv(tpmk);
 
+    clear: sid, esk;
     Alice: new v;
     Alice -> Parent: "Envelope", {v}k;
-    clear: sid, esk;
 
     Parent: new esk;
     Parent -> TPM : "Session", {esk}tpmk;
