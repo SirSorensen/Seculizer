@@ -4,18 +4,18 @@ Knowledge: {
     Shared: tpmk;
 }
 Protocol:
-    Alice -> TPM: "boot";
+    Alice -> TPM: "Boot";
     TPM: pcr := '1';
-    TPM -> Alice: "booted";
+    TPM -> Alice: "Booted";
     Alice: new n;
     Alice: new esk;
-    Alice -> TPM: "session", {esk}tpmk;
+    Alice -> TPM: "Session", {esk}tpmk;
     TPM: new sid;
     TPM -> Alice: sid;
 
-    Alice -> TPM: {"extend", n, sid}esk
+    Alice -> TPM: {"Extend", n, sid}esk
     TPM: pcr := hash(n, pcr);
-    TPM -> Alice: "extended", pcr;
+    TPM -> Alice: "Extended", pcr;
     
     Alice -> TPM: "Create", hash('obt', pcr);
     TPM: new k;
@@ -26,7 +26,7 @@ Protocol:
     clear: sid, esk;
 
     Parent: new esk;
-    Parent -> TPM : "session", {esk}tpmk;
+    Parent -> TPM : "Session", {esk}tpmk;
     TPM: new sid;
     TPM -> Parent: sid;
 
@@ -34,14 +34,14 @@ Protocol:
         "Refuse":{
             Parent -> TPM: {"Extend", "ref", sid}esk
             TPM: pcr := hash('ref', pcr);
-            TPM -> Parent: "extended", pcr;
+            TPM -> Parent: "Extended", pcr;
             Parent -> TPM: "Quote", {v}k;
             TPM -> Parent: {|"Quoted", pcr, {v}k|}inv(tpmk);
         };
         "Obtain":{
             Parent -> TPM: {"Extend", "obt", sid}esk
             TPM: pcr := hash('obt', pcr);
-            TPM -> Parent: "extended", pcr;
+            TPM -> Parent: "Extended", pcr;
             Parent -> TPM: "Decrypt",{v}k, pcr
             TPM -> Parent: v;
         }
