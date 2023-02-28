@@ -32,50 +32,111 @@ export enum LexTypes {
   latex = "latex",
   functionCall = "functionCall",
 }
-const id = createToken({ 
+export const id = createToken({ 
   name: LexTypes.id, 
   pattern: /[a-zA-Z_][a-zA-Z0-9_]*/ 
 })
 
-const topLevel = createToken({
+export const topLevel = createToken({
   name: LexTypes.topLevel,
   pattern: /((Protocol)|(Participants)|(Functions)|(Format)|(Knowledge)|(Equations)):/,
 })
 
-const functionCall = createToken({
+export const functionCall = createToken({
   name: LexTypes.functionCall,
   pattern: /([a-zA-Z_][a-zA-Z0-9_]*)\(/
 })
 
   
 
-const string = createToken({
+export const string = createToken({
   name: LexTypes.string,
   pattern: /"[^"]*"/,
 })
 
-const whiteSpace = createToken({
+export const whiteSpace = createToken({
   name: "WhiteSpace",
   pattern: /\s+/,
   group: Lexer.SKIPPED
 })
 
-const number = createToken({
+export const number = createToken({
   name: LexTypes.number,
   pattern: /[0-9][0-9]*/,
 })
 
-const delimiter = createToken({
+export const delimiter = createToken({
   name: LexTypes.delimiter,
   pattern: /[{()};,\/=:|]|(->)/,
 })
 
-const latex = createToken({
+export const LBrace = createToken({
+  name: "LBrace",
+  pattern: /{/,
+})
+
+export const RBrace = createToken({
+  name: "RBrace",
+  pattern: /}/,
+})
+
+export const LPar = createToken({
+  name: "LPar",
+  pattern: /\(/,
+})
+
+export const RPar = createToken({
+  name: "RPar",
+  pattern: /\)/,
+})
+
+export const Semicolon = createToken({
+  name: "Semicolon",
+  pattern: /;/,
+})
+
+export const Comma = createToken({
+  name: "Comma",
+  pattern: /,/,
+})
+
+export const Slash = createToken({
+  name: "Slash",
+  pattern: /\//,
+})
+
+export const Dollar = createToken({
+  name: "Dollar",
+  pattern: /\$/,
+})
+
+export const Colon = createToken({
+  name: "Colon",
+  pattern: /:/,
+})
+
+export const Equals = createToken({
+  name: "Equals",
+  pattern: /=/,
+})
+
+export const Arrow = createToken({
+  name: "Arrow",
+  pattern: /->/,
+})
+
+export const Pipe = createToken({
+  name: "Pipe",
+  pattern: /\|/,
+})
+
+
+export const latex = createToken({
   name: LexTypes.latex,
   pattern: /\$[^$]*\$/,
 })
 
-let allTokens = [
+export const allTokens = [
   whiteSpace,
   topLevel,
   functionCall,
