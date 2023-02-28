@@ -1,4 +1,6 @@
 import { createToken, CstParser, Lexer } from "chevrotain";
+
+//Lexical Tokens
 const Id = createToken({ name: "Id", pattern: /[a-zA-Z_][a-zA-Z0-9_]*/ });
 const NumberLiteral = createToken({
   name: "NumberLiteral",
@@ -22,6 +24,8 @@ const New = createToken({ name: "New", pattern: /new/ });
 const Match = createToken({ name: "Match", pattern: /match/ });
 const LeftBrace = createToken({ name: "LeftBrace", pattern: /{/ });
 const RightBrace = createToken({ name: "RightBrace", pattern: /}/ });
+const LeftParen = createToken({ name: "LeftParen", pattern: /\(/ });
+const RightParen = createToken({ name: "RightParen", pattern: /\)/ });
 const Comma = createToken({ name: "Comma", pattern: /,/ });
 const Colon = createToken({ name: "Colon", pattern: /:/ });
 const Arrow = createToken({ name: "Arrow", pattern: /->/ });
@@ -30,12 +34,11 @@ const Set = createToken({ name: "Set", pattern: /:=/ });
 const Slash = createToken({ name: "Slash", pattern: /\// });
 const As = createToken({ name: "As", pattern: /as/ });
 const Pipe = createToken({ name: "Pipe", pattern: /\|/ });
-const Dollar = createToken({ name: "Dollar", pattern: /$/ });
+const Dollar = createToken({ name: "Dollar", pattern: /\$/ });
 const Semicolon = createToken({ name: "Semicolon", pattern: /;/ });
 const End = createToken({ name: "End", pattern: /eof/ });
-
+//Sequence = Precedence
 const allTokens = [
-  Id,
   NumberLiteral,
   StringLiteral,
   Participants,
@@ -49,6 +52,8 @@ const allTokens = [
   Match,
   LeftBrace,
   RightBrace,
+  LeftParen,
+  RightParen,
   Comma,
   Colon,
   Arrow,
@@ -59,10 +64,13 @@ const allTokens = [
   Equal,
   Pipe,
   Dollar,
+  Id,
 ];
 // Define the lexer
 export const SepoLexer = new Lexer(allTokens);
 
+
+//Parser
 export class SepoParser extends CstParser {
   constructor() {
     super(allTokens);
@@ -73,20 +81,20 @@ export class SepoParser extends CstParser {
     this.CONSUME(Participants);
     this.SUBRULE(this.participants);
     this.OPTION(() => {
-      this.CONSUME(Knowledge);
-      this.SUBRULE(this.knowledgeList);
-    });
-    this.OPTION(() => {
       this.CONSUME(Functions);
       this.SUBRULE(this.functionsDef);
     });
-    this.OPTION(() => {
+    this.OPTION1(() => {
       this.CONSUME(Equations);
       this.SUBRULE(this.equation);
     });
-    this.OPTION(() => {
+    this.OPTION2(() => {
       this.CONSUME(Format);
       this.SUBRULE(this.format);
+    });
+    this.OPTION3(() => {
+      this.CONSUME(Knowledge);
+      this.SUBRULE(this.knowledgeList);
     });
     this.CONSUME(Protocol);
     this.SUBRULE(this.protocol);
@@ -95,25 +103,25 @@ export class SepoParser extends CstParser {
 
   private type = this.RULE("type", () => {
     this.OR([
-      { ALT: () => this.CONSUME(Id) },
-      { ALT: () => this.CONSUME(Number) },
-      { ALT: () => this.CONSUME(String) },
       { ALT: () => this.SUBRULE(this.function) },
+      { ALT: () => this.CONSUME(Id) },
+      { ALT: () => this.CONSUME(NumberLiteral) },
+      { ALT: () => this.CONSUME(StringLiteral) },
     ]);
   });
 
   private function = this.RULE("function", () => {
     this.CONSUME(Id);
-    this.CONSUME(LeftBrace);
+    this.CONSUME(LeftParen);
     this.MANY_SEP({
       SEP: Comma,
       DEF: () =>
         this.OR([
-          { ALT: () => this.CONSUME(Id) },
           { ALT: () => this.SUBRULE(this.function) },
+          { ALT: () => this.CONSUME1(Id) },
         ]),
     });
-    this.CONSUME(RightBrace);
+    this.CONSUME(RightParen);
   });
 
   private participants = this.RULE("participants", () => {
@@ -142,8 +150,8 @@ export class SepoParser extends CstParser {
 
   private knowledge = this.RULE("knowledge", () => {
     this.OR([
-      { ALT: () => this.CONSUME(Id) },
       { ALT: () => this.SUBRULE(this.function) },
+      { ALT: () => this.CONSUME(Id) },
     ]);
   });
 
@@ -157,7 +165,7 @@ export class SepoParser extends CstParser {
   private functionItem = this.RULE("functionItem", () => {
     this.CONSUME(Id);
     this.CONSUME(Slash);
-    this.CONSUME(Number);
+    this.CONSUME(NumberLiteral);
   });
 
   private equation = this.RULE("equation", () => {
@@ -168,9 +176,9 @@ export class SepoParser extends CstParser {
   });
 
   private equationElement = this.RULE("equationElement", () => {
-    this.SUBRULE(this.equation);
+    this.SUBRULE(this.function);
     this.CONSUME(Equal);
-    this.SUBRULE(this.equation);
+    this.SUBRULE1(this.function);
   });
 
   private format = this.RULE("format", () => {
@@ -192,7 +200,7 @@ export class SepoParser extends CstParser {
   private latex = this.RULE("latex", () => {
     this.CONSUME(Dollar);
     this.CONSUME(StringLiteral);
-    this.CONSUME(Dollar);
+    this.CONSUME1(Dollar);
   });
 
   private protocol = this.RULE("protocol", () => {
@@ -203,8 +211,16 @@ export class SepoParser extends CstParser {
     this.OR([
       { ALT: () => this.SUBRULE(this.clear) },
       { ALT: () => this.SUBRULE(this.participantStatement) },
-      { ALT: () => this.SUBRULE(this.match) },
-      { ALT: () => this.SUBRULE(this.messageSend) },
+      { ALT: () => {
+        this.CONSUME(Id);
+        this.CONSUME(Arrow);
+        this.CONSUME1(Id);
+        this.CONSUME(Colon);
+        this.OR1([
+          { ALT: () => this.SUBRULE(this.match) },
+          { ALT: () => this.SUBRULE(this.messageSend) },
+        ])
+      }},
     ]);
   });
 
@@ -238,10 +254,6 @@ export class SepoParser extends CstParser {
   });
 
   private match = this.RULE("match", () => {
-    this.CONSUME(Id);
-    this.CONSUME(Arrow);
-    this.CONSUME(Id);
-    this.CONSUME(Colon);
     this.CONSUME(Match);
     this.CONSUME(LeftBrace);
     this.MANY(() => this.SUBRULE(this.matchCase));
@@ -255,10 +267,6 @@ export class SepoParser extends CstParser {
   });
 
   private messageSend = this.RULE("messageSend", () => {
-    this.CONSUME(Id);
-    this.CONSUME(Arrow);
-    this.CONSUME(Id);
-    this.CONSUME(Colon);
     this.MANY_SEP({
       SEP: Comma,
       DEF: () => this.SUBRULE(this.messageSendElement),
@@ -292,7 +300,7 @@ export class SepoParser extends CstParser {
     this.CONSUME(LeftBrace);
     this.CONSUME(Pipe);
     this.SUBRULE(this.expessionList);
-    this.CONSUME(Pipe);
+    this.CONSUME1(Pipe);
     this.CONSUME(RightBrace);
   });
 
