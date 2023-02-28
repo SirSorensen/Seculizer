@@ -242,12 +242,12 @@ export class SepoParser extends CstParser {
         ])
       }},
     ]);
+    this.CONSUME(Semicolon);
   });
 
   private clear = this.RULE("clear", () => {
     this.CONSUME(Clear);
     this.CONSUME(Id);
-    this.CONSUME(Semicolon);
   });
 
   private participantStatement = this.RULE("participantStatement", () => {
@@ -257,20 +257,17 @@ export class SepoParser extends CstParser {
       { ALT: () => this.SUBRULE(this.new) },
       { ALT: () => this.SUBRULE(this.set) },
     ]);
-    this.CONSUME(Semicolon);
   });
 
   private new = this.RULE("new", () => {
     this.CONSUME(New);
     this.CONSUME(Id);
-    this.CONSUME(Semicolon);
   });
 
   private set = this.RULE("set", () => {
     this.CONSUME(Id);
     this.CONSUME(Set);
     this.SUBRULE(this.type);
-    this.CONSUME(Semicolon);
   });
 
   private match = this.RULE("match", () => {
@@ -291,7 +288,6 @@ export class SepoParser extends CstParser {
       SEP: Comma,
       DEF: () => this.SUBRULE(this.messageSendElement),
     });
-    this.CONSUME(Semicolon);
   });
 
   private messageSendElement = this.RULE("messageSendElement", () => {
@@ -314,6 +310,7 @@ export class SepoParser extends CstParser {
     this.CONSUME(LeftBrace);
     this.SUBRULE(this.expressionList);
     this.CONSUME(RightBrace);
+    this.SUBRULE1(this.expressionList);
   });
 
   private sign = this.RULE("sign", () => {
@@ -322,6 +319,7 @@ export class SepoParser extends CstParser {
     this.SUBRULE(this.expressionList);
     this.CONSUME1(Pipe);
     this.CONSUME(RightBrace);
+    this.SUBRULE1(this.expressionList);
   });
 
   private expressionList = this.RULE("expressionList", () => {

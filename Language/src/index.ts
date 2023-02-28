@@ -28,7 +28,7 @@ const lexerTest = async (): Promise<void> => {
 
       new SepoToAstVisitor().visit(cst);
 
-      console.log(cst);
+      //console.log(cst);
       
     }
   );

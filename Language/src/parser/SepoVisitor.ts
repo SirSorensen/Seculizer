@@ -24,7 +24,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         // const where = this.visit(ctx.whereClause)
 
         console.log("SepoVisitor:");
-        console.log(ctx);
+        //console.log(ctx);
         return ctx;
     }
 
