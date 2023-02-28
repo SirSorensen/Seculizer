@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import { throwSimpleParseError } from "./parser/ParseError.js";
 import { SepoParser, SepoLexer } from './parser/parser_2.js';
 import { SepoToAstVisitor } from "./parser/SepoVisitor.js";
 //import { Parser } from './parser/parser.js';
@@ -18,11 +19,10 @@ const lexerTest = async (): Promise<void> => {
       //console.log(parser);
 
       const cst = parser.program();
+      
       if (parser.errors.length > 0) {
-        throw Error(
-          "Sad sad panda, parsing errors detected!\n" +
-            parser.errors[0].message
-        )
+        let error = parser.errors[0];
+        throwSimpleParseError(error.message, error.token, data.toString() + "eof");
       }
 
 

@@ -41,8 +41,16 @@ const Pipe = createToken({ name: "Pipe", pattern: /\|/ });
 const Dollar = createToken({ name: "Dollar", pattern: /\$/ });
 const Semicolon = createToken({ name: "Semicolon", pattern: /;/ });
 const End = createToken({ name: "End", pattern: /eof/ });
+
+const WhiteSpace = createToken({
+  name: "WhiteSpace",
+  pattern: /\s+/,
+  group: Lexer.SKIPPED
+})
+
 //Sequence = Precedence
 const allTokens = [
+  WhiteSpace,
   NumberLiteral,
   StringLiteral,
   latexLiteral,
