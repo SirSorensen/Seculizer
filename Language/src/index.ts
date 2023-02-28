@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { SepoParser, SepoLexer } from './parser/parser_2.js';
+import { SepoToAstVisitor } from "./parser/SepoVisitor.js";
 //import { Parser } from './parser/parser.js';
 const print = false;
 const lexerTest = async (): Promise<void> => {
@@ -14,7 +15,19 @@ const lexerTest = async (): Promise<void> => {
       const lexResult = SepoLexer.tokenize(data.toString() + "eof");
       const parser = new SepoParser();
       parser.input = lexResult.tokens;
+      //console.log(parser);
+
       const cst = parser.program();
+      if (parser.errors.length > 0) {
+        throw Error(
+          "Sad sad panda, parsing errors detected!\n" +
+            parser.errors[0].message
+        )
+      }
+
+
+      new SepoToAstVisitor().visit(cst);
+
       console.log(cst);
       
     }

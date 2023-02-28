@@ -2,6 +2,7 @@ Participants: Alice, Bob;
 Functions: exp/2;
 Equations: exp(exp(g,Y),X) = exp(exp(g,X),Y), exp(exp(g,Y),X) = exp(g,prod(X,Y));
 Format: exp(x,y) = $x^y$;
+
 Knowledge: {
             Alice: X, msgA;
             Bob: Y, msgB;

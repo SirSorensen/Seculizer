@@ -5,11 +5,11 @@ string ::= '"' [^"]* '"'                /* This passes https://www.bottlecaps.de
 function ::= id "(" id ("," id)* ")"    /* Example: f(x) */
 
 program ::= ("Participants:" participants ";")
-            ("Knowledge:" (knowledge_list | knowledge) ";")?
+            ("Knowledge:" knowledge_list ";")?
             ("Functions:" functions_def ";")?
             ("Equations:" equations ";")?
             ("Format:" formats ";")?
-            ("Protocol:" stmt* ";")
+            ("Protocol:" "{" stmt* "}" ";")
             end
 
 end ::= "eof"
@@ -59,9 +59,8 @@ format ::= id "(" id ("," id)* ")" "=" string | latex   /* Example: exp(x,y) = $
 latex ::= "$" [^$]* "$"
 
 /* ---- Knowledge ---- */
-knowledge_list ::= "{" knowledge+ "}" ";" /* Example: {Alice: X, msgA; Bob: Y, msgB; Shared: g; }; */
-knowledge ::= participant ":" knowledge_item ("," knowledge_item)* ";" /* Example: Alice: X, msgA; */
-knowledge_item ::= id | function /* Example: X, msgA; */
+knowledge_list ::= "{" knowledge* "}" ";" /* Example: {Alice: X, msgA; Bob: Y, msgB; Shared: g; }; */
+knowledge ::= participant ":" (id | function) ("," (id | function))* ";" /* Example: Alice: X, msgA; */
 
 /* ---- Functions ---- */
 functions_def ::= function_def ("," function_def)*  /* Example: f/1, g/2 */
