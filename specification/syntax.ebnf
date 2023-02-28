@@ -28,6 +28,10 @@ message_expr ::=    /* Could have id "=" id as well, but it creates confusion in
 	expression "as" id
 	| expression
 
+expression ::= type | encrypt_expr | sign_expr
+encrypt_expr ::= "{" expression ("," expression)* "}" expression  /* Example: {exp(g,X)}inv(pk(A)); */
+sign_expr ::= "{|" expression ("," expression)* "|}" expression   /* Example: {|msgA|}aKey; */
+
 match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";" /* Example: alice -> bob: match { "refuse": { ... }; }; */
 match_case ::= type ":" "{" stmt* "}" ";" /* Example: "refuse": { ... }; */
 
