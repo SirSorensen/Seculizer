@@ -1,143 +1,408 @@
-import { CstNode } from 'chevrotain';
-import { SepoParser, SepoLexer } from './parser_2.js';
-import { latex } from './lexer/lexer';
+import { SepoParser, SepoLexer } from "./parser_2.js";
+const parserInstance = new SepoParser();
 
-const parserInstance = new SepoParser()
-
-const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor()
+const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
 
 export class SepoToAstVisitor extends BaseSepoVisitor {
-    constructor() {
-        super()
-        this.validateVisitor()
+  constructor() {
+    super();
+    this.validateVisitor();
+  }
+
+  program(ctx: any) {
+    const participants = this.visit(ctx.participants);
+    const functions = this.visit(ctx.functionsDef);
+    const equations = this.visit(ctx.equation);
+    const format = this.visit(ctx.format);
+    const knowledge = this.visit(ctx.knowledgeList);
+    const protocol = this.visit(ctx.protocol);
+
+    return {
+      type: "program",
+      participants: participants,
+      functions: functions,
+      equations: equations,
+      format: format,
+      knowledge: knowledge,
+      protocol: protocol,
+    };
+  }
+
+  type(ctx: any):Type {
+    const functionChild = this.visit(ctx.function);
+    if (functionChild) {
+        return {
+            type: "type",
+            value: functionChild,
+        }
+    }
+    const idChild = ctx.Id;
+    if (idChild && idChild.length > 0) {
+        return {
+            type: "type",
+            value: {
+                type: "id",
+                id: idChild[0].image,
+            }
+        }
+    }
+    const numberChild = ctx.Number;
+    if (numberChild && numberChild.length > 0) {
+        return {
+            type: "type",
+            value: {
+                type: "number",
+                value: numberChild[0].image,
+            }
+        }
+    }
+    const stringChild = ctx.String;
+    if (stringChild && stringChild.length > 0) {
+        return {
+            type: "type",
+            value: {
+                type: "string",
+                value: stringChild[0].image,
+            }
+        }
     }
 
-    program(ctx: any) {
-        // const select = this.visit(ctx.selectClause)
-
-        //  "this.visit" can work on either a CstNode or an Array of CstNodes.
-        //  If an array is passed (ctx.fromClause is an array) it is equivalent
-        //  to passing the first element of that array
-        // const from = this.visit(ctx.fromClause)
-
-        // "whereClause" is optional, "this.visit" will ignore empty arrays (optional)
-        // const where = this.visit(ctx.whereClause)
-
-        console.log("SepoVisitor:");
-        //console.log(ctx);
-        return ctx;
+    //TODO throw error if unknown
+    return {
+        type: "type",
+        value: null
     }
+  }
 
-
-    type(ctx: any) {
-        return ctx;
+  function(ctx: any): FunctionCall {
+    const id = ctx.Id[0].image;
+    const functionChild = this.visit(ctx.function);
+    if (functionChild) {
+      return {
+        type: "function",
+        id: id,
+        child: functionChild,
+      };
     }
+    const idChild = ctx.Id[1].image;
+    return {
+      type: "function",
+      id: id,
+      child: {
+        type: "id",
+        id: idChild,
+      },
+    };
+  }
 
-    function(ctx: any) {
-        return ctx;
-    }
+  participants(ctx: any): Participants {
+    const participants = ctx.participant.map((p: any) => this.visit(p));
 
-    participants(ctx: any) {
-        return ctx;
-    }
+    return {
+      type: "participants",
+      participants: participants,
+    };
+  }
 
-    participant(ctx: any) { 
-        return ctx;
-    }
+  participant(ctx: any): Participant {
+    const id = ctx.Id[0].image;
+    return {
+      type: "participant",
+      id: id,
+    };
+  }
 
-    knowledgeList(ctx: any) {
-        return ctx;
-    }
+  functionsDef(ctx: any): FunctionsDef {
+    const functions = ctx.functionItem.map((f: any) => this.visit(f));
+    return {
+      type: "functionsDef",
+      functions: functions,
+    };
+  }
 
-    knowledge(ctx: any) {
-        return ctx;
-    }
+  functionItem(ctx: any): FunctionDefItem {
+    const id = ctx.Id[0].image;
+    const args = ctx.NumberLiteral[0].image;
+    return {
+      type: "functionDef",
+      id: id,
+      args: args,
+    };
+  }
 
-    functionsDef(ctx: any) {
-        return ctx;
-    }
+  equation(ctx: any): Equations {
+    const equations = ctx.equationElement.map((e: any) => this.visit(e));
+    return {
+      type: "equations",
+      equations: equations,
+    };
+  }
 
-    functionItem(ctx: any) {
-        return ctx;
-    }
+  equationElement(ctx: any): Equation {
+    const leftFunction = this.visit(ctx.function[0]);
+    const rightFunction = this.visit(ctx.function[0]);
+    return {
+      type: "equation",
+      left: leftFunction,
+      right: rightFunction,
+    };
+  }
 
-    equation(ctx: any) {
-        return ctx;
-    }
+  format(ctx: any): Format {
+    const formats = ctx.formatElement.map((f: any) => this.visit(f));
+    return {
+      type: "format",
+      formats: formats,
+    };
+  }
 
-    equationElement(ctx: any) {
-        return ctx;
+  formatElement(ctx: any): FormatItem {
+    const functionCall = this.visit(ctx.function);
+    const string = ctx.StringLiteral;
+    if (string && string.length > 0) {
+      return {
+        type: "formatItem",
+        function: functionCall,
+        format: { type: "string", value: string[0].image },
+      };
     }
+    const latex = this.visit(ctx.latex);
+    return {
+      type: "formatItem",
+      function: functionCall,
+      format: latex,
+    };
+  }
 
-    format(ctx: any) {
-        return ctx;
-    }
+  knowledgeList(ctx: any): Knowledge {
+    const knowledge = ctx.knowledge.map((k: any) => this.visit(k));
+    return {
+      type: "knowledge",
+      knowledge: knowledge,
+    };
+  }
 
-    formatElement(ctx: any) {
-        return ctx;
-    }
+  knowledge(ctx: any): KnowledgeItem {
 
-    latex(ctx: any) {
-        return ctx;
+    const id = ctx.Id[0].image;
+    const functions:FunctionCall[] = ctx.function ? ctx.function.map((f: any):FunctionCall => this.visit(f)) : [];
+    const ids:Id[] = 
+            ctx.Id
+            .slice(1)
+            .map(
+                (i: any):Id => {
+                    return {
+                        type: "id",
+                        id: i.image
+                    }
+                }
+                );
+    return {
+        type: "knowledgeItem",
+        id: id,
+        children: {
+            functions: functions,
+            ids: ids
+        }
     }
+  }
 
-    protocol(ctx: any) {
-        return ctx;
-    }
+  latex(ctx: any):LatexLiteral {
+    let latex = ctx.latexLiteral[0].image;
+    return { type: "latex", value: latex };
+  }
 
-    statement(ctx: any) {
-        return ctx;
+  protocol(ctx: any):Protocol {
+    const statements = ctx.statement.map((s: any) => this.visit(s));
+    return {
+        type: "protocol",
+        statements: statements
     }
+  }
 
-    clear(ctx: any) {
-        return ctx;
+  statement(ctx: any):Statement {
+    const clear = this.visit(ctx.clear);
+    if (clear) {
+        return {
+            type: "statement",
+            child: clear
+        }
     }
+    const participantStatement = this.visit(ctx.participantStatement);
+    if(participantStatement) {
+        return {
+            type: "statement",
+            child: participantStatement
+        }
+    }
+    if(ctx.Id && ctx.Id.length >= 2){
+        const leftId = ctx.Id[0].image;
+        const rightId = ctx.Id[1].image;
+        const match = this.visit(ctx.match);
+        if(match) {
+            return {
+                type: "statement",
+                child: {
+                    type: "sendStatement",
+                    leftId: leftId,
+                    rightId: rightId,
+                    child: match
+                }
+            }
+        }
+        const messageSend = this.visit(ctx.messageSend);
+        if(messageSend) {
+            return {
+                type: "statement",
+                child: {
+                    type: "sendStatement",
+                    leftId: leftId,
+                    rightId: rightId,
+                    child: messageSend
+                }
+            }
+        }
+    }
+    //TODO THROW ERROR HERE and remove possibility of null
+    return {
+        type: "statement",
+        child: null
+    }
+  }
 
-    participantStatement(ctx: any) {
-        return ctx;
+  clear(ctx: any):ClearStatement {
+    const id = ctx.Id[0].image;
+    return {
+        type: "clearStatement",
+        id: id
     }
+  }
 
-    name(ctx: any) {
-        return ctx;
+  participantStatement(ctx: any):ParticipantStatement {
+    const id = ctx.Id[0].image;
+    const newStatement = this.visit(ctx.new);
+    if (newStatement) {
+        return {
+            type: "participantStatement",
+            id: id,
+            child: newStatement
+        }
     }
+    const setStatement = this.visit(ctx.set);
+    if (setStatement) {
+        return {
+            type: "participantStatement",
+            id: id,
+            child: setStatement
+        }
+    }
+    //TODO THROW ERROR HERE and remove possibility of null
+    return {
+        type: "participantStatement",
+        id: id,
+        child: null
+    };
+  }
 
-    new(ctx: any) {
-        return ctx;
+  new(ctx: any):NewStatement {
+    const id = ctx.Id[0].image;
+    return {
+        type: "newStatement",
+        id: id
     }
+  }
+
+  set(ctx: any):SetStatement {
+    const id = ctx.Id[0].image;
+    const type = this.visit(ctx.type);
+    return {
+        type: "setStatement",
+        id: id,
+        value: type
+    }
+  }
+
+  match(ctx: any):MatchStatement {
+    const cases = ctx.matchCase.map((c: any) => this.visit(c));
+    return {
+        type: "matchStatement",
+        cases: cases
+    }
+  }
+
+  matchCase(ctx: any):MatchCase {
+    const type:Type = this.visit(ctx.Type);
+    const statements:Statement[] = ctx.statement.map((s: any) => this.visit(s));
+    return {
+        type: "matchCase",
+        case: type,
+        children: statements
+    };
+  }
+
+  messageSend(ctx: any):MessageSendStatement {
+    const elements = ctx.messageSendElement.map((m: any) => this.visit(m));
+    return {
+        type: "messageSendStatement",
+        ids: elements
+    }
+  }
+
+  messageSendElement(ctx: any):MessageSendElement {
+    const expression = this.visit(ctx.expression);
+    const alias = ctx.Id && ctx.Id[0] ? ctx.Id[0].image : null;
+    return {
+        type: "messageSendElement",
+        expression: expression,
+        alias: alias
+    }
+  }
+
+  expression(ctx: any):Expression {
+
+    const type:Type = this.visit(ctx.Type);
+    if(type) {
+        return {
+            type: "expression",
+            child: type
+        }
+    }
+    const encrypt = this.visit(ctx.encrypt);
+    if(encrypt) {
+        return {
+            type: "expression",
+            child: encrypt
+        }
+    }
+    const sign = this.visit(ctx.sign);
+    if(sign) {
+        return {
+            type: "expression",
+            child: sign
+        }
+    }
+    console.log(JSON.stringify(ctx, null, 2));
     
-    set(ctx: any) {
-        return ctx;
-    }
+    throw new Error("Expression not found");
+  }
 
-    match(ctx: any) {
-        return ctx;
+  encrypt(ctx: any):EncryptExpression {
+    const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
+    const [last, ...rest] = expressions;
+    return {
+        type: "encryptExpression",
+        inner: rest,
+        outer: last
     }
+  }
 
-    matchCase(ctx: any) {
-        return ctx;
+  sign(ctx: any):SignExpression {
+    const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
+    const [last, ...rest] = expressions;
+    return {
+        type: "signExpression",
+        inner: rest,
+        outer: last
     }
-
-    messageSend(ctx: any) {
-        return ctx;
-    }
-
-    messageSendElement(ctx: any) {
-        return ctx;
-    }
-
-    expression(ctx: any) {
-        return ctx;
-    }
-
-    encrypt(ctx: any) {
-        return ctx;
-    }
-
-    sign(ctx: any) {
-        return ctx;
-    }
-
-    expressionList(ctx: any) {
-        return ctx;
-    }
+  }
 }
