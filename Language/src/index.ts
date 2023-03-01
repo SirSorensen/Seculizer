@@ -3,7 +3,6 @@ import { throwSimpleParseError } from "./parser/ParseError.js";
 import { SepoParser, SepoLexer } from './parser/parser_2.js';
 import { SepoToAstVisitor } from "./parser/SepoVisitor.js";
 //import { Parser } from './parser/parser.js';
-const print = false;
 const lexerTest = async (): Promise<void> => {
   await fs.readFile(
     "./examples/test.st",
@@ -35,6 +34,13 @@ const lexerTest = async (): Promise<void> => {
           return;
         }
         console.log('Data written to file', './examples/test.json');
+      });
+      fs.writeFile('./examples/test.cst.json', JSON.stringify(cst), (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log('Data written to file', './examples/test.cst.json');
       });
       
     }

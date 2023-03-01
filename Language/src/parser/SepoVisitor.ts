@@ -360,7 +360,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   expression(ctx: any):Expression {
 
-    const type:Type = this.visit(ctx.Type);
+    const type:Type = this.visit(ctx.type);
     if(type) {
         return {
             type: "expression",
@@ -381,7 +381,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
             child: sign
         }
     }
-    console.log(JSON.stringify(ctx, null, 2));
+    
     
     throw new Error("Expression not found");
   }
