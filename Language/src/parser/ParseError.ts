@@ -28,10 +28,27 @@ export const throwParseError = (
 
   throw error;
 };
-/*export function error(error: IError, token: IToken): void {
-  const msg = `${error.refCode}: ${error.message} (Line: ${line})`;
-  throw new Error(msg);
-}*/
+
+export const throwSimpleParseError = (
+  errorMsg: String,
+  token: IToken,
+  template: string
+) => {
+  const error = new Error(
+    `${errorMsg} ${token ? 'Line: ' + token.startLine + ":"+ getIndent(token) : ""}`
+  );
+  error.name = "ParserError";
+  if (token) {
+    error.stack =
+      template.split("\n")[(token.startLine ?? 0)-1] +
+      "\n" +
+      " ".repeat(getIndent(token) - 1) +
+      "^\n" +
+      error.stack;
+  }
+
+  throw error;
+};
 
 export const ParseError = {
   unknown_type: () => ({

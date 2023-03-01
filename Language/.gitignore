@@ -1,2 +1,5 @@
 /node_modules/
 /dist/
+test.json
+test.ast.json
+test.cst.json

@@ -5,11 +5,11 @@ string ::= '"' [^"]* '"'                /* This passes https://www.bottlecaps.de
 function ::= id "(" id ("," id)* ")"    /* Example: f(x) */
 
 program ::= ("Participants:" participants ";")
-            ("Knowledge:" (knowledge_list | knowledge) ";")?
+            ("Knowledge:" knowledge_list ";")?
             ("Functions:" functions_def ";")?
             ("Equations:" equations ";")?
             ("Format:" formats ";")?
-            ("Protocol:" stmt* ";")
+            ("Protocol:" "{" stmt* "}" ";")
             end
 
 end ::= "eof"
@@ -27,6 +27,10 @@ message_send_stmt ::= id "->" id ":" message_expr ("," message_expr)* ";"   /* E
 message_expr ::=    /* Could have id "=" id as well, but it creates confusion in what it is saved as what */
 	expression "as" id
 	| expression
+
+expression ::= type | encrypt_expr | sign_expr
+encrypt_expr ::= "{" expression ("," expression)* "}" expression  /* Example: {exp(g,X)}inv(pk(A)); */
+sign_expr ::= "{|" expression ("," expression)* "|}" expression   /* Example: {|msgA|}aKey; */
 
 match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";" /* Example: alice -> bob: match { "refuse": { ... }; }; */
 match_case ::= type ":" "{" stmt* "}" ";" /* Example: "refuse": { ... }; */
@@ -55,9 +59,8 @@ format ::= id "(" id ("," id)* ")" "=" string | latex   /* Example: exp(x,y) = $
 latex ::= "$" [^$]* "$"
 
 /* ---- Knowledge ---- */
-knowledge_list ::= "{" knowledge+ "}" ";" /* Example: {Alice: X, msgA; Bob: Y, msgB; Shared: g; }; */
-knowledge ::= participant ":" knowledge_item ("," knowledge_item)* ";" /* Example: Alice: X, msgA; */
-knowledge_item ::= id | function /* Example: X, msgA; */
+knowledge_list ::= "{" knowledge* "}" ";" /* Example: {Alice: X, msgA; Bob: Y, msgB; Shared: g; }; */
+knowledge ::= participant ":" (id | function) ("," (id | function))* ";" /* Example: Alice: X, msgA; */
 
 /* ---- Functions ---- */
 functions_def ::= function_def ("," function_def)*  /* Example: f/1, g/2 */
