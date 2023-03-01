@@ -279,8 +279,11 @@ export class SepoParser extends CstParser {
 
   private matchCase = this.RULE("matchCase", () => {
     this.SUBRULE(this.type);
-    this.CONSUME(Colon);
-    this.SUBRULE(this.statement);
+    this.CONSUME2(Colon);
+    this.CONSUME(LeftBrace);
+    this.MANY(this.statement);
+    this.CONSUME(RightBrace);
+    this.CONSUME2(Semicolon);
   });
 
   private messageSend = this.RULE("messageSend", () => {
@@ -308,24 +311,24 @@ export class SepoParser extends CstParser {
 
   private encrypt = this.RULE("encrypt", () => {
     this.CONSUME(LeftBrace);
-    this.SUBRULE(this.expressionList);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.expression),
+    });
     this.CONSUME(RightBrace);
-    this.SUBRULE1(this.expressionList);
+    this.SUBRULE1(this.expression);
   });
 
   private sign = this.RULE("sign", () => {
     this.CONSUME(LeftBrace);
     this.CONSUME(Pipe);
-    this.SUBRULE(this.expressionList);
-    this.CONSUME1(Pipe);
-    this.CONSUME(RightBrace);
-    this.SUBRULE1(this.expressionList);
-  });
-
-  private expressionList = this.RULE("expressionList", () => {
     this.MANY_SEP({
       SEP: Comma,
       DEF: () => this.SUBRULE(this.expression),
     });
+    this.CONSUME1(Pipe);
+    this.CONSUME(RightBrace);
+    this.SUBRULE1(this.expression);
   });
+
 }

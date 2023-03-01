@@ -26,9 +26,16 @@ const lexerTest = async (): Promise<void> => {
       }
 
 
-      new SepoToAstVisitor().visit(cst);
+      const ast = new SepoToAstVisitor().visit(cst);
 
-      //console.log(cst);
+      console.log(ast);
+      fs.writeFile('./examples/test.json', JSON.stringify(ast), (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log('Data written to file', './examples/test.json');
+      });
       
     }
   );
