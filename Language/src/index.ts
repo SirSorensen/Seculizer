@@ -28,12 +28,12 @@ const lexerTest = async (): Promise<void> => {
       const ast = new SepoToAstVisitor().visit(cst);
 
       console.log(ast);
-      fs.writeFile('./examples/test.json', JSON.stringify(ast), (err) => {
+      fs.writeFile('./examples/test.ast.json', JSON.stringify(ast), (err) => {
         if (err) {
           console.error(err);
           return;
         }
-        console.log('Data written to file', './examples/test.json');
+        console.log('Data written to file', './examples/test.ast.json');
       });
       fs.writeFile('./examples/test.cst.json', JSON.stringify(cst), (err) => {
         if (err) {
