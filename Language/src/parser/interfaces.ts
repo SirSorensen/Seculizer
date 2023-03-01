@@ -9,7 +9,7 @@ interface Program extends ASTNode {
   equations: Equations;
   format: Format;
   knowledge: Knowledge;
-  //protocol: Protocol;
+  protocol: Protocol;
 }
 
 interface Participants extends ASTNode {
