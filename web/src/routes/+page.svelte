@@ -1,6 +1,5 @@
 <script>
     import Participants from "$lib/participants.svelte";
-    import Participant from "../lib/participant.svelte";
 </script>
 
 <h1>Welcome to SvelteKit</h1>
