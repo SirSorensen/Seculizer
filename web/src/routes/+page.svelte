@@ -1,11 +1,15 @@
 <script>
+  import ActionBox from "$lib/ActionBox.svelte";
   import CommonKnowledge from "$lib/CommonKnowledge.svelte";
   import MessageBox from "$lib/MessageBox.svelte";
     import Participants from "$lib/Participants.svelte";
+    import Item from "$lib/Item.svelte";
 </script>
 
 <CommonKnowledge />
-
+<ActionBox title="test">
+    <Item id="test" emoji="oma-key" />
+</ActionBox>
 <MessageBox />
 <MessageBox signie={{name: "Alice", emoji: "oma-woman"}} encryptKey={{id: "Key", emoji: "oma-key"}}/>
 
