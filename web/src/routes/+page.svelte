@@ -1,12 +1,9 @@
 <script>
+  import CommonKnowledge from "$lib/CommonKnowledge.svelte";
     import Participants from "$lib/participants.svelte";
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>
-    Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
-<p>Hello! I am alien from Florida!</p>
+<CommonKnowledge />
 
 <Participants
     participants={[
