@@ -1,8 +1,11 @@
 <script lang="ts">
-    let knowledges:{Id:string, Emoji:String}[] = [
-        { Id: "g", Emoji: "⚙️" },
-        { Id: "your mom phone number", Emoji: "🤰🤙" },
-        { Id: "your dad phone number", Emoji: "🫃🤙" },
+  import Item from "./Item.svelte";
+
+
+    let knowledges:{id:string, emoji:String}[] = [
+        { id: "g", emoji: "oma-gear" },
+        { id: "long text long text", emoji: "oma-key" },
+        { id: "even longer text long text", emoji: "oma-key" },
     ];
 
 </script>
@@ -10,10 +13,7 @@
     <p class="header">Common knowledge</p>
     <div class="knowledges">
         {#each knowledges as knowledge}
-            <div class="knowledge">
-                <p class="icon">{knowledge.Emoji}</p>
-                <p>{knowledge.Id}</p>
-            </div>
+            <Item id={knowledge.id} emoji={knowledge.emoji}/>
         {/each}
     </div>
 </div>
@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
+    align-items: start;
   }
 
 .header{

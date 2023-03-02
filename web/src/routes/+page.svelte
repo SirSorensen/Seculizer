@@ -1,32 +1,36 @@
 <script>
   import CommonKnowledge from "$lib/CommonKnowledge.svelte";
-    import Participants from "$lib/participants.svelte";
+  import MessageBox from "$lib/MessageBox.svelte";
+    import Participants from "$lib/Participants.svelte";
 </script>
 
 <CommonKnowledge />
+
+<MessageBox />
+<MessageBox signie={{name: "Alice", emoji: "oma-woman"}} encryptKey={{id: "Key", emoji: "oma-key"}}/>
 
 <Participants
     participants={[
         {
             Name: "Alice",
-            Emoji: "👩",
+            Emoji: "oma-woman",
             Knowledge: [
-                { Id: "a_sk", Emoji: "🔑" },
-                { Id: "your mom phone number", Emoji: "🤰🤙" },
+                { id: "a_sk", emoji: "oma-key" },
+                { id: "long text long text", emoji: "oma-pregnant-woman" },
             ],
         },
         {
             Name: "Adversary",
-            Emoji: "😈",
+            Emoji: "oma-smiling-face-with-horns",
             Knowledge: [
             ],
         },
         {
             Name: "Bob",
-            Emoji: "👨",
+            Emoji: "oma-man",
             Knowledge: [
-                { Id: "b_sk", Emoji: "🔑" },
-                { Id: "your dad phone number", Emoji: "🫃🤙" },
+                { id: "b_sk", emoji: "oma-key" },
+                { id: "long text long text", emoji: "oma-pregnant-man" },
             ],
         },
     ]}

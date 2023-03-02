@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Participant from "./participant.svelte";
+  import Participant from "./Participant.svelte";
   export let participants: {
     Name: String;
     Emoji: String;
-    Knowledge: { Id: String; Emoji: String }[];
+    Knowledge: { id: String; emoji: String }[];
   }[] = [];
 </script>
 

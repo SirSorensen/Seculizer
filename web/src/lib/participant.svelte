@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
-
-  let container: HTMLDivElement;
+  import Item from "./Item.svelte";
   export let name: String;
   export let emoji: String;
-  export let knowledge: { Id: String; Emoji: String }[] = [];
-
+  export let knowledge: { id: String; emoji: String }[] = [];
+  
+  let container: HTMLDivElement;
   let showKnowledge = false;
   export function accordion(node: HTMLDivElement, showKnowledge: boolean) {
     let initialHeight = node.offsetHeight;
@@ -61,16 +60,10 @@
   }}
 >
   <div class="container">
-    <div class="elem showKnowledge">
-      <p class="emoji">{emoji}</p>
-      <p>{name}</p>
-    </div>
+    <Item id={name} emoji={emoji}/>
     <div class="knowledges" use:accordion={showKnowledge}>
-      {#each knowledge as { Id, Emoji }}
-        <div transition:fade={{ delay: 250, duration: 300 }} class="elem">
-          <p class="emoji">{Emoji}</p>
-          <p>{Id}</p>
-        </div>
+      {#each knowledge as { id, emoji }}
+        <Item id={id} emoji={emoji}/>
       {/each}
     </div>
   </div>
@@ -98,15 +91,4 @@
     transition: all 2s ease-in-out;
   }
 
-  .emoji {
-    font-size: 3rem;
-  }
-
-  p {
-    margin: 0;
-  }
-
-  .elem {
-    padding: 1rem;
-  }
 </style>
