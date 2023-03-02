@@ -44,16 +44,4 @@
     padding: 0;
     text-align: center;
 }
-.knowledge{
-    max-width: 10rem;
-}
-
-.knowledge p {
-    margin: 0 .5rem;
-    text-align: center;
-}
-
-.knowledge .icon{
-    font-size: 1.5rem;
-}
 </style>
