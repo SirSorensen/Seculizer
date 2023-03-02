@@ -20,6 +20,12 @@
             ],
         },
         {
+            Name: "Adversary",
+            Emoji: "😈",
+            Knowledge: [
+            ],
+        },
+        {
             Name: "Bob",
             Emoji: "👨",
             Knowledge: [
@@ -27,38 +33,5 @@
                 { Id: "your dad phone number", Emoji: "🫃🤙" },
             ],
         },
-    ]}
-/>
-
-<Participant
-    name={"Alice"}
-    emoji={"👩"}
-    knowledge={[
-        { Id: "a_sk", Emoji: "🔑" },
-        { Id: "your mom phone number", Emoji: "🤰🤙" },
-    ]}
-/>
-<Participant
-    name={"Alice"}
-    emoji={"👩"}
-    knowledge={[
-        { Id: "a_sk", Emoji: "🔑" },
-        { Id: "your mom phone number", Emoji: "🤰🤙" },
-    ]}
-/>
-<Participant
-    name={"Alice"}
-    emoji={"👩"}
-    knowledge={[
-        { Id: "a_sk", Emoji: "🔑" },
-        { Id: "your mom phone number", Emoji: "🤰🤙" },
-    ]}
-/>
-<Participant
-    name={"Alice"}
-    emoji={"👩"}
-    knowledge={[
-        { Id: "a_sk", Emoji: "🔑" },
-        { Id: "your mom phone number", Emoji: "🤰🤙" },
     ]}
 />
