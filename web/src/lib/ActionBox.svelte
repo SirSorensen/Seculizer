@@ -7,7 +7,7 @@
 <div class="message">
   <div class="header">{title}</div>
   <div class="message-inner">
-    <slot />
+    <slot >No content was provided</slot>
   </div>
 </div>
 

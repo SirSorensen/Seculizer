@@ -15,7 +15,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    transform: translate(50%, 50%);
+    transform: translate(40%, 60%);
   }
   .id-container {
     position: relative;

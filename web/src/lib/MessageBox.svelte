@@ -1,14 +1,13 @@
 <script lang="ts">
   import SignIcon from "./Icons/SignIcon.svelte";
   import EncryptIcon from "./Icons/EncryptIcon.svelte";
-  import Item from "./Item.svelte";
 
   export let signie: { name: string; emoji: string } | null = null;
   export let encryptKey: { id: string; emoji: string } | null = null;
 </script>
 
 <div class="message">
-  <Item id="test" emoji="oma-key" />
+  <slot >No content was provided</slot>
   {#if signie !== null}
     <SignIcon {signie} />
   {/if}
@@ -31,5 +30,9 @@
     font-size: 1.2rem;
     border-radius: 15px;
     margin-bottom: 2rem;
+  }
+
+  .message :global(.message){
+    border: 1px dashed black;;
   }
 </style>
