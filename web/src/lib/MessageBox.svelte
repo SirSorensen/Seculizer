@@ -35,4 +35,10 @@
   .message :global(.message){
     border: 1px dashed black;;
   }
+  .message :global(.message p){
+    font-size: 1.2rem;
+  }
+  .message :global(.message .emoji){
+    font-size: 1.3rem;
+  }
 </style>
