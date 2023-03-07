@@ -17,12 +17,19 @@ const Participants = createToken({
 const latexLiteral = createToken({
   name: "latexLiteral",
   pattern: /\$([^$])*\$/,
-})
+});
 const Knowledge = createToken({ name: "Knowledge", pattern: /Knowledge:/ });
+const KeyRelation = createToken({
+  name: "KeyRelation",
+  pattern: /KeyRelation:/,
+});
+const Icons = createToken({ name: "Icons", pattern: /Icons:/ });
 const Functions = createToken({ name: "Functions", pattern: /Functions:/ });
 const Equations = createToken({ name: "Equations", pattern: /Equations:/ });
 const Format = createToken({ name: "Format", pattern: /Format:/ });
 const Protocol = createToken({ name: "Protocol", pattern: /Protocol:/ });
+const secretKey = createToken({ name: "secretKey", pattern: /sk/ });
+const publicKey = createToken({ name: "publicKey", pattern: /pk/ });
 const Clear = createToken({ name: "Clear", pattern: /clear/ });
 const New = createToken({ name: "New", pattern: /new/ });
 const Match = createToken({ name: "Match", pattern: /match/ });
@@ -45,8 +52,8 @@ const End = createToken({ name: "End", pattern: /eof/ });
 const WhiteSpace = createToken({
   name: "WhiteSpace",
   pattern: /\s+/,
-  group: Lexer.SKIPPED
-})
+  group: Lexer.SKIPPED,
+});
 
 //Sequence = Precedence
 const allTokens = [
@@ -56,10 +63,14 @@ const allTokens = [
   latexLiteral,
   Participants,
   Knowledge,
+  KeyRelation,
+  Icons,
   Functions,
   Equations,
   Format,
   Protocol,
+  secretKey,
+  publicKey,
   Clear,
   New,
   Match,
@@ -82,7 +93,6 @@ const allTokens = [
 // Define the lexer
 export const SepoLexer = new Lexer(allTokens);
 
-
 //Parser
 export class SepoParser extends CstParser {
   constructor() {
@@ -93,21 +103,30 @@ export class SepoParser extends CstParser {
   program = this.RULE("program", () => {
     this.CONSUME(Participants);
     this.SUBRULE(this.participants);
+
     this.OPTION(() => {
+      this.CONSUME(Knowledge);
+      this.SUBRULE(this.knowledgeList);
+    });
+    this.OPTION1(() => {
+      this.CONSUME(KeyRelation);
+      this.SUBRULE(this.keyRelationList);
+    });
+    this.OPTION2(() => {
       this.CONSUME(Functions);
       this.SUBRULE(this.functionsDef);
     });
-    this.OPTION1(() => {
+    this.OPTION3(() => {
       this.CONSUME(Equations);
       this.SUBRULE(this.equation);
     });
-    this.OPTION2(() => {
+    this.OPTION4(() => {
       this.CONSUME(Format);
       this.SUBRULE(this.format);
     });
-    this.OPTION3(() => {
-      this.CONSUME(Knowledge);
-      this.SUBRULE(this.knowledgeList);
+    this.OPTION5(() => {
+      this.CONSUME(Icons);
+      this.SUBRULE(this.icons);
     });
     this.CONSUME(Protocol);
     this.SUBRULE(this.protocol);
@@ -121,6 +140,67 @@ export class SepoParser extends CstParser {
       { ALT: () => this.CONSUME(NumberLiteral) },
       { ALT: () => this.CONSUME(StringLiteral) },
     ]);
+  });
+
+  private knowledgeList = this.RULE("knowledgeList", () => {
+    this.CONSUME(LeftBrace);
+    this.MANY({
+      DEF: () => this.SUBRULE(this.knowledge),
+    });
+    this.CONSUME(RightBrace);
+    this.CONSUME(Semicolon);
+  });
+
+  private knowledge = this.RULE("knowledge", () => {
+    this.CONSUME(Id);
+    this.CONSUME(Colon);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () =>
+        this.OR([
+          { ALT: () => this.SUBRULE(this.function) },
+          { ALT: () => this.CONSUME1(Id) },
+        ]),
+    });
+    this.CONSUME(Semicolon);
+  });
+
+  private keyRelationList = this.RULE("keyRelationList", () => {
+    this.CONSUME(LeftParen);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.keyRelation),
+    });
+    this.CONSUME(RightParen);
+  });
+
+  private keyRelation = this.RULE("keyRelation", () => {
+    this.CONSUME(LeftParen);
+    this.OR([
+      {
+        ALT: () => {
+          this.CONSUME(secretKey);
+          this.CONSUME(Colon);
+          this.CONSUME(Id);
+          this.CONSUME(Comma);
+          this.CONSUME(publicKey);
+          this.CONSUME1(Colon);
+          this.CONSUME1(Id);
+          
+        },
+      },{
+        ALT: () => {
+          this.CONSUME1(publicKey);
+          this.CONSUME2(Colon);
+          this.CONSUME2(Id);
+          this.CONSUME1(Comma);
+          this.CONSUME1(secretKey);
+          this.CONSUME3(Colon);
+          this.CONSUME3(Id);
+        },
+      },
+    ]);
+    this.CONSUME(RightParen);
   });
 
   private function = this.RULE("function", () => {
@@ -147,28 +227,6 @@ export class SepoParser extends CstParser {
 
   private participant = this.RULE("participant", () => {
     this.CONSUME(Id);
-  });
-
-  private knowledgeList = this.RULE("knowledgeList", () => {
-    this.CONSUME(LeftBrace);
-    this.MANY({
-      DEF: () => this.SUBRULE(this.knowledge),
-    });
-    this.CONSUME(RightBrace);
-    this.CONSUME(Semicolon);
-  });
-
-  private knowledge = this.RULE("knowledge", () => {
-    this.CONSUME(Id);
-    this.CONSUME(Colon);
-    this.MANY_SEP({
-      SEP: Comma,
-      DEF: () => this.OR([
-        { ALT: () => this.SUBRULE(this.function) },
-        { ALT: () => this.CONSUME1(Id) },
-      ]),
-    });
-    this.CONSUME(Semicolon);
   });
 
   private functionsDef = this.RULE("functionsDef", () => {
@@ -216,6 +274,23 @@ export class SepoParser extends CstParser {
     ]);
   });
 
+  private icons = this.RULE("icons", () => {
+    this.CONSUME(LeftBrace);
+    this.MANY(() => this.SUBRULE(this.iconSet));
+    this.CONSUME(RightBrace);
+    this.CONSUME(Semicolon);
+  });
+
+  private iconSet = this.RULE("iconSet", () => {
+    this.CONSUME(StringLiteral);
+    this.CONSUME(Colon);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.CONSUME(Id),
+    })
+    this.CONSUME(Semicolon);
+  });
+
   private latex = this.RULE("latex", () => {
     this.CONSUME(latexLiteral);
   });
@@ -231,16 +306,18 @@ export class SepoParser extends CstParser {
     this.OR([
       { ALT: () => this.SUBRULE(this.clear) },
       { ALT: () => this.SUBRULE(this.participantStatement) },
-      { ALT: () => {
-        this.CONSUME(Id);
-        this.CONSUME(Arrow);
-        this.CONSUME1(Id);
-        this.CONSUME(Colon);
-        this.OR1([
-          { ALT: () => this.SUBRULE(this.match) },
-          { ALT: () => this.SUBRULE(this.messageSend) },
-        ])
-      }},
+      {
+        ALT: () => {
+          this.CONSUME(Id);
+          this.CONSUME(Arrow);
+          this.CONSUME1(Id);
+          this.CONSUME(Colon);
+          this.OR1([
+            { ALT: () => this.SUBRULE(this.match) },
+            { ALT: () => this.SUBRULE(this.messageSend) },
+          ]);
+        },
+      },
     ]);
     this.CONSUME(Semicolon);
   });
@@ -330,5 +407,4 @@ export class SepoParser extends CstParser {
     this.CONSUME(RightBrace);
     this.SUBRULE1(this.expression);
   });
-
 }
