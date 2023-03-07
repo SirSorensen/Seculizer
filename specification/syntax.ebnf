@@ -36,9 +36,6 @@ sign_expr ::= "{|" expression ("," expression)* "|}" expression   /* Example: {|
 match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: alice -> bob: match { "refuse": { ... }; }; */
 match_case ::= type ":" "{" stmt* "}" ";"                           /* Example: "refuse": { ... }; */
 
-match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: alice -> bob: match { "refuse": { ... }; }; */
-match_case ::= type ":" "{" stmt "}" ";"                            /* Example: "refuse": { ... }; */
-
 clear_stmt ::= "clear" id ";"   /* Example: clear akey; */
 
 call_stmt ::= function ("," function)*";"   /* Example: f(x); */

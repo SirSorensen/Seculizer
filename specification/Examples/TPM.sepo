@@ -1,6 +1,12 @@
-Participants: Alice, Parent, TPM;
+Participants: Alice<"Pregnant-woman">, Parent<👩‍👦>, TPM;
 Functions: hash/2;
 KeyRelations: (sk:tmp_sk, pk:tpm_pk);
+Icons: {
+    "Pregnant-woman": Alice;
+    "👩‍👦": Parent;
+    "🔑": tpm_pk, tpm_sk;
+    "📝": n, esk;
+    };
 Format: hash(x,y) = $H(x||y)$;
 Knowledge: {
     tpm: tpm_sk;
