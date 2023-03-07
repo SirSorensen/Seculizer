@@ -33,6 +33,7 @@ interface KeyRelation extends ASTNode {
   pk: Id;
 }
 
+
 interface FunctionsDef extends ASTNode {
   type: "functionsDef";
   functions: FunctionDefItem[];
@@ -58,7 +59,7 @@ interface Equation extends ASTNode {
 interface FunctionCall extends ASTNode {
   type: "function";
   id: string;
-  child: FunctionCall | Id;
+  params: Type[];
 }
 
 interface Id extends ASTNode {

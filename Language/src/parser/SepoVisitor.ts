@@ -12,7 +12,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   program(ctx: any) {
     const participants = this.visit(ctx.participants);
     const knowledge = this.visit(ctx.knowledgeList);
-    const keyRelations = this.visit(ctx.keyRelations);
+    const keyRelations = this.visit(ctx.keyRelationList);
     const functions = this.visit(ctx.functionsDef);
     const equations = this.visit(ctx.equation);
     const format = this.visit(ctx.format);
@@ -111,7 +111,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     }
   }
 
-  keyRelations(ctx: any): KeyRelations {
+  keyRelationList(ctx: any): KeyRelations {
     const keyRelations = ctx.keyRelation.map((k: any) => this.visit(k));
     return {
       type: "keyRelations",
@@ -120,9 +120,8 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   keyRelation(ctx: any): KeyRelation {
-  
-    const sk = ctx.Id[0].image;
-    const pk = ctx.Id[1].image;
+    const sk = this.visit(ctx.secretKeyRelation);
+    const pk = this.visit(ctx.publicKeyRelation);
     return {
       type: "keyRelation",
       sk: sk,
@@ -130,24 +129,23 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
+  secretKeyRelation(ctx: any): Id {
+    const id = ctx.Id[0].image;
+    return id;
+  }
+
+  publicKeyRelation(ctx: any): Id {
+    const id = ctx.Id[0].image;
+    return id;
+  }
+
   function(ctx: any): FunctionCall {
     const id = ctx.Id[0].image;
-    const functionChild = this.visit(ctx.function);
-    if (functionChild) {
-      return {
-        type: "function",
-        id: id,
-        child: functionChild,
-      };
-    }
-    const idChild = ctx.Id[1].image;
+    const params = ctx.type.map((p: any) => this.visit(p));
     return {
       type: "function",
       id: id,
-      child: {
-        type: "id",
-        id: idChild,
-      },
+      params: params,
     };
   }
 

@@ -180,28 +180,32 @@ export class SepoParser extends CstParser {
     this.OR([
       {
         ALT: () => {
-          this.CONSUME(secretKey);
-          this.CONSUME(Colon);
-          this.CONSUME(Id);
+          this.SUBRULE(this.secretKeyRelation);
           this.CONSUME(Comma);
-          this.CONSUME(publicKey);
-          this.CONSUME1(Colon);
-          this.CONSUME1(Id);
+          this.SUBRULE(this.publicKeyRelation);
           
         },
       },{
         ALT: () => {
-          this.CONSUME1(publicKey);
-          this.CONSUME2(Colon);
-          this.CONSUME2(Id);
+          this.SUBRULE1(this.publicKeyRelation);
           this.CONSUME1(Comma);
-          this.CONSUME1(secretKey);
-          this.CONSUME3(Colon);
-          this.CONSUME3(Id);
+          this.SUBRULE1(this.secretKeyRelation);
         },
       },
     ]);
     this.CONSUME(RightParen);
+  });
+
+  private secretKeyRelation = this.RULE("secretKeyRelation", () => {
+    this.CONSUME(secretKey);
+    this.CONSUME(Colon);
+    this.CONSUME1(Id);
+  });
+
+  private publicKeyRelation = this.RULE("publicKeyRelation", () => {
+    this.CONSUME(publicKey);
+    this.CONSUME(Colon);
+    this.CONSUME1(Id);
   });
 
   private function = this.RULE("function", () => {
@@ -359,7 +363,7 @@ export class SepoParser extends CstParser {
     this.SUBRULE(this.type);
     this.CONSUME2(Colon);
     this.CONSUME(LeftBrace);
-    this.MANY(this.statement);
+    this.MANY(() => this.SUBRULE(this.statement));
     this.CONSUME(RightBrace);
     this.CONSUME2(Semicolon);
   });
