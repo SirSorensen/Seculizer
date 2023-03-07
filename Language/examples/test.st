@@ -1,17 +1,53 @@
-Participants: Alice, Bob;
-Functions: exp/2;
-Equations: exp(exp(g,Y),X) = exp(exp(g,X),Y), exp(exp(g,Y),X) = exp(g,prod(X,Y));
-Format: exp(x,y) = $x^y$;
-
+Participants: Alice, Paren, TPM;
 Knowledge: {
-            Alice: X, msgA;
-            Bob: Y, msgB;
-            Shared: g;
-        };
+    tpm: tpm_sk;
+    Shared: tpm_pk;
+};
+Functions: hash/2;
+Format: hash(x,y) = $H(x||y)$;
 
 Protocol: {
-    Alice -> Bob: exp(g,X);
-    Bob -> Alice: exp(g,Y);
-    Alice-> Bob: {MsgA}exp(exp(g,X),Y);
-    Bob -> Alice: {MsgB}exp(exp(g,X),Y);
+    Alice -> TPM: "Boot";
+    TPM: pcr := '1';
+    TPM -> Alice: "Booted";
+    Alice: new n;
+    Alice: new esk;
+    Alice -> TPM: "Session", {esk}tpm_pk;
+    TPM: new sid;
+    TPM -> Alice: sid;
+
+    Alice -> TPM: {"Extend", n, sid}esk;
+    TPM: pcr := hash(n, pcr);
+    TPM -> Alice: "Extended", pcr;
+    
+    Alice -> TPM: "Create", hash('obt', pcr);
+    TPM: new k;
+    TPM -> Alice: {|"Created", k, hash('obt', pcr)|}tpm_sk;
+
+    clear: sid, esk;
+    Alice: new v;
+    Alice -> Parent: "Envelope", {v}k;
+
+    Parent: new esk;
+    Parent -> TPM : "Session", {esk}tpm_pk;
+    TPM: new sid;
+    TPM -> Parent: sid;
+
+    Parent -> TPM: match {
+        "Refuse":{
+            Parent -> TPM: {"Extend", "ref", sid}esk;
+            TPM: pcr := hash("ref", pcr);
+            TPM -> Parent: "Extended", pcr;
+            Parent -> TPM: "Quote", {v}k;
+            TPM -> Parent: {|"Quoted", pcr, {v}k|}tpm_sk;
+        };
+        "Obtain":{
+            Parent -> TPM: {"Extend", "obt", sid}esk;
+            TPM: pcr := hash("obt", pcr);
+            TPM -> Parent: "Extended", pcr;
+            Parent -> TPM: "Decrypt",{v}k, pcr;
+            TPM -> Parent: v;
+        };
+
+    };
 };

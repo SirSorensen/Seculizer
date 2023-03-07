@@ -2,7 +2,7 @@ type ::= id | number | string | function
 id ::= [a-zA-Z_][a-zA-Z0-9_]*
 number ::= '-'?[0-9]+
 string ::= '"' [^"]* '"'                /* This passes https://www.bottlecaps.de/rr/ui */
-function ::= id "(" id ("," id)* ")"    /* Example: f(x) */
+function ::= id "(" type ("," type)* ")"    /* Example: f(x) */
 
 program ::= ("Participants:" participants ";")
             ("Knowledge:" knowledge_list ";")?
@@ -10,7 +10,6 @@ program ::= ("Participants:" participants ";")
             ("Functions:" functions_def ";")?
             ("Equations:" equations ";")?
             ("Format:" formats ";")?
-            ("Icons:" "{" icons "}" ";")?
             ("Protocol:" "{" stmt* "}" ";")
             end
 
@@ -37,7 +36,7 @@ sign_expr ::= "{|" expression ("," expression)* "|}" expression   /* Example: {|
 match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: alice -> bob: match { "refuse": { ... }; }; */
 match_case ::= type ":" "{" stmt* "}" ";"                           /* Example: "refuse": { ... }; */
 
-clear_stmt ::= "clear" id ";"   /* Example: clear akey; */
+clear_stmt ::= "clear" ":" id ("," id)* ";"   /* Example: clear akey; */
 
 call_stmt ::= function ("," function)*";"   /* Example: f(x); */
 
@@ -70,11 +69,6 @@ equation ::= id "(" (id|equation) ("," (id|equation))* ")"  /* Example: exp(exp(
 /* ---- Format ---- */
 formats ::= format ("," format)*                        /* Example: exp(x,y) = $x^y$ */
 format ::= id "(" id ("," id)* ")" "=" string | latex   /* Example: exp(x,y) = $x^y$ */
-
-/* ---- Icons ---- */
-icons ::= iconSet*
-iconSet ::= string ":" id ("," id)* ";" /* Example: "👩‍👦": "Alice", "Bob"; */
-
 
 /* --- Latex ---  */
 latex ::= "$" [^$]* "$" /* Example: $x^y$ */

@@ -73,6 +73,7 @@ const allTokens = [
   publicKey,
   Clear,
   New,
+  Set,
   Match,
   LeftBrace,
   RightBrace,
@@ -209,10 +210,7 @@ export class SepoParser extends CstParser {
     this.MANY_SEP({
       SEP: Comma,
       DEF: () =>
-        this.OR([
-          { ALT: () => this.SUBRULE(this.function) },
-          { ALT: () => this.CONSUME1(Id) },
-        ]),
+        this.SUBRULE(this.type)
     });
     this.CONSUME(RightParen);
   });
@@ -324,7 +322,11 @@ export class SepoParser extends CstParser {
 
   private clear = this.RULE("clear", () => {
     this.CONSUME(Clear);
-    this.CONSUME(Id);
+    this.CONSUME(Colon);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.CONSUME1(Id)
+    });
   });
 
   private participantStatement = this.RULE("participantStatement", () => {
