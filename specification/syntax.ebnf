@@ -10,6 +10,7 @@ program ::= ("Participants:" participants ";")
             ("Functions:" functions_def ";")?
             ("Equations:" equations ";")?
             ("Format:" formats ";")?
+            ("Icons:" "{" icons "}" ";")?
             ("Protocol:" "{" stmt* "}" ";")
             end
 
@@ -69,6 +70,10 @@ equation ::= id "(" (id|equation) ("," (id|equation))* ")"  /* Example: exp(exp(
 /* ---- Format ---- */
 formats ::= format ("," format)*                        /* Example: exp(x,y) = $x^y$ */
 format ::= id "(" id ("," id)* ")" "=" string | latex   /* Example: exp(x,y) = $x^y$ */
+
+/* ---- Icons ---- */
+icons ::= iconSet*
+iconSet ::= string ":" id ("," id)* ";" /* Example: "👩‍👦": "Alice", "Bob"; */
 
 /* --- Latex ---  */
 latex ::= "$" [^$]* "$" /* Example: $x^y$ */
