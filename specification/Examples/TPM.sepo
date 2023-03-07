@@ -1,6 +1,6 @@
 Participants: Alice, Parent, TPM;
 Functions: hash/2;
-Equations: {tpm_sk}tpm_pk
+KeyRelations: (sk:tmp_sk, pk:tpm_pk);
 Format: hash(x,y) = $H(x||y)$;
 Knowledge: {
     tpm: tpm_sk;
@@ -12,7 +12,7 @@ Protocol:
     TPM -> Alice: "Booted";
     Alice: new n;
     Alice: new esk;
-    Alice -> TPM: "Session", {esk}tpmk_pk;
+    Alice -> TPM: "Session", {esk}tpm_pk;
     TPM: new sid;
     TPM -> Alice: sid;
 
@@ -29,7 +29,7 @@ Protocol:
     Alice -> Parent: "Envelope", {v}k;
 
     Parent: new esk;
-    Parent -> TPM : "Session", {esk}tpmk_pk;
+    Parent -> TPM : "Session", {esk}tpm_pk;
     TPM: new sid;
     TPM -> Parent: sid;
 
