@@ -1,363 +1,411 @@
-import { ILexingResult, IToken } from "chevrotain";
-import { getLexer, LexTypes } from "./lexer/lexer.js";
-import { ParseError, throwParseError } from "./ParseError.js";
+import { createToken, CstParser, Lexer } from "chevrotain";
 
-export class Parser {
-  private readonly lexer: ILexingResult;
-  private readonly template: string;
-  private readonly tokens;
-  private current: number | null = null;
-  constructor(template: string) {
-    this.lexer = getLexer(template);
-    this.template = template;
-    this.tokens = this.lexer.tokens;
-    let token;
-    while ((token = this.next(false)) !== null && token) {
-      const type = token.tokenType.name;
-      switch (type) {
-        case LexTypes.topLevel: {
-          this.parseTopLevel(token);
-          break;
-        }
-        default: {
-          throwParseError(ParseError.unknown_type(), token, template);
-        }
-      }
-    }
+//Lexical Tokens
+const Id = createToken({ name: "Id", pattern: /[a-zA-Z_][a-zA-Z0-9_]*/ });
+const NumberLiteral = createToken({
+  name: "NumberLiteral",
+  pattern: /-?[0-9]+/,
+});
+const StringLiteral = createToken({
+  name: "StringLiteral",
+  pattern: /"([^\\"]|\\")*"/,
+});
+const Participants = createToken({
+  name: "Participants",
+  pattern: /Participants:/,
+});
+const latexLiteral = createToken({
+  name: "latexLiteral",
+  pattern: /\$([^$])*\$/,
+});
+const Knowledge = createToken({ name: "Knowledge", pattern: /Knowledge:/ });
+const KeyRelation = createToken({
+  name: "KeyRelation",
+  pattern: /KeyRelation:/,
+});
+const Icons = createToken({ name: "Icons", pattern: /Icons:/ });
+const Functions = createToken({ name: "Functions", pattern: /Functions:/ });
+const Equations = createToken({ name: "Equations", pattern: /Equations:/ });
+const Format = createToken({ name: "Format", pattern: /Format:/ });
+const Protocol = createToken({ name: "Protocol", pattern: /Protocol:/ });
+const secretKey = createToken({ name: "secretKey", pattern: /sk/ });
+const publicKey = createToken({ name: "publicKey", pattern: /pk/ });
+const Clear = createToken({ name: "Clear", pattern: /clear/ });
+const New = createToken({ name: "New", pattern: /new/ });
+const Match = createToken({ name: "Match", pattern: /match/ });
+const LeftBrace = createToken({ name: "LeftBrace", pattern: /{/ });
+const RightBrace = createToken({ name: "RightBrace", pattern: /}/ });
+const LeftParen = createToken({ name: "LeftParen", pattern: /\(/ });
+const RightParen = createToken({ name: "RightParen", pattern: /\)/ });
+const Comma = createToken({ name: "Comma", pattern: /,/ });
+const Colon = createToken({ name: "Colon", pattern: /:/ });
+const Arrow = createToken({ name: "Arrow", pattern: /->/ });
+const Equal = createToken({ name: "Equal", pattern: /=/ });
+const Set = createToken({ name: "Set", pattern: /:=/ });
+const Slash = createToken({ name: "Slash", pattern: /\// });
+const As = createToken({ name: "As", pattern: /as/ });
+const Pipe = createToken({ name: "Pipe", pattern: /\|/ });
+const Dollar = createToken({ name: "Dollar", pattern: /\$/ });
+const Semicolon = createToken({ name: "Semicolon", pattern: /;/ });
+const End = createToken({ name: "End", pattern: /eof/ });
+
+const WhiteSpace = createToken({
+  name: "WhiteSpace",
+  pattern: /\s+/,
+  group: Lexer.SKIPPED,
+});
+
+//Sequence = Precedence
+const allTokens = [
+  WhiteSpace,
+  NumberLiteral,
+  StringLiteral,
+  latexLiteral,
+  Participants,
+  Knowledge,
+  KeyRelation,
+  Icons,
+  Functions,
+  Equations,
+  Format,
+  Protocol,
+  secretKey,
+  publicKey,
+  Clear,
+  New,
+  Set,
+  Match,
+  LeftBrace,
+  RightBrace,
+  LeftParen,
+  RightParen,
+  Comma,
+  Colon,
+  Arrow,
+  As,
+  Semicolon,
+  End,
+  Slash,
+  Equal,
+  Pipe,
+  Dollar,
+  Id,
+];
+// Define the lexer
+export const SepoLexer = new Lexer(allTokens);
+
+//Parser
+export class SepoParser extends CstParser {
+  constructor() {
+    super(allTokens);
+    this.performSelfAnalysis();
   }
 
-  private getCurrent = (): IToken => {
-    if (this.current === null) this.current = 0;
-    return this.tokens[this.current];
-  };
-  private next = (checkNull = true): IToken => {
-    if (this.current === null) this.current = 0;
-    else this.current++;
-    if (checkNull) this.checkNull();
-    return this.getCurrent();
-  };
+  program = this.RULE("program", () => {
+    this.CONSUME(Participants);
+    this.SUBRULE(this.participants);
 
-  private peek = (): IToken => {
-    if (this.current === null) this.current = 0;
-    return this.tokens[this.current + 1];
-  };
+    this.OPTION(() => {
+      this.CONSUME(Knowledge);
+      this.SUBRULE(this.knowledgeList);
+    });
+    this.OPTION1(() => {
+      this.CONSUME(KeyRelation);
+      this.SUBRULE(this.keyRelationList);
+    });
+    this.OPTION2(() => {
+      this.CONSUME(Functions);
+      this.SUBRULE(this.functionsDef);
+    });
+    this.OPTION3(() => {
+      this.CONSUME(Equations);
+      this.SUBRULE(this.equation);
+    });
+    this.OPTION4(() => {
+      this.CONSUME(Format);
+      this.SUBRULE(this.format);
+    });
+    this.OPTION5(() => {
+      this.CONSUME(Icons);
+      this.SUBRULE(this.icons);
+    });
+    this.CONSUME(Protocol);
+    this.SUBRULE(this.protocol);
+    this.CONSUME(End);
+  });
 
-  parseTopLevel = (token: IToken): void => {
-    switch (token.image) {
-      case "Protocol:": {
-        this.parseProtocol();
-        break;
-      }
-      case "Participants:": {
-        this.parseParticipants();
-        break;
-      }
-      case "Format:": {
-        this.parseFormat();
-        break;
-      }
-      case "Knowledge:": {
-        this.parseKnowledge();
-        break;
-      }
-      case "Functions:": {
-        this.parseFunctions();
-        break;
-      }
-      case "Equations:": {
-        this.parseEquations();
-        break;
-      }
-      default: {
-        throwParseError(ParseError.unexpected_top_level(), token, this.template);
-        break;
-      }
-    }
-  };
+  private type = this.RULE("type", () => {
+    this.OR([
+      { ALT: () => this.SUBRULE(this.function) },
+      { ALT: () => this.CONSUME(Id) },
+      { ALT: () => this.CONSUME(NumberLiteral) },
+      { ALT: () => this.CONSUME(StringLiteral) },
+    ]);
+  });
 
-  //Participants: Alice, bob
-  parseParticipants = (): void => {
-    let token = this.next();
-    this.checkType(LexTypes.id);
+  private knowledgeList = this.RULE("knowledgeList", () => {
+    this.CONSUME(LeftBrace);
+    this.MANY({
+      DEF: () => this.SUBRULE(this.knowledge),
+    });
+    this.CONSUME(RightBrace);
+    this.CONSUME(Semicolon);
+  });
 
-    //DO STUFF WITH NEW PARTICIPANT
-    let participant = token.image;
-    console.log("NEW PARTICIPANT: " + participant);
+  private knowledge = this.RULE("knowledge", () => {
+    this.CONSUME(Id);
+    this.CONSUME(Colon);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () =>
+        this.OR([
+          { ALT: () => this.SUBRULE(this.function) },
+          { ALT: () => this.CONSUME1(Id) },
+        ]),
+    });
+    this.CONSUME(Semicolon);
+  });
 
-    token = this.next();
-    this.checkType(LexTypes.delimiter);
+  private keyRelationList = this.RULE("keyRelationList", () => {
+    this.CONSUME(LeftParen);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.keyRelation),
+    });
+    this.CONSUME(RightParen);
+  });
 
-    if (token.image === ",") {
-      return this.parseParticipants();
-    }
-    if (token.image === ";") {
-      return;
-    }
+  private keyRelation = this.RULE("keyRelation", () => {
+    this.CONSUME(LeftParen);
+    this.OR([
+      {
+        ALT: () => {
+          this.CONSUME(secretKey);
+          this.CONSUME(Colon);
+          this.CONSUME(Id);
+          this.CONSUME(Comma);
+          this.CONSUME(publicKey);
+          this.CONSUME1(Colon);
+          this.CONSUME1(Id);
+          
+        },
+      },{
+        ALT: () => {
+          this.CONSUME1(publicKey);
+          this.CONSUME2(Colon);
+          this.CONSUME2(Id);
+          this.CONSUME1(Comma);
+          this.CONSUME1(secretKey);
+          this.CONSUME3(Colon);
+          this.CONSUME3(Id);
+        },
+      },
+    ]);
+    this.CONSUME(RightParen);
+  });
 
-    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
-  };
+  private function = this.RULE("function", () => {
+    this.CONSUME(Id);
+    this.CONSUME(LeftParen);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () =>
+        this.SUBRULE(this.type)
+    });
+    this.CONSUME(RightParen);
+  });
 
-  parseFormat = (): void => {
-    let s = this.parseFunctionCall();
+  private participants = this.RULE("participants", () => {
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.participant),
+    });
+    this.CONSUME(Semicolon);
+  });
 
-    let token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, "=");
+  private participant = this.RULE("participant", () => {
+    this.CONSUME(Id);
+  });
 
-    token = this.next();
-    this.checkType(LexTypes.latex);
-    let latex = token.image;
+  private functionsDef = this.RULE("functionsDef", () => {
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.functionItem),
+    });
+    this.CONSUME(Semicolon);
+  });
 
-    token = this.next();
-    this.checkType(LexTypes.delimiter);
+  private functionItem = this.RULE("functionItem", () => {
+    this.CONSUME(Id);
+    this.CONSUME(Slash);
+    this.CONSUME(NumberLiteral);
+  });
 
-    console.log("NEW FORMAT: " + s + " = $" + latex + "$");
+  private equation = this.RULE("equation", () => {
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.equationElement),
+    });
+    this.CONSUME(Semicolon);
+  });
 
-    if (token.image === ",") {
-      this.parseFormat();
-      return;
-    }
-    this.checkValue(";");
-  };
+  private equationElement = this.RULE("equationElement", () => {
+    this.SUBRULE(this.function);
+    this.CONSUME(Equal);
+    this.SUBRULE1(this.function);
+  });
 
-  parseKnowledge = (): void => {
-    let knowledge = [];
+  private format = this.RULE("format", () => {
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.formatElement),
+    });
+    this.CONSUME(Semicolon);
+  });
 
-    let token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, "{");
+  private formatElement = this.RULE("formatElement", () => {
+    this.SUBRULE(this.function);
+    this.CONSUME(Equal);
+    this.OR([
+      { ALT: () => this.CONSUME(StringLiteral) },
+      { ALT: () => this.SUBRULE(this.latex) },
+    ]);
+  });
 
-    token = this.next();
-    this.checkNull(token);
-    while (token.tokenType.name !== LexTypes.delimiter || token.image !== "}") {
-      this.checkType(LexTypes.id);
-      let tokenHead = token.image;
-      token = this.next();
-      this.checkTypeValue(LexTypes.delimiter, ":");
+  private icons = this.RULE("icons", () => {
+    this.CONSUME(LeftBrace);
+    this.MANY(() => {
+      this.CONSUME(StringLiteral);
+      this.CONSUME(Colon);
+      this.MANY_SEP({
+        SEP: Comma,
+        DEF: () => this.CONSUME(Id),
+      })
+      this.CONSUME(Semicolon);
+    });
+    this.CONSUME(RightBrace);
+    this.CONSUME1(Semicolon);
+  });
 
-      let headerKnowledge = [];
 
-      token = this.next();
-      while (token.image !== ";") {
-        this.checkType(LexTypes.id);
-        headerKnowledge.push(token.image);
+  private latex = this.RULE("latex", () => {
+    this.CONSUME(latexLiteral);
+  });
 
-        token = this.next();
-        this.checkType(LexTypes.delimiter);
-        if (token.image === ";") break;
-        this.checkValue(",");
+  private protocol = this.RULE("protocol", () => {
+    this.CONSUME(LeftBrace);
+    this.MANY(() => this.SUBRULE(this.statement));
+    this.CONSUME(RightBrace);
+    this.CONSUME(Semicolon);
+  });
 
-        token = this.next();
-      }
-      knowledge.push([tokenHead, headerKnowledge]);
-      token = this.next();
-    }
+  private statement = this.RULE("statement", () => {
+    this.OR([
+      { ALT: () => this.SUBRULE(this.clear) },
+      { ALT: () => this.SUBRULE(this.participantStatement) },
+      {
+        ALT: () => {
+          this.CONSUME(Id);
+          this.CONSUME(Arrow);
+          this.CONSUME1(Id);
+          this.CONSUME(Colon);
+          this.OR1([
+            { ALT: () => this.SUBRULE(this.match) },
+            { ALT: () => this.SUBRULE(this.messageSend) },
+          ]);
+        },
+      },
+    ]);
+    this.CONSUME(Semicolon);
+  });
 
-    token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, ";");
+  private clear = this.RULE("clear", () => {
+    this.CONSUME(Clear);
+    this.CONSUME(Colon);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.CONSUME1(Id)
+    });
+  });
 
-    console.log("NEW KNOWLEDGE: " + JSON.stringify(knowledge));
-  };
+  private participantStatement = this.RULE("participantStatement", () => {
+    this.CONSUME(Id);
+    this.CONSUME(Colon);
+    this.OR([
+      { ALT: () => this.SUBRULE(this.new) },
+      { ALT: () => this.SUBRULE(this.set) },
+    ]);
+  });
 
-  parseFunctions = (): void => {
-    let token = this.next();
-    this.checkNull(token);
-    this.checkType(LexTypes.id);
-    let functionName = token.image;
-    token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, "/");
-    token = this.next();
-    this.checkType(LexTypes.number);
-    let numArgs = parseInt(token.image);
-    console.log("NEW FUNCTION: " + functionName + " with " + numArgs + " args");
+  private new = this.RULE("new", () => {
+    this.CONSUME(New);
+    this.CONSUME(Id);
+  });
 
-    token = this.next();
-    this.checkType(LexTypes.delimiter);
-    if (token.image === ",") {
-      return this.parseFunctions();
-    }
-    if (token.image === ";") {
-      return;
-    }
-    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
-  };
+  private set = this.RULE("set", () => {
+    this.CONSUME(Id);
+    this.CONSUME(Set);
+    this.SUBRULE(this.type);
+  });
 
-  parseEquations = (): void => {
-    let eq1 = this.parseFunctionCall();
+  private match = this.RULE("match", () => {
+    this.CONSUME(Match);
+    this.CONSUME(LeftBrace);
+    this.MANY(() => this.SUBRULE(this.matchCase));
+    this.CONSUME(RightBrace);
+  });
 
-    let token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, "=");
+  private matchCase = this.RULE("matchCase", () => {
+    this.SUBRULE(this.type);
+    this.CONSUME2(Colon);
+    this.CONSUME(LeftBrace);
+    this.MANY(this.statement);
+    this.CONSUME(RightBrace);
+    this.CONSUME2(Semicolon);
+  });
 
-    let eq2 = this.parseFunctionCall();
+  private messageSend = this.RULE("messageSend", () => {
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.messageSendElement),
+    });
+  });
 
-    token = this.next();
-    this.checkType(LexTypes.delimiter);
-    if (token.image == ",") {
-      this.parseEquations();
-      return;
-    } else if (token.image === ";") {
-      return;
-    }
-    throwParseError(ParseError.unexpected_delimiter(), token, this.template);
-  };
+  private messageSendElement = this.RULE("messageSendElement", () => {
+    this.SUBRULE(this.expression);
+    this.OPTION(() => {
+      this.CONSUME(As);
+      this.CONSUME(Id);
+    });
+  });
 
-  parseFunctionCall = (): string => {
-    let token = this.next();
-    this.checkType(LexTypes.functionCall);
-    let s = token.image;
+  private expression = this.RULE("expression", () => {
+    this.OR([
+      { ALT: () => this.SUBRULE(this.type) },
+      { ALT: () => this.SUBRULE(this.encrypt) },
+      { ALT: () => this.SUBRULE(this.sign) },
+    ]);
+  });
 
-    while (token.image !== ")") {
-      if (this.peek().tokenType.name === LexTypes.functionCall) {
-        this.parseFunctionCall();
-      } else if (this.peek().tokenType.name === LexTypes.id) {
-        token = this.next();
-        s += token.image;
-      }
+  private encrypt = this.RULE("encrypt", () => {
+    this.CONSUME(LeftBrace);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.expression),
+    });
+    this.CONSUME(RightBrace);
+    this.SUBRULE1(this.expression);
+  });
 
-      token = this.next();
-      this.checkType(LexTypes.delimiter);
-      s += token.image;
-    }
-    return s;
-  };
-
-  parseProtocol = (): void => {
-    let token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, "{");
-    while (this.peek().image !== "}") {
-      this.parseMsgSend();
-    }
-    token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, "}");
-    token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, ";");
-  };
-
-  parseMsgSend = (): void => {
-    let token = this.next();
-    this.checkType(LexTypes.id);
-    let sender = token.image;
-    token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, "->");
-    token = this.next();
-    this.checkType(LexTypes.id);
-    let receiver = token.image;
-    token = this.next();
-    this.checkTypeValue(LexTypes.delimiter, ":");
-
-    this.parseExpression();
-
-    token = this.next();
-    this.checkType(LexTypes.delimiter);
-
-    while (token.image === ",") {
-      this.parseExpression();
-      token = this.next();
-      this.checkType(LexTypes.delimiter);
-    }
-
-    this.checkValue(";");
-
-    console.log(sender + " -> " + receiver);
-  };
-
-  parseExpression = (): void => {
-    let token = this.peek();
-    switch (token.tokenType.name) {
-      case LexTypes.functionCall: {
-        console.log(
-          "NEW EXPRESSION: " +
-            this.parseFunctionCall() +
-            " it has type functionCall!"
-        );
-        break;
-      }
-      case LexTypes.id: {
-        console.log("NEW EXPRESSION: " + token.image + " it has type id!");
-        token = this.next();
-        break;
-      }
-      case LexTypes.number: {
-        console.log("NEW EXPRESSION: " + token.image + " it has type number!");
-        token = this.next();
-        break;
-      }
-      case LexTypes.string: {
-        console.log("NEW EXPRESSION: " + token.image + " it has type string!");
-        token = this.next();
-        break;
-      }
-      case LexTypes.delimiter: {
-        token = this.next();
-        this.checkValue("{");
-        token = this.peek();
-        if (token.image === "|") {
-          //SIGN
-          token = this.next();
-          this.parseExpression();
-          token = this.next();
-          this.checkValue("|");
-        } else {
-          this.parseExpression();
-        }
-        token = this.next();
-        this.checkValue("}");
-        this.parseExpression();
-        break;
-      }
-      default: {
-        token = this.next();
-        throwParseError(
-          ParseError.unknown_type(),
-          token,
-          this.template
-        );
-        break;
-      }
-    }
-  };
-
-  /**
-   * A util method to get the next token until a specific type is found
-   * @param type the lexer type we are looking for (ex: "delimiter")
-   * @param value the value of the token we are looking for (ex: "}")
-   * @returns token or null if not found
-   */
-  nextUntil = (type: string, value: string | null = null): IToken | null => {
-    let token = this.next();
-    while (token !== null) {
-      if (
-        token.tokenType.name === type &&
-        (value == null || value === token.image)
-      )
-        return token;
-      token = this.next();
-    }
-    return null;
-  };
-
-  checkNull(token: IToken = this.getCurrent()) {
-    if (token === null || token === undefined) {
-      return throwParseError(ParseError.unexpected_EOF(), token, this.template);
-    }
-  }
-
-  checkType(type: string, token: IToken = this.getCurrent()) {
-    if (token.tokenType.name !== type) {
-      return throwParseError(ParseError.unexpected_type(type), token, this.template);
-    }
-  }
-
-  checkValue(value: string, token: IToken = this.getCurrent()) {
-    if (token.image !== value) {
-      return throwParseError(ParseError.unexpected_value(token.image), token, this.template);
-    }
-  }
-
-  checkTypeValue(
-    type: string,
-    value: string,
-    token: IToken = this.getCurrent()
-  ) {
-    this.checkType(type, token);
-    this.checkValue(value, token);
-  }
+  private sign = this.RULE("sign", () => {
+    this.CONSUME(LeftBrace);
+    this.CONSUME(Pipe);
+    this.MANY_SEP({
+      SEP: Comma,
+      DEF: () => this.SUBRULE(this.expression),
+    });
+    this.CONSUME1(Pipe);
+    this.CONSUME(RightBrace);
+    this.SUBRULE1(this.expression);
+  });
 }

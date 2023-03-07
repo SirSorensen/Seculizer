@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { throwSimpleParseError } from "./parser/ParseError.js";
-import { SepoParser, SepoLexer } from './parser/parser_2.js';
+import { SepoParser, SepoLexer } from './parser/parser.js';
 import { SepoToAstVisitor } from "./parser/SepoVisitor.js";
 //import { Parser } from './parser/parser.js';
 const lexerTest = async (): Promise<void> => {

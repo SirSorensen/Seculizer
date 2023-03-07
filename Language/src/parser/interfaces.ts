@@ -22,6 +22,17 @@ interface Participant extends ASTNode {
   id: Id;
 }
 
+interface KeyRelations extends ASTNode {
+  type: "keyRelations";
+  keyRelations: KeyRelation[];
+}
+
+interface KeyRelation extends ASTNode {
+  type: "keyRelation";
+  sk: Id;
+  pk: Id;
+}
+
 interface FunctionsDef extends ASTNode {
   type: "functionsDef";
   functions: FunctionDefItem[];
@@ -65,6 +76,12 @@ interface FormatItem extends ASTNode {
   function: Function;
   format: StringLiteral | LatexLiteral;
 }
+
+interface Icons extends ASTNode {
+  type: "icons";
+  icons: Map<Id, String>;
+}
+  
 
 interface StringLiteral extends ASTNode {
   type: "string";

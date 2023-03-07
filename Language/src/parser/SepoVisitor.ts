@@ -1,4 +1,4 @@
-import { SepoParser, SepoLexer } from "./parser_2.js";
+import { SepoParser, SepoLexer } from "./parser.js";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -11,19 +11,23 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   program(ctx: any) {
     const participants = this.visit(ctx.participants);
+    const knowledge = this.visit(ctx.knowledgeList);
+    const keyRelations = this.visit(ctx.keyRelations);
     const functions = this.visit(ctx.functionsDef);
     const equations = this.visit(ctx.equation);
     const format = this.visit(ctx.format);
-    const knowledge = this.visit(ctx.knowledgeList);
+    const icon = this.visit(ctx.icons);
     const protocol = this.visit(ctx.protocol);
 
     return {
       type: "program",
       participants: participants,
+      knowledge: knowledge,
+      keyRelations: keyRelations,
       functions: functions,
       equations: equations,
       format: format,
-      knowledge: knowledge,
+      icon: icon,
       protocol: protocol,
     };
   }
@@ -72,6 +76,58 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         type: "type",
         value: null
     }
+  }
+
+  knowledgeList(ctx: any): Knowledge {
+    const knowledge = ctx.knowledge.map((k: any) => this.visit(k));
+    return {
+      type: "knowledge",
+      knowledge: knowledge,
+    };
+  }
+
+  knowledge(ctx: any): KnowledgeItem {
+
+    const id = ctx.Id[0].image;
+    const functions:FunctionCall[] = ctx.function ? ctx.function.map((f: any):FunctionCall => this.visit(f)) : [];
+    const ids:Id[] = 
+            ctx.Id
+            .slice(1)
+            .map(
+                (i: any):Id => {
+                    return {
+                        type: "id",
+                        id: i.image
+                    }
+                }
+                );
+    return {
+        type: "knowledgeItem",
+        id: id,
+        children: {
+            functions: functions,
+            ids: ids
+        }
+    }
+  }
+
+  keyRelations(ctx: any): KeyRelations {
+    const keyRelations = ctx.keyRelation.map((k: any) => this.visit(k));
+    return {
+      type: "keyRelations",
+      keyRelations: keyRelations,
+    };
+  }
+
+  keyRelation(ctx: any): KeyRelation {
+  
+    const sk = ctx.Id[0].image;
+    const pk = ctx.Id[1].image;
+    return {
+      type: "keyRelation",
+      sk: sk,
+      pk: pk,
+    };
   }
 
   function(ctx: any): FunctionCall {
@@ -174,39 +230,6 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  knowledgeList(ctx: any): Knowledge {
-    const knowledge = ctx.knowledge.map((k: any) => this.visit(k));
-    return {
-      type: "knowledge",
-      knowledge: knowledge,
-    };
-  }
-
-  knowledge(ctx: any): KnowledgeItem {
-
-    const id = ctx.Id[0].image;
-    const functions:FunctionCall[] = ctx.function ? ctx.function.map((f: any):FunctionCall => this.visit(f)) : [];
-    const ids:Id[] = 
-            ctx.Id
-            .slice(1)
-            .map(
-                (i: any):Id => {
-                    return {
-                        type: "id",
-                        id: i.image
-                    }
-                }
-                );
-    return {
-        type: "knowledgeItem",
-        id: id,
-        children: {
-            functions: functions,
-            ids: ids
-        }
-    }
-  }
-
   latex(ctx: any):LatexLiteral {
     let latex = ctx.latexLiteral[0].image;
     return { type: "latex", value: latex };
@@ -219,6 +242,23 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         statements: statements
     }
   }
+
+  icons(ctx: any): Icons {
+    let map = new Map<Id, string>();
+    ctx.iconSet.forEach((icon: any) => 
+      {
+        const emoji = icon.StringLiteral[0].image;
+        icon.Id.forEach((id:Id) => {
+          map.set(id, emoji)
+        });
+      }
+    );
+    return {
+      type: "icons",
+      icons: map,
+    };
+  }
+
 
   statement(ctx: any):Statement {
     const clear = this.visit(ctx.clear);
