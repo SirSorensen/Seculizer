@@ -1,4 +1,4 @@
-Participants: Alice, Paren, TPM;
+Participants: Alice, Parent, TPM;
 Knowledge: {
     tpm: tpm_sk;
     Shared: tpm_pk;
