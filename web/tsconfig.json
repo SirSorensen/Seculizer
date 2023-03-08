@@ -9,9 +9,12 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
+    "baseUrl": "./",
     "paths": {
-      "$lib": ["./src/lib"],
-      "$lib/*": ["./src/lib/*"]
+      "$lib":["./src/lib"],
+      "$lib/*":["./src/lib/*"],
+      "$language": ["../../Language/dist/"],
+      "$language/*": ["../../Language/dist/*"]
     }
   }
   // Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
