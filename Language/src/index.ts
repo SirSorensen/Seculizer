@@ -2,8 +2,7 @@ import { throwSimpleParseError } from "./parser/ParseError.js";
 import { SepoToAstVisitor } from "./parser/SepoVisitor.js";
 import { SepoLexer, SepoParser } from "./parser/parser.js";
 
-export const parse = (input: string, includeCST:boolean) => {
-  var exports = {};
+export default function parse(input: string, includeCST:boolean) {
   //return {ast: null, cst: null};
   const lexResult = SepoLexer.tokenize(input.toString() + "eof");
   const parser = new SepoParser();

@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { parse } from "./index.js";
+import parse from "./index.js";
 //import { Parser } from './parser/parser.js';
 const lexerTest = async (): Promise<void> => {
   await fs.readFile(
