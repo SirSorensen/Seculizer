@@ -3,13 +3,13 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 
 export default [
-  {
-    input: "src/index.ts",
+    {
+    input: "src/example.ts",
     output: {
-      file: "dist/index.js",
+      file: "dist/example.js",
       format: "es",
       sourcemap: true,
-      exports: "default",
+      exports: "none",
     },
     plugins: [
       typescript(),
