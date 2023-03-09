@@ -1,11 +1,14 @@
 import { SepoParser, SepoLexer } from "./parser.js";
+import { ParseError, throwSimpleParseError } from './ParseError';
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
 
 export class SepoToAstVisitor extends BaseSepoVisitor {
-  constructor() {
+  template: string;
+  constructor(template:string) {
     super();
+    this.template = template;
     this.validateVisitor();
   }
 
@@ -35,47 +38,32 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   type(ctx: any):Type {
     const functionChild = this.visit(ctx.function);
     if (functionChild) {
-        return {
-            type: "type",
-            value: functionChild,
-        }
+        return functionChild
     }
     const idChild = ctx.Id;
     if (idChild && idChild.length > 0) {
         return {
-            type: "type",
-            value: {
-                type: "id",
-                id: idChild[0].image,
-            }
-        }
+          type: "id",
+          id: idChild[0].image,
+      }
     }
-    const numberChild = ctx.Number;
+    const numberChild = ctx.NumberLiteral;
     if (numberChild && numberChild.length > 0) {
         return {
-            type: "type",
-            value: {
-                type: "number",
-                value: numberChild[0].image,
-            }
-        }
+          type: "number",
+          value: numberChild[0].image,
+      }
     }
-    const stringChild = ctx.String;
+    const stringChild = ctx.StringLiteral;
     if (stringChild && stringChild.length > 0) {
         return {
-            type: "type",
-            value: {
-                type: "string",
-                value: stringChild[0].image,
-            }
-        }
+          type: "string",
+          value: stringChild[0].image,
+      }
     }
-
-    //TODO throw error if unknown
-    return {
-        type: "type",
-        value: null
-    }
+    
+    throwSimpleParseError("Unknown type", ctx[Object.keys(ctx)[0]][0], this.template)
+    return null;
   }
 
   knowledgeList(ctx: any): Knowledge {
@@ -89,25 +77,11 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   knowledge(ctx: any): KnowledgeItem {
 
     const id = ctx.Id[0].image;
-    const functions:FunctionCall[] = ctx.function ? ctx.function.map((f: any):FunctionCall => this.visit(f)) : [];
-    const ids:Id[] = 
-            ctx.Id
-            .slice(1)
-            .map(
-                (i: any):Id => {
-                    return {
-                        type: "id",
-                        id: i.image
-                    }
-                }
-                );
+    const children = ctx.type.map((t: any) => this.visit(t));
     return {
         type: "knowledgeItem",
         id: id,
-        children: {
-            functions: functions,
-            ids: ids
-        }
+        children: children
     }
   }
 

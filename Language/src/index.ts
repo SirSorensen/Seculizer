@@ -14,7 +14,7 @@ export default function parse(input: string, includeCST:boolean) {
     throwSimpleParseError(error.message, error.token, input.toString() + "eof");
   }
   if(includeCST)
-    return {ast: new SepoToAstVisitor().visit(cst), cst: cst};
+    return {ast: new SepoToAstVisitor(input.toString() + "eof").visit(cst), cst: cst};
   else
-    return new SepoToAstVisitor().visit(cst);
+    return new SepoToAstVisitor(input.toString() + "eof").visit(cst);
 };

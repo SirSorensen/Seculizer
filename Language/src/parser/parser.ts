@@ -157,11 +157,7 @@ export class SepoParser extends CstParser {
     this.CONSUME(Colon);
     this.MANY_SEP({
       SEP: Comma,
-      DEF: () =>
-        this.OR([
-          { ALT: () => this.SUBRULE(this.function) },
-          { ALT: () => this.CONSUME1(Id) },
-        ]),
+      DEF: () => this.SUBRULE(this.type),
     });
     this.CONSUME(Semicolon);
   });
