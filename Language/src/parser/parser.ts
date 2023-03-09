@@ -19,9 +19,9 @@ const latexLiteral = createToken({
   pattern: /\$([^$])*\$/,
 });
 const Knowledge = createToken({ name: "Knowledge", pattern: /Knowledge:/ });
-const KeyRelation = createToken({
-  name: "KeyRelation",
-  pattern: /KeyRelation:/,
+const KeyRelations = createToken({
+  name: "KeyRelations",
+  pattern: /KeyRelations:/,
 });
 const Icons = createToken({ name: "Icons", pattern: /Icons:/ });
 const Functions = createToken({ name: "Functions", pattern: /Functions:/ });
@@ -63,7 +63,7 @@ const allTokens = [
   latexLiteral,
   Participants,
   Knowledge,
-  KeyRelation,
+  KeyRelations,
   Icons,
   Functions,
   Equations,
@@ -110,7 +110,7 @@ export class SepoParser extends CstParser {
       this.SUBRULE(this.knowledgeList);
     });
     this.OPTION1(() => {
-      this.CONSUME(KeyRelation);
+      this.CONSUME(KeyRelations);
       this.SUBRULE(this.keyRelationList);
     });
     this.OPTION2(() => {
@@ -195,13 +195,13 @@ export class SepoParser extends CstParser {
   private secretKeyRelation = this.RULE("secretKeyRelation", () => {
     this.CONSUME(secretKey);
     this.CONSUME(Colon);
-    this.CONSUME1(Id);
+    this.CONSUME(Id);
   });
 
   private publicKeyRelation = this.RULE("publicKeyRelation", () => {
     this.CONSUME(publicKey);
     this.CONSUME(Colon);
-    this.CONSUME1(Id);
+    this.CONSUME(Id);
   });
 
   private function = this.RULE("function", () => {
