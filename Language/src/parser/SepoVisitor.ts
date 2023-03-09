@@ -217,20 +217,27 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   icons(ctx: any): Icons {
     let map = new Map<Id, string>();
-    ctx.iconSet.forEach((icon: any) => 
-      {
-        const emoji = icon.StringLiteral[0].image;
-        icon.Id.forEach((id:Id) => {
-          map.set(id, emoji)
-        });
-      }
-    );
+    
+    ctx.iconSet.forEach((icon: any) => {
+      let set = this.visit(icon)
+      set.ids.forEach((id: Id) => {
+        map.set(id, set.emoji);
+      });
+    });
+      
     return {
       type: "icons",
       icons: map,
     };
   }
 
+  iconSet(ctx: any) {
+    const emoji = ctx.StringLiteral[0].image;
+    let ids = ctx.Id.map((id:any) => {
+      return id.image;
+    });
+    return {emoji: emoji, ids: ids};
+  }
 
   statement(ctx: any):Statement {
     const clear = this.visit(ctx.clear);

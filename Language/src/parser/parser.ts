@@ -273,16 +273,20 @@ export class SepoParser extends CstParser {
   private icons = this.RULE("icons", () => {
     this.CONSUME(LeftBrace);
     this.MANY(() => {
-      this.CONSUME(StringLiteral);
+      this.SUBRULE(this.iconSet);
+    });
+    this.CONSUME(RightBrace);
+    this.CONSUME1(Semicolon);
+  });
+
+  private iconSet = this.RULE("iconSet", () => {
+    this.CONSUME(StringLiteral);
       this.CONSUME(Colon);
       this.MANY_SEP({
         SEP: Comma,
         DEF: () => this.CONSUME(Id),
       })
       this.CONSUME(Semicolon);
-    });
-    this.CONSUME(RightBrace);
-    this.CONSUME1(Semicolon);
   });
 
 

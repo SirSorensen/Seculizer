@@ -1,4 +1,4 @@
-Participants: Alice, Paren, TPM;
+Participants: Alice, Parent, TPM;
 Knowledge: {
     TPM: tpm_sk;
     Shared: tpm_pk;
@@ -6,6 +6,12 @@ Knowledge: {
 KeyRelations: (sk:tmp_sk, pk:tpm_pk);
 Functions: hash/2;
 Format: hash(x,y) = $H(x||y)$;
+Icons: {
+    "woman": Alice;
+    "👩‍👦": Parent;
+    "🔑": tpm_pk, tpm_sk;
+    "📝": n, esk;
+};
 
 Protocol: {
     Alice -> TPM: "Boot";
