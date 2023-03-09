@@ -150,11 +150,11 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   functionItem(ctx: any): FunctionDefItem {
     const id = ctx.Id[0].image;
-    const args = ctx.NumberLiteral[0].image;
+    const params = ctx.NumberLiteral[0].image;
     return {
       type: "functionDef",
       id: id,
-      args: args,
+      params: params,
     };
   }
 

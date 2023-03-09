@@ -42,7 +42,7 @@ interface FunctionsDef extends ASTNode {
 interface FunctionDefItem extends ASTNode {
   type: "functionDef";
   id: Id;
-  args: Number;
+  params: Number;
 }
 
 interface Equations extends ASTNode {
