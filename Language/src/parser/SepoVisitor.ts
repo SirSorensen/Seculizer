@@ -30,7 +30,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
       functions: functions,
       equations: equations,
       format: format,
-      icon: icon,
+      icons: icon,
       protocol: protocol,
     };
   }

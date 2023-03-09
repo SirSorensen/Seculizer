@@ -9,6 +9,7 @@ interface Program extends ASTNode {
   equations: Equations;
   format: Format;
   knowledge: Knowledge;
+  icons: Icons;
   protocol: Protocol;
 }
 

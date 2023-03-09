@@ -1,7 +1,9 @@
 <script lang="ts">
   import Editor from "$lib/Editor.svelte";
   import Header from "$lib/Header.svelte";
-  let content = "";
+  import {Program} from "$lib/program";
+  import {test} from "$lib/test.js";
+  let content = test;
 
   let parsed: any = undefined;
 
@@ -15,8 +17,9 @@
     })
       .then((res) => res.json())
       .then((data) => {
+        new Program(data, true);
         parsed = data;
-      });
+      })
   }
 </script>
 
@@ -31,6 +34,12 @@
     {/if}
   </div>
 </div>
+{#if parsed && !parsed}
+  <pre>{JSON.stringify(parsed, null, 2)}</pre>
+{:else}
+  <Editor bind:content />
+  <button disabled={content.trim() === ""} on:click={parseContent}>Generate</button>
+{/if}
 
 <style>
   #main{
