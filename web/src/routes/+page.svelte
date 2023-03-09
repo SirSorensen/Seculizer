@@ -34,12 +34,6 @@
     {/if}
   </div>
 </div>
-{#if parsed && !parsed}
-  <pre>{JSON.stringify(parsed, null, 2)}</pre>
-{:else}
-  <Editor bind:content />
-  <button disabled={content.trim() === ""} on:click={parseContent}>Generate</button>
-{/if}
 
 <style>
   #main{
