@@ -19,9 +19,9 @@ const latexLiteral = createToken({
   pattern: /\$([^$])*\$/,
 });
 const Knowledge = createToken({ name: "Knowledge", pattern: /Knowledge:/ });
-const KeyRelation = createToken({
-  name: "KeyRelation",
-  pattern: /KeyRelation:/,
+const KeyRelations = createToken({
+  name: "KeyRelations",
+  pattern: /KeyRelations:/,
 });
 const Icons = createToken({ name: "Icons", pattern: /Icons:/ });
 const Functions = createToken({ name: "Functions", pattern: /Functions:/ });
@@ -63,7 +63,7 @@ const allTokens = [
   latexLiteral,
   Participants,
   Knowledge,
-  KeyRelation,
+  KeyRelations,
   Icons,
   Functions,
   Equations,
@@ -110,7 +110,7 @@ export class SepoParser extends CstParser {
       this.SUBRULE(this.knowledgeList);
     });
     this.OPTION1(() => {
-      this.CONSUME(KeyRelation);
+      this.CONSUME(KeyRelations);
       this.SUBRULE(this.keyRelationList);
     });
     this.OPTION2(() => {
@@ -157,22 +157,17 @@ export class SepoParser extends CstParser {
     this.CONSUME(Colon);
     this.MANY_SEP({
       SEP: Comma,
-      DEF: () =>
-        this.OR([
-          { ALT: () => this.SUBRULE(this.function) },
-          { ALT: () => this.CONSUME1(Id) },
-        ]),
+      DEF: () => this.SUBRULE(this.type),
     });
     this.CONSUME(Semicolon);
   });
 
   private keyRelationList = this.RULE("keyRelationList", () => {
-    this.CONSUME(LeftParen);
     this.MANY_SEP({
       SEP: Comma,
       DEF: () => this.SUBRULE(this.keyRelation),
     });
-    this.CONSUME(RightParen);
+    this.CONSUME(Semicolon);
   });
 
   private keyRelation = this.RULE("keyRelation", () => {
@@ -183,7 +178,6 @@ export class SepoParser extends CstParser {
           this.SUBRULE(this.secretKeyRelation);
           this.CONSUME(Comma);
           this.SUBRULE(this.publicKeyRelation);
-          
         },
       },{
         ALT: () => {
@@ -199,13 +193,13 @@ export class SepoParser extends CstParser {
   private secretKeyRelation = this.RULE("secretKeyRelation", () => {
     this.CONSUME(secretKey);
     this.CONSUME(Colon);
-    this.CONSUME1(Id);
+    this.CONSUME(Id);
   });
 
   private publicKeyRelation = this.RULE("publicKeyRelation", () => {
     this.CONSUME(publicKey);
     this.CONSUME(Colon);
-    this.CONSUME1(Id);
+    this.CONSUME(Id);
   });
 
   private function = this.RULE("function", () => {

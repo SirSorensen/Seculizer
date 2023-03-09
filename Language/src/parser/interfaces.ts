@@ -169,10 +169,7 @@ interface MatchCase extends ASTNode {
   children: Statement[];
 }
 
-interface Type extends ASTNode {
-  type: "type";
-  value: StringLiteral | NumberLiteral | Id | FunctionCall | null;
-}
+type Type = StringLiteral | NumberLiteral | Id | FunctionCall | null
 
 interface NumberLiteral extends ASTNode {
   type: "number";
