@@ -163,12 +163,11 @@ export class SepoParser extends CstParser {
   });
 
   private keyRelationList = this.RULE("keyRelationList", () => {
-    this.CONSUME(LeftParen);
     this.MANY_SEP({
       SEP: Comma,
       DEF: () => this.SUBRULE(this.keyRelation),
     });
-    this.CONSUME(RightParen);
+    this.CONSUME(Semicolon);
   });
 
   private keyRelation = this.RULE("keyRelation", () => {
@@ -179,7 +178,6 @@ export class SepoParser extends CstParser {
           this.SUBRULE(this.secretKeyRelation);
           this.CONSUME(Comma);
           this.SUBRULE(this.publicKeyRelation);
-          
         },
       },{
         ALT: () => {
