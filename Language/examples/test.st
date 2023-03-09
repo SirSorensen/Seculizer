@@ -1,8 +1,9 @@
 Participants: Alice, Paren, TPM;
 Knowledge: {
-    tpm: tpm_sk;
+    TPM: tpm_sk;
     Shared: tpm_pk;
 };
+KeyRelations: (sk:tmp_sk, pk:tpm_pk);
 Functions: hash/2;
 Format: hash(x,y) = $H(x||y)$;
 
