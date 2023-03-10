@@ -14,6 +14,10 @@
     "target": "es2022",
     "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
+    "paths": {
+      "$lib":["./src/lib"],
+      "$lib/*":["./src/lib/*"]
+    }
     
   },
   "exclude": [
