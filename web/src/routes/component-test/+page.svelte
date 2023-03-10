@@ -1,9 +1,9 @@
 <script>
-    import ActionBox from "$lib/ActionBox.svelte";
-    import CommonKnowledge from "$lib/CommonKnowledge.svelte";
-    import MessageBox from "$lib/MessageBox.svelte";
-    import Participants from "$lib/Participants.svelte";
-    import Item from "$lib/Item.svelte";
+    import ActionBox from "$lib/components/messages/ActionBox.svelte";
+    import CommonKnowledge from "$lib/components/CommonKnowledge.svelte";
+    import MessageBox from "$lib/components/messages/MessageBox.svelte";
+    import Participants from "$lib/components/Participants.svelte";
+    import Item from "$lib/components/Item.svelte";
   </script>
   
   <CommonKnowledge />

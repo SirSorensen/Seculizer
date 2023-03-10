@@ -1,8 +1,8 @@
-interface ASTNode {
+export interface ASTNode {
   type: string;
 }
 
-interface Program extends ASTNode {
+export interface Program extends ASTNode {
   type: "program";
   participants: Participants;
   functions: FunctionsDef;
@@ -13,94 +13,94 @@ interface Program extends ASTNode {
   protocol: Protocol;
 }
 
-interface Participants extends ASTNode {
+export interface Participants extends ASTNode {
   type: "participants";
   participants: Participant[];
 }
 
-interface Participant extends ASTNode {
+export interface Participant extends ASTNode {
   type: "participant";
   id: Id;
 }
 
-interface KeyRelations extends ASTNode {
+export interface KeyRelations extends ASTNode {
   type: "keyRelations";
   keyRelations: KeyRelation[];
 }
 
-interface KeyRelation extends ASTNode {
+export interface KeyRelation extends ASTNode {
   type: "keyRelation";
   sk: Id;
   pk: Id;
 }
 
 
-interface FunctionsDef extends ASTNode {
+export interface FunctionsDef extends ASTNode {
   type: "functionsDef";
   functions: FunctionDefItem[];
 }
 
-interface FunctionDefItem extends ASTNode {
+export interface FunctionDefItem extends ASTNode {
   type: "functionDef";
   id: Id;
   params: Number;
 }
 
-interface Equations extends ASTNode {
+export interface Equations extends ASTNode {
   type: "equations";
   equations: Equation[];
 }
 
-interface Equation extends ASTNode {
+export interface Equation extends ASTNode {
   type: "equation";
   left: Function;
   right: Function;
 }
 
-interface FunctionCall extends ASTNode {
+export interface FunctionCall extends ASTNode {
   type: "function";
   id: string;
   params: Type[];
 }
 
-interface Id extends ASTNode {
+export interface Id extends ASTNode {
   type: "id";
   id: string;
 }
 
-interface Format extends ASTNode {
+export interface Format extends ASTNode {
   type: "format";
   formats: FormatItem[];
 }
 
-interface FormatItem extends ASTNode {
+export interface FormatItem extends ASTNode {
   type: "formatItem";
   function: Function;
   format: StringLiteral | LatexLiteral;
 }
 
-interface Icons extends ASTNode {
+export interface Icons extends ASTNode {
   type: "icons";
   icons: Map<Id, String>;
 }
   
 
-interface StringLiteral extends ASTNode {
+export interface StringLiteral extends ASTNode {
   type: "string";
   value: string;
 }
 
-interface LatexLiteral extends ASTNode {
+export interface LatexLiteral extends ASTNode {
   type: "latex";
   value: string;
 }
 
-interface Knowledge extends ASTNode {
+export interface Knowledge extends ASTNode {
   type: "knowledge";
   knowledge: KnowledgeItem[];
 }
 
-interface KnowledgeItem extends ASTNode {
+export interface KnowledgeItem extends ASTNode {
   type: "knowledgeItem";
   id: Id;
   children: {
@@ -109,85 +109,85 @@ interface KnowledgeItem extends ASTNode {
   };
 }
 
-interface Protocol extends ASTNode {
+export interface Protocol extends ASTNode {
   type: "protocol";
   statements: Statement[];
 }
 
-interface Statement extends ASTNode {
+export interface Statement extends ASTNode {
   type: "statement";
   child: ClearStatement | ParticipantStatement | SendStatement | null;
 }
 
-interface ClearStatement extends ASTNode {
+export interface ClearStatement extends ASTNode {
   type: "clearStatement";
   id: Id;
 }
 
-interface ParticipantStatement extends ASTNode {
+export interface ParticipantStatement extends ASTNode {
   type: "participantStatement";
   id: Id;
   child: NewStatement | SetStatement | null;
 }
 
-interface NewStatement extends ASTNode {
+export interface NewStatement extends ASTNode {
   type: "newStatement";
   id: Id;
 }
 
-interface SetStatement extends ASTNode {
+export interface SetStatement extends ASTNode {
   type: "setStatement";
   id: Id;
   value: Type;
 }
 
-interface SendStatement extends ASTNode {
+export interface SendStatement extends ASTNode {
   type: "sendStatement";
   leftId: Id;
   rightId: Id;
   child: MessageSendStatement | MatchStatement | null;
 }
 
-interface MessageSendStatement extends ASTNode {
+export interface MessageSendStatement extends ASTNode {
   type: "messageSendStatement";
   ids: MessageSendElement[];
 }
 
-interface MessageSendElement extends ASTNode {
+export interface MessageSendElement extends ASTNode {
   type: "messageSendElement";
   expression: Expression;
   alias: Id | null;
 }
 
-interface MatchStatement extends ASTNode {
+export interface MatchStatement extends ASTNode {
   type: "matchStatement";
   cases: MatchCase[];
 }
 
-interface MatchCase extends ASTNode {
+export interface MatchCase extends ASTNode {
   type: "matchCase";
   case: Type;
   children: Statement[];
 }
 
-type Type = StringLiteral | NumberLiteral | Id | FunctionCall | null
+export type Type = StringLiteral | NumberLiteral | Id | FunctionCall | null
 
-interface NumberLiteral extends ASTNode {
+export interface NumberLiteral extends ASTNode {
   type: "number";
   value: number;
 }
 
-interface Expression extends ASTNode {
+export interface Expression extends ASTNode {
     type: "expression";
     child: Type | EncryptExpression | SignExpression;
 }
 
-interface EncryptExpression extends ASTNode {
+export interface EncryptExpression extends ASTNode {
     type: "encryptExpression";
     inner: Expression[];
     outer: Expression;
 } 
-interface SignExpression extends ASTNode {
+export interface SignExpression extends ASTNode {
     type: "signExpression";
     inner: Expression[];
     outer: Expression;

@@ -1,5 +1,6 @@
-import { SepoParser, SepoLexer } from "./parser.js";
-import { ParseError, throwSimpleParseError } from './ParseError';
+import { SepoParser } from "./parser.js";
+import { throwSimpleParseError } from './ParseError';
+import { ClearStatement, EncryptExpression, Equation, Equations, Expression, Format, FormatItem, FunctionCall, FunctionDefItem, FunctionsDef, Icons, Id, KeyRelation, KeyRelations, Knowledge, KnowledgeItem, LatexLiteral, MatchCase, MatchStatement, MessageSendElement, MessageSendStatement, NewStatement, Participant, Participants, ParticipantStatement, Protocol, SetStatement, SignExpression, Statement, Type } from "./interfaces.js";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();

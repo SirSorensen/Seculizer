@@ -1,6 +1,6 @@
 <script lang="ts">
-  import SignIcon from "./Icons/SignIcon.svelte";
-  import EncryptIcon from "./Icons/EncryptIcon.svelte";
+  import SignIcon from "../../Icons/SignIcon.svelte";
+  import EncryptIcon from "../../Icons/EncryptIcon.svelte";
 
   export let signie: { name: string; emoji: string } | null = null;
   export let encryptKey: { id: string; emoji: string } | null = null;

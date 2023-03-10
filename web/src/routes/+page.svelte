@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Editor from "$lib/Editor.svelte";
-  import Header from "$lib/Header.svelte";
+  import Editor from "$lib/components/Editor.svelte";
+  import Header from "$lib/components/Header.svelte";
   import {Program} from "$lib/program";
   import {test} from "$lib/test.js";
   let content = test;
