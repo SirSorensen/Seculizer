@@ -137,24 +137,47 @@ export class Program {
         // Protocol:
         if (json.protocol.statements){
             json.protocol.statements.forEach( (stmnt:any) => {
-                if (stmnt.child){
-                    let type = stmnt.child.type
-                    if (type == "clearStatement") {
-                        this.clear(stmnt.id, this.last?.participants)
-                    } else if (type == "participantStatement") {
-                        
-                    } else if (type == "sendStatement"){
+                let type = this.getStmntType(stmnt)
+                let tmp_participants = this.last?.participants
 
-                    }
-                }
+
+
+                this.newFrame(tmp_participants, stmnt)
             });
         } else if (log) console.log("No protocol found");
         
         console.log("Program created");
     }
 
-    clear(knowledge: string, participants: {[id: string]: _participant} | undefined){
-        if (!participants) throw new Error("Invalid json");
+    getStmntType(stmnt: any) : string {
+        if (stmnt.child){
+            let type = stmnt.child.type
+            if (type == "clearStatement") {
+                return type
+            } else if (type == "participantStatement" || type == "sendStatement") {
+                type = type.child.type
+                if (type) return type
+                else throw new Error("Invalid json: participantStatement child type not found");
+            } else {
+                return type
+            }
+        }
+        throw new Error("Invalid json: stmnt type not found");
+    }
+
+    pipeStmnt(stmnt:any, stmntType:string, participants: {[id: string]: _participant} | undefined){
+        if (!participants) throw new Error("Invalid json: participants is undefined");
+
+        switch (stmntType) {
+            case "clear":
+                return this.clear(stmnt.child, participants)
+            default:
+                throw new Error("Invalid json: stmnt type not found");    
+        }
+    }
+
+    clear(knowledge: string, participants: {[id: string]: _participant} | undefined) : {[id: string]: _participant} | undefined{
+        if (!participants) throw new Error("Invalid json: participants is undefined");
 
         Object.keys(participants).forEach((participant: string) => {
             participants[participant].knowledge =  participants[participant].knowledge.filter(
@@ -164,7 +187,9 @@ export class Program {
         return participants;
     }
 
-    new_frame(participants: {[id: string]: _participant}, stmnt : any){
+    newFrame(participants: {[id: string]: _participant} | undefined, stmnt : any){
+        if (!participants) throw new Error("Invalid json: participants is undefined");
+
         let oldLast = this.last;
         this.last = {
             next: null,
