@@ -45,7 +45,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     if (idChild && idChild.length > 0) {
         return {
           type: "id",
-          id: idChild[0].image,
+          value: idChild[0].image,
       }
     }
     const numberChild = ctx.NumberLiteral;
