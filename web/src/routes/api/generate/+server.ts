@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import parse from '../../../../../Language/dist/index.js'
+import parse from '$lang'
 
 export async function POST({ request }: { request: Request}) {
     const {content} = await request.json();

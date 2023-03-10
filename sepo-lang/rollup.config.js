@@ -19,7 +19,7 @@ export default [
         preferBuiltins: true,
       }),
       commonjs(),
-      dts(),
+      dts()
     ],
   }
 ];

@@ -16,7 +16,9 @@
     "allowSyntheticDefaultImports": true,
     "paths": {
       "$lib":["./src/lib"],
-      "$lib/*":["./src/lib/*"]
+      "$lib/*":["./src/lib/*"],
+      "$lang": ["../sepo-lang/dist"],
+      "$lang/*": ["../sepo-lang/dist/*"]
     }
     
   },
