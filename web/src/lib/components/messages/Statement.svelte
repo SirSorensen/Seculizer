@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { Statement as StatementAST } from "../../../../../Language/dist/dist/dts/parser/interfaces";
+  import type { Statement as StatementAST } from "$lang/types/parser/interfaces";
   export let statement: StatementAST;
 
 </script>
+

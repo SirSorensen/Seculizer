@@ -3,7 +3,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "declaration": true,
-    "declarationDir": "dist/dts",
+    "declarationDir": "types",
     // optional if you're using babel to transpile TS -> JS
     "emitDeclarationOnly": true,
     "target": "es2022",
