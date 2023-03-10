@@ -2,6 +2,29 @@ export interface ASTNode {
   type: string;
 }
 
+export type Type = StringLiteral | NumberLiteral | Id | FunctionCall | null
+
+export interface StringLiteral extends ASTNode {
+  type: "string";
+  value: string;
+}
+
+export interface NumberLiteral extends ASTNode {
+  type: "number";
+  value: number;
+}
+
+export interface Id extends ASTNode {
+  type: "id";
+  value: string;
+}
+
+export interface FunctionCall extends ASTNode {
+  type: "function";
+  id: string;
+  params: Type[];
+}
+
 export interface Program extends ASTNode {
   type: "program";
   participants: Participants;
@@ -57,17 +80,6 @@ export interface Equation extends ASTNode {
   right: Function;
 }
 
-export interface FunctionCall extends ASTNode {
-  type: "function";
-  id: string;
-  params: Type[];
-}
-
-export interface Id extends ASTNode {
-  type: "id";
-  id: string;
-}
-
 export interface Format extends ASTNode {
   type: "format";
   formats: FormatItem[];
@@ -82,12 +94,6 @@ export interface FormatItem extends ASTNode {
 export interface Icons extends ASTNode {
   type: "icons";
   icons: Map<Id, String>;
-}
-  
-
-export interface StringLiteral extends ASTNode {
-  type: "string";
-  value: string;
 }
 
 export interface LatexLiteral extends ASTNode {
@@ -170,12 +176,7 @@ export interface MatchCase extends ASTNode {
   children: Statement[];
 }
 
-export type Type = StringLiteral | NumberLiteral | Id | FunctionCall | null
 
-export interface NumberLiteral extends ASTNode {
-  type: "number";
-  value: number;
-}
 
 export interface Expression extends ASTNode {
     type: "expression";

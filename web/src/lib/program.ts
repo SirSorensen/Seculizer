@@ -1,10 +1,11 @@
 //import "../../../Language/dist/dist/dts/parser/interfaces"
+import type { Statement } from '$lang/types/parser/interfaces';
 
 type frame = {
     next : frame | {[id: string]: frame}
     prev : frame
     participants :  {[id: string]: _participant}
-    presentation : any
+    presentation : Statement
 } | null
 
 
@@ -14,8 +15,10 @@ type _participant = {
 }
 
 type _format = {
+    //Function
     id: string
     params: string[]
+    //Latex
     latex: string
 }
 
@@ -68,16 +71,6 @@ export class Program {
             })
             if (log) console.log("Knowledge added to participants", this.init_participants);
         } else if (log) console.log("No knowledge found");
-
-
-        //Setup first frame
-        this.first = {
-            next: null,
-            prev: null,
-            participants: this.init_participants,
-            presentation: null
-        }
-        this.last = this.first
         
 
 
@@ -134,19 +127,33 @@ export class Program {
             if (log) console.log("Icons created", this.icons);
         } else if (log) console.log("No icons found");
 
+        //Setup first frame
+        this.newFrame(null, this.init_participants)
+        
         // Protocol:
+
         if (json.protocol.statements){
             json.protocol.statements.forEach( (stmnt:any) => {
                 let type = this.getStmntType(stmnt)
                 let tmp_participants = this.last?.participants
-
-
-
-                this.newFrame(tmp_participants, stmnt)
+                tmp_participants = this.pipeStmnt(stmnt, type, tmp_participants)
+                this.newFrame(stmnt, tmp_participants)
             });
         } else if (log) console.log("No protocol found");
         
         console.log("Program created");
+    }
+
+    newFrame(stmnt : any, participants: {[id: string]: _participant}){
+        let oldLast = this.last;
+        this.last = {
+            next: null,
+            prev: oldLast,
+            participants: participants,
+            presentation: stmnt
+        }
+        if (oldLast) oldLast.next = this.last
+        else this.first = this.last
     }
 
     getStmntType(stmnt: any) : string {
@@ -169,16 +176,22 @@ export class Program {
         if (!participants) throw new Error("Invalid json: participants is undefined");
 
         switch (stmntType) {
-            case "clear":
+            case "clearStatement":
                 return this.clear(stmnt.child, participants)
+            case "newStatement":
+                // TODO: create methond for newStatement
+            case "setStatement":
+                // TODO: create methond for newStatement
+            case "messageSendStatement":
+                // TODO: create methond for newStatement
+            case "matchStatement":
+                // TODO: create methond for newStatement
             default:
                 throw new Error("Invalid json: stmnt type not found");    
         }
     }
 
-    clear(knowledge: string, participants: {[id: string]: _participant} | undefined) : {[id: string]: _participant} | undefined{
-        if (!participants) throw new Error("Invalid json: participants is undefined");
-
+    clear(knowledge: string, participants: {[id: string]: _participant}) : {[id: string]: _participant}{
         Object.keys(participants).forEach((participant: string) => {
             participants[participant].knowledge =  participants[participant].knowledge.filter(
                                                             (item: string) => item != knowledge
@@ -187,18 +200,8 @@ export class Program {
         return participants;
     }
 
-    newFrame(participants: {[id: string]: _participant} | undefined, stmnt : any){
-        if (!participants) throw new Error("Invalid json: participants is undefined");
+    new(){
 
-        let oldLast = this.last;
-        this.last = {
-            next: null,
-            prev: oldLast,
-            participants: participants,
-            presentation: stmnt
-        }
-        if (oldLast) oldLast.next = this.last
-        else this.first = this.last
     }
 }
 
