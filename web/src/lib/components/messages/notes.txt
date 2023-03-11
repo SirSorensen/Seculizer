@@ -1,0 +1,45 @@
+MessageBox(Expression[], Alias???):
+	Has background
+	Contains
+		for each expression in Expression[]:
+			- ExpressionBox(expression)
+
+SignIcon(expression, SignieIcon):
+	Contains:
+		- SignIcon
+			- Icon
+		- ExpressionBox
+
+EncryptIcon(expression):
+	Contains:
+		- LockIcon
+		- ExpressionBox
+
+ExpressionBox(Expression):
+	Contains:
+	If(expression is type):
+		if type is id:
+			- Item(id, id.emoji)
+		else:
+			- String representation of type
+
+
+	If(Expression is encrypt)
+		Define inner of encrypt (list)
+		Define outer of encrypt
+		Contains
+			- MessageBox(inner) but MessageBox can only receive one expression and needs alias????
+			- EncryptIcon(outer)
+
+	If(Expression is sign)
+		Define inner of encrypt (list)
+		Define outer of encrypt
+		Contains
+			- MessageBox(inner) but MessageBox can only receive one expression and needs alias????
+			- SignIcon(outer)
+
+
+Item(name, emoji):
+	Contains:
+		- Emoji
+		- Name as string

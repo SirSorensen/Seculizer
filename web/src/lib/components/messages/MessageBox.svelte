@@ -1,19 +1,20 @@
 <script lang="ts">
-  import SignIcon from "../../Icons/SignIcon.svelte";
-  import EncryptIcon from "../../Icons/EncryptIcon.svelte";
+  import ExpressionBox from "./ExpressionBox.svelte";
+  import type { Expression as ExpressionAST} from "$lang/types/parser/interfaces";
+  import type { Program } from "$lib/program";
 
-  export let signie: { name: string; emoji: string } | null = null;
-  export let encryptKey: { id: string; emoji: string } | null = null;
+  export let program:Program;
+  export let fromId:string;
+  export let toId:string;
+  export let messageExpressions:ExpressionAST[];
+  export let alias:string | undefined;
 </script>
 
 <div class="message">
-  <slot >No content was provided</slot>
-  {#if signie !== null}
-    <SignIcon {signie} />
-  {/if}
-  {#if encryptKey !== null}
-    <EncryptIcon {encryptKey} />
-  {/if}
+  {#each messageExpressions as messageExpression}
+      <ExpressionBox program={program} expression={messageExpression} />
+  {/each}
+  <p>Alias: {alias} From: {fromId} To: {toId}</p>
 </div>
 
 <style>

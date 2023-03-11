@@ -1,11 +1,15 @@
 <script lang="ts">
-  export let encryptKey: { id: string; emoji: string };
+  import type { Expression as ExpressionAST} from "$lang/types/parser/interfaces";
+  import type { Program } from "$lib/program";
+  import ExpressionBox from "$lib/components/messages/ExpressionBox.svelte";
+  export let program: Program;
+  export let encryptExpression: ExpressionAST;
 </script>
 
 <div class="encrypt-icon">
   <i class="oma oma-locked emoji" />
   <div class="id-container">
-    <p>{encryptKey.id}</p>
+    <ExpressionBox program={program} expression={encryptExpression} />
   </div>
 </div>
 
@@ -21,10 +25,5 @@
   }
   .emoji {
     font-size: 2rem;
-  }
-  p {
-    margin: 0;
-    text-align: center;
-    font-size: 1rem;
   }
 </style>

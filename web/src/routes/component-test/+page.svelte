@@ -10,7 +10,7 @@
   <ActionBox title="test">
     <Item id="test" emoji="oma-key" />
   </ActionBox>
-  <MessageBox signie={{ name: "Alice", emoji: "oma-woman" }}>
+  <!--<MessageBox signie={{ name: "Alice", emoji: "oma-woman" }}>
     <MessageBox encryptKey={{ id: "Key", emoji: "oma-key" }}>
       <MessageBox encryptKey={{ id: "Key", emoji: "oma-key" }}>
         <Item id="test" emoji="oma-key" />
@@ -31,7 +31,7 @@
     encryptKey={{ id: "Key", emoji: "oma-key" }}
   >
     <Item id="test" emoji="oma-key" />
-  </MessageBox>
+  </MessageBox>-->
   
   <Participants
     participants={[
