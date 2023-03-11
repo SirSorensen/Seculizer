@@ -1,7 +1,6 @@
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import dts from "rollup-plugin-dts";
 
 export default [
   {
@@ -15,11 +14,10 @@ export default [
     plugins: [
       typescript(),
       resolve({
-        browser: false,
+        browser: true,
         preferBuiltins: true,
       }),
-      commonjs(),
-      dts()
+      commonjs()
     ],
   }
 ];
