@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Item from "./Item.svelte";
-
   export let title: string;
 </script>
 
