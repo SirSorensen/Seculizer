@@ -4,11 +4,15 @@
   let files: FileList | undefined = undefined;
   let announcement = { text: "No file selected", isError: false };
   $: if (files) {
-    if (files.length > 1) {
+    if(files.length == 0) {
+      announcement.text = "No file selected";
+      announcement.isError = false;
+    } else if (files.length > 1) {
       announcement.text = "Only one file can be uploaded at a time";
       announcement.isError = true;
     } else {
-      let file = files[0];
+      let file = files[0];  
+      
       if (!file.name.endsWith(".sepo") && !file.name.endsWith(".txt")) {
         announcement.text = "Unsupported file type";
         announcement.isError = true;
