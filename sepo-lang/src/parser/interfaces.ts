@@ -153,13 +153,7 @@ export interface SendStatement extends ASTNode {
 
 export interface MessageSendStatement extends ASTNode {
   type: "messageSendStatement";
-  ids: MessageSendElement[];
-}
-
-export interface MessageSendElement extends ASTNode {
-  type: "messageSendElement";
-  expression: Expression;
-  alias: Id | null;
+  expressions: Expression[];
 }
 
 export interface MatchStatement extends ASTNode {
@@ -183,10 +177,10 @@ export interface Expression extends ASTNode {
 export interface EncryptExpression extends ASTNode {
     type: "encryptExpression";
     inner: Expression[];
-    outer: Expression;
+    outer: Type;
 } 
 export interface SignExpression extends ASTNode {
     type: "signExpression";
     inner: Expression[];
-    outer: Expression;
+    outer: Type;
 } 

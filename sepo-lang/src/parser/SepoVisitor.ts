@@ -1,6 +1,6 @@
 import { SepoParser } from "./parser.js";
 import { throwSimpleParseError } from './ParseError';
-import { ClearStatement, EncryptExpression, Equation, Equations, Expression, Format, FormatItem, FunctionCall, FunctionDefItem, FunctionsDef, Icons, Id, KeyRelation, KeyRelations, Knowledge, KnowledgeItem, LatexLiteral, MatchCase, MatchStatement, MessageSendElement, MessageSendStatement, NewStatement, Participant, Participants, ParticipantStatement, Protocol, SetStatement, SignExpression, Statement, Type } from "./interfaces.js";
+import { ClearStatement, EncryptExpression, Equation, Equations, Expression, Format, FormatItem, FunctionCall, FunctionDefItem, FunctionsDef, Icons, Id, KeyRelation, KeyRelations, Knowledge, KnowledgeItem, LatexLiteral, MatchCase, MatchStatement, MessageSendStatement, NewStatement, Participant, Participants, ParticipantStatement, Protocol, SetStatement, SignExpression, Statement, Type } from "./interfaces.js";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -356,20 +356,10 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   messageSend(ctx: any):MessageSendStatement {
-    const elements = ctx.messageSendElement.map((m: any) => this.visit(m));
+    const elements = ctx.expression.map((e: any) => this.visit(e));
     return {
         type: "messageSendStatement",
-        ids: elements
-    }
-  }
-
-  messageSendElement(ctx: any):MessageSendElement {
-    const expression = this.visit(ctx.expression);
-    const alias = ctx.Id && ctx.Id[0] ? ctx.Id[0].image : null;
-    return {
-        type: "messageSendElement",
-        expression: expression,
-        alias: alias
+        expressions: elements
     }
   }
 
@@ -402,22 +392,22 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   encrypt(ctx: any):EncryptExpression {
+    const type:Type = this.visit(ctx.type);
     const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
-    const [last, ...rest] = expressions;
     return {
         type: "encryptExpression",
-        inner: rest,
-        outer: last
+        inner: expressions,
+        outer: type
     }
   }
 
   sign(ctx: any):SignExpression {
+    const type:Type = this.visit(ctx.type);
     const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
-    const [last, ...rest] = expressions;
     return {
         type: "signExpression",
-        inner: rest,
-        outer: last
+        inner: expressions,
+        outer: type
     }
   }
 }
