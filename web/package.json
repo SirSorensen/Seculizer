@@ -10,7 +10,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"crypto_chor_parser": "file:../Language"
+		"crypto_chor_parser": "file:../sepo-lang"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
