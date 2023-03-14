@@ -63,8 +63,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
       }
     }
     
-    throwSimpleParseError("Unknown type", ctx[Object.keys(ctx)[0]][0], this.template)
-    return null;
+    return throwSimpleParseError("Unknown type", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
   knowledgeList(ctx: any): Knowledge {
@@ -205,7 +204,10 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   latex(ctx: any):LatexLiteral {
     let latex = ctx.latexLiteral[0].image;
-    return { type: "latex", value: latex };
+    return { 
+      type: "latex", 
+      value: latex 
+    };
   }
 
   protocol(ctx: any):Protocol {
@@ -284,10 +286,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         }
     }
     //TODO THROW ERROR HERE and remove possibility of null
-    return {
-        type: "statement",
-        child: null
-    }
+    return throwSimpleParseError("Uknown statement", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
   clear(ctx: any):ClearStatement {
@@ -317,11 +316,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         }
     }
     //TODO THROW ERROR HERE and remove possibility of null
-    return {
-        type: "participantStatement",
-        id: id,
-        child: null
-    };
+    return throwSimpleParseError("Uknown participant statement", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
   new(ctx: any):NewStatement {
