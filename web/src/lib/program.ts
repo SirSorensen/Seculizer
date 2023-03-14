@@ -8,7 +8,8 @@ import type { Participant, Statement, ParticipantStatement,
     Id,
     Type,
     FunctionDefItem,
-    FormatItem} from '$lang/types/parser/interfaces';
+    FormatItem,
+    Expression} from '$lang/types/parser/interfaces';
 
 
 type _participant = {
@@ -223,28 +224,17 @@ export class Program {
     }
 
     newStmnt(participant : string, newKnowledge : string, participants: participantMap) : participantMap{
-        participants[participant].knowledge.push({
-            id: newKnowledge,
-            value: ""
-        })
-        return participants
+        return this.setKnowledge(participant, newKnowledge, participants)
     }
 
     setStmnt(participant : string, knowledge : string, value : string, participants: participantMap) : participantMap{
-        let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
-
-        participants[participant].knowledge[index] = {
-            id: knowledge,
-            value: value
-        }
-
-        return participants
+        return this.setKnowledge(participant, knowledge, participants, value)
     }
 
     sendStmnt(stmnt : SendStatement, participants: participantMap) : participantMap{
         // Pipe SendStatement
         if (stmnt.child.type == "messageSendStatement"){
-            return this.messageSendStmnt(stmnt.child, participants)
+            return this.messageSendStmnt(stmnt.leftId.value, stmnt.rightId.value, stmnt.child.expressions, participants)
         } else if (stmnt.child.type == "matchStatement"){
             return this.matchStmnt(stmnt.child, participants)
         } else {
@@ -252,12 +242,53 @@ export class Program {
         }
     }
 
-    messageSendStmnt(stmnt : MessageSendStatement, participants: participantMap) : participantMap{
+    messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], participants: participantMap) : participantMap{
+        knowledge.forEach((expression) => {
+            if(expression.child.type == "encryptExpression"){
+
+            } else if(expression.child.type == "signExpression"){
+
+            } else if (expression.child.type == "function") {
+                throw new Error("Invalid json: stmnt child value type not implemented");
+            }else {
+                let val = this.findKnowledgeValue(senderId, String(expression.child.value), participants)
+                participants = this.setKnowledge(receiverId, String(expression.child.value), participants, val)
+            }
+        })
+
         return participants
     }
 
     matchStmnt(stmnt : MatchStatement, participants: participantMap) : participantMap{
         return participants
+    }
+
+    setKnowledge(participant : string, knowledge : string, participants: participantMap, value : string = "") : participantMap{
+        let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
+
+        if (index >= 0) {
+            participants[participant].knowledge[index] = {
+                id: knowledge,
+                value: value
+            }
+        } else {
+            participants[participant].knowledge.push({
+                id: knowledge,
+                value: value
+            })
+        }
+
+        return participants
+    }
+
+    findKnowledgeValue(participant : string, knowledge : string, participants: participantMap) : string{
+        let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
+
+        if (index >= 0) {
+            return participants[participant].knowledge[index].value
+        } else {
+            throw new Error("Invalid json: participant does not have knowledge!");
+        }
     }
     
 }
