@@ -42,7 +42,6 @@ export class Program {
     init_participants: participantMap = {}
 
     first : frame = null
-    last : frame = null
 
     keyRelations: {[id: string]: string} = {}
     functions: {[id: string]: Number} = {}
@@ -157,31 +156,46 @@ export class Program {
         } else if (log) console.log("No icons found");
 
         //Setup first frame
-        this.newFrame(null, this.init_participants)
+        let last = this.newFrame(null, this.init_participants, this.first)
         
         // Protocol:
 
         if (json.protocol.statements){
-            json.protocol.statements.forEach( (stmnt: Statement) => {
-                let tmp_participants = this.last?.participants
-                tmp_participants = this.pipeStmnt(stmnt, tmp_participants)
-                this.newFrame(stmnt, tmp_participants)
-            });
+            this.parseProtocol(json.protocol.statements, last)
         } else if (log) console.log("No protocol found");
         
         console.log("Program created");
     }
 
-    newFrame(stmnt : any, participants: participantMap){
-        let oldLast = this.last;
-        this.last = {
+    parseProtocol(statements: any, last : frame) : void {
+        statements.forEach( (stmnt: Statement) => {
+                let tmp_participants = last?.participants
+                if (this.checkIfMatchStmnt(stmnt)){
+                    //TODO fix this
+                    
+                } else {
+                    tmp_participants = this.pipeStmnt(stmnt, tmp_participants)
+                    last = this.newFrame(stmnt, tmp_participants, last)
+                }
+            });
+        }
+
+    newFrame(stmnt : any, participants: participantMap, last : frame) : frame{
+        let tmp_last = {
             next: null,
-            prev: oldLast,
+            prev: last,
             participants: participants,
             presentation: stmnt
         }
-        if (oldLast) oldLast.next = this.last
-        else this.first = this.last
+
+        if (last != undefined) last.next = tmp_last
+        else this.first = last
+
+        return tmp_last
+    }
+
+    checkIfMatchStmnt(stmnt: Statement) : boolean{
+        return stmnt.child.type == "sendStatement" && stmnt.child.child.type == "matchStatement"
     }
 
     pipeStmnt(stmnt: Statement, participants: participantMap | undefined) : participantMap{
@@ -241,20 +255,18 @@ export class Program {
         }
     }
 
-    messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], participants: participantMap, decrypted : boolean = true) : participantMap{
+    messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], participants: participantMap, encrypted : boolean = false) : participantMap{
         knowledge.forEach((expression) => {
             if(expression.child.type == "encryptExpression"){
-                participants = this.encryptExpr(senderId, receiverId, expression.child.inner, expression.child.outer, participants)
+                participants = this.encryptExpr(senderId, receiverId, expression.child.inner, expression.child.outer, participants, encrypted)
             } else if(expression.child.type == "signExpression"){
-                participants = this.messageSendStmnt(senderId, receiverId, expression.child.inner, participants, decrypted)
-            } else if (expression.child.type == "function") {
-                throw new Error("Invalid json: stmnt child value type not implemented");
-            }else {
+                participants = this.messageSendStmnt(senderId, receiverId, expression.child.inner, participants, encrypted)
+            } else {
+                if (expression.child.type == "function") throw new Error("Invalid json: stmnt child value type not implemented");
                 let val = this.findKnowledgeValue(senderId, String(expression.child.value), participants)
-                participants = this.setKnowledge(receiverId, String(expression.child.value), participants, decrypted, val)
+                participants = this.setKnowledge(receiverId, String(expression.child.value), participants, encrypted, val)
             }
         })
-
         return participants
     }
 
@@ -262,25 +274,31 @@ export class Program {
         return participants
     }
 
-    encryptExpr(senderId : string, receiverId : string, inner : Expression[], outer : Type, participants: participantMap) : participantMap{
-        let decryptable = this.checkKeyKnowledge(receiverId, outer, participants)
-        return this.messageSendStmnt(senderId, receiverId, inner, participants, decryptable)
+    encryptExpr(senderId : string, receiverId : string, inner : Expression[], outer : Type, participants: participantMap, encrypted : boolean) : participantMap{
+        // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
+        if (!encrypted){
+            // decryptable = true if receiver knows the key, it is therefore not encrypted
+            let decryptable = this.checkKeyKnowledge(receiverId, outer, participants)
+            encrypted = !decryptable
+        }
+
+        return this.messageSendStmnt(senderId, receiverId, inner, participants, encrypted)
     }
 
-    setKnowledge(participant : string, knowledge : string, participants: participantMap, decrypted : boolean, value : string = "") : participantMap{
+    setKnowledge(participant : string, knowledge : string, participants: participantMap, encrypted : boolean, value : string = "") : participantMap{
         let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
 
         if (index >= 0) {
             participants[participant].knowledge[index] = {
                 id: knowledge,
                 value: value,
-                encrypted: decrypted
+                encrypted: encrypted
             }
         } else {
             participants[participant].knowledge.push({
                 id: knowledge,
                 value: value,
-                encrypted: decrypted
+                encrypted: encrypted
             })
         }
 
@@ -308,7 +326,6 @@ export class Program {
         let index = participants[participant].knowledge.find((element) => element.id == key_str)
 
         return (index != undefined)
-    }
-    
+    }    
 }
 
