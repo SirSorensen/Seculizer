@@ -1,11 +1,8 @@
 //import "../../../Language/dist/dist/dts/parser/interfaces"
 import type { Participant, Statement, ParticipantStatement, 
     SendStatement,
-    SetStatement,
-    MessageSendStatement,
     MatchStatement,
     KnowledgeItem,
-    Id,
     Type,
     FunctionDefItem,
     FormatItem,
@@ -20,6 +17,7 @@ type _participant = {
 type _knowledge = {
     id: string
     value: string
+    encrypted : boolean
 }
 
 type participantMap = {[id: string]: _participant}
@@ -88,7 +86,8 @@ export class Program {
                     else {
                         this.init_participants[knowledge.id.value].knowledge.push({
                             id: String(child.value),
-                            value: ""
+                            value: "",
+                            encrypted: false
                         })
                     }
                 })
@@ -224,11 +223,11 @@ export class Program {
     }
 
     newStmnt(participant : string, newKnowledge : string, participants: participantMap) : participantMap{
-        return this.setKnowledge(participant, newKnowledge, participants)
+        return this.setKnowledge(participant, newKnowledge, participants, true)
     }
 
     setStmnt(participant : string, knowledge : string, value : string, participants: participantMap) : participantMap{
-        return this.setKnowledge(participant, knowledge, participants, value)
+        return this.setKnowledge(participant, knowledge, participants, true, value)
     }
 
     sendStmnt(stmnt : SendStatement, participants: participantMap) : participantMap{
@@ -242,17 +241,17 @@ export class Program {
         }
     }
 
-    messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], participants: participantMap) : participantMap{
+    messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], participants: participantMap, decrypted : boolean = true) : participantMap{
         knowledge.forEach((expression) => {
             if(expression.child.type == "encryptExpression"){
-
+                participants = this.encryptExpr(senderId, receiverId, expression.child.inner, expression.child.outer, participants)
             } else if(expression.child.type == "signExpression"){
-
+                participants = this.messageSendStmnt(senderId, receiverId, expression.child.inner, participants, decrypted)
             } else if (expression.child.type == "function") {
                 throw new Error("Invalid json: stmnt child value type not implemented");
             }else {
                 let val = this.findKnowledgeValue(senderId, String(expression.child.value), participants)
-                participants = this.setKnowledge(receiverId, String(expression.child.value), participants, val)
+                participants = this.setKnowledge(receiverId, String(expression.child.value), participants, decrypted, val)
             }
         })
 
@@ -263,18 +262,25 @@ export class Program {
         return participants
     }
 
-    setKnowledge(participant : string, knowledge : string, participants: participantMap, value : string = "") : participantMap{
+    encryptExpr(senderId : string, receiverId : string, inner : Expression[], outer : Type, participants: participantMap) : participantMap{
+        let decryptable = this.checkKeyKnowledge(receiverId, outer, participants)
+        return this.messageSendStmnt(senderId, receiverId, inner, participants, decryptable)
+    }
+
+    setKnowledge(participant : string, knowledge : string, participants: participantMap, decrypted : boolean, value : string = "") : participantMap{
         let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
 
         if (index >= 0) {
             participants[participant].knowledge[index] = {
                 id: knowledge,
-                value: value
+                value: value,
+                encrypted: decrypted
             }
         } else {
             participants[participant].knowledge.push({
                 id: knowledge,
-                value: value
+                value: value,
+                encrypted: decrypted
             })
         }
 
@@ -289,6 +295,19 @@ export class Program {
         } else {
             throw new Error("Invalid json: participant does not have knowledge!");
         }
+    }
+
+    checkKeyKnowledge(participant : string, key : Type,  participants: participantMap) : boolean {
+        if (key.type == "function") throw new Error("Invalid json: key type not implemented");
+        let key_str = String(key)
+        
+        // Check if key has a key relation
+        let tmp_key = this.keyRelations[key_str]
+        if (tmp_key) key_str = tmp_key
+
+        let index = participants[participant].knowledge.find((element) => element.id == key_str)
+
+        return (index != undefined)
     }
     
 }
