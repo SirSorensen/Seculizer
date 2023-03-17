@@ -6,7 +6,8 @@ import type { Participant, Statement, ParticipantStatement,
     Type,
     FunctionDefItem,
     FormatItem,
-    Expression} from '$lang/types/parser/interfaces';
+    Expression,
+    MatchCase} from '$lang/types/parser/interfaces';
 
 
 type _participant = {
@@ -157,28 +158,49 @@ export class Program {
 
         //Setup first frame
         let last = this.newFrame(null, this.init_participants, this.first)
+        if (this.first == null) throw new Error("Invalid json: no first frame created! First frame not properly initialized")
         
         // Protocol:
-
         if (json.protocol.statements){
-            this.parseProtocol(json.protocol.statements, last)
+            this.first.next = this.parseProtocol(json.protocol.statements, last)
         } else if (log) console.log("No protocol found");
         
         console.log("Program created");
     }
 
-    parseProtocol(statements: any, last : frame) : void {
-        statements.forEach( (stmnt: Statement) => {
-                let tmp_participants = last?.participants
-                if (this.checkIfMatchStmnt(stmnt)){
-                    //TODO fix this
-                    
-                } else {
-                    tmp_participants = this.pipeStmnt(stmnt, tmp_participants)
-                    last = this.newFrame(stmnt, tmp_participants, last)
-                }
-            });
+    parseProtocol(statements: Statement[] | Statement, last : frame) : frame {
+        if (last == null) throw new Error("Invalid json: last frame not properly initialized")
+
+        let tmp_participants = last.participants
+
+        if (statements instanceof Array && statements.length > 0) 
+        {
+            let stmnt = statements.shift()
+            if (stmnt == undefined) throw new Error("Invalid json: stmnt is undefined! Check if statements array is empty (parseProtocol)")
+
+            last.next = this.parseProtocol(stmnt, last)
+            if (last.next == null) throw new Error("Invalid json: next frame not properly initialized! (parseProtocol)")
+            if (statements.length > 0) last.next.next = this.parseProtocol(statements, last)
+        } 
+        else if (!(statements instanceof Array))
+        {
+            let stmnt = statements
+            
+            if (stmnt.child.type == "sendStatement" && stmnt.child.child.type == "matchStatement"){                    
+                    last.next = {}
+                    for (const caseIndex in stmnt.child.child.cases) {
+                        const matchCase = stmnt.child.child.cases[caseIndex];
+                        last.next[caseIndex] = this.parseProtocol(matchCase.children, last.next[caseIndex])
+                    }
+            } else {
+                tmp_participants = this.pipeStmnt(stmnt, tmp_participants)
+                last = this.newFrame(stmnt, tmp_participants, last)
+            }
         }
+        
+        return last;
+        
+    }
 
     newFrame(stmnt : any, participants: participantMap, last : frame) : frame{
         let tmp_last = {
@@ -188,8 +210,8 @@ export class Program {
             presentation: stmnt
         }
 
-        if (last != undefined) last.next = tmp_last
-        else this.first = last
+        if (last != null) last.next = tmp_last
+        else this.first = tmp_last
 
         return tmp_last
     }
@@ -305,6 +327,7 @@ export class Program {
         return participants
     }
 
+    // Find value of knowledge of participant
     findKnowledgeValue(participant : string, knowledge : string, participants: participantMap) : string{
         let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
 
@@ -315,6 +338,7 @@ export class Program {
         }
     }
 
+    // Check if participant has knowledge of given key
     checkKeyKnowledge(participant : string, key : Type,  participants: participantMap) : boolean {
         if (key.type == "function") throw new Error("Invalid json: key type not implemented");
         let key_str = String(key)
