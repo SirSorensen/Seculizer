@@ -171,8 +171,6 @@ export class Program {
     parseProtocol(statements: Statement[] | Statement, last : frame) : frame {
         if (last == null) throw new Error("Invalid json: last frame not properly initialized")
 
-        let tmp_participants = last.participants
-
         if (statements instanceof Array && statements.length > 0) 
         {
             let stmnt = statements.shift()
@@ -193,7 +191,7 @@ export class Program {
                         last.next[caseIndex] = this.parseProtocol(matchCase.children, last.next[caseIndex])
                     }
             } else {
-                tmp_participants = this.pipeStmnt(stmnt, tmp_participants)
+                let tmp_participants = this.pipeStmnt(stmnt, last.participants)
                 last = this.newFrame(stmnt, tmp_participants, last)
             }
         }
@@ -258,16 +256,18 @@ export class Program {
         }
     }
 
+    // New Statement
     newStmnt(participant : string, newKnowledge : string, participants: participantMap) : participantMap{
         return this.setKnowledge(participant, newKnowledge, participants, true)
     }
 
+    // Set Statement
     setStmnt(participant : string, knowledge : string, value : string, participants: participantMap) : participantMap{
         return this.setKnowledge(participant, knowledge, participants, true, value)
     }
 
+    // Pipe SendStatement to messageSendStatement, or matchStatement
     sendStmnt(stmnt : SendStatement, participants: participantMap) : participantMap{
-        // Pipe SendStatement
         if (stmnt.child.type == "messageSendStatement"){
             return this.messageSendStmnt(stmnt.leftId.value, stmnt.rightId.value, stmnt.child.expressions, participants)
         } else if (stmnt.child.type == "matchStatement"){
@@ -277,6 +277,7 @@ export class Program {
         }
     }
 
+    // Pipe MessageSendStatement to encryptExpression, signExpression, or setStatement
     messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], participants: participantMap, encrypted : boolean = false) : participantMap{
         knowledge.forEach((expression) => {
             if(expression.child.type == "encryptExpression"){
@@ -292,10 +293,12 @@ export class Program {
         return participants
     }
 
+    // TODO : implement matchStmnt
     matchStmnt(stmnt : MatchStatement, participants: participantMap) : participantMap{
         return participants
     }
 
+    // Acoomodate encryption of knowledge in messages
     encryptExpr(senderId : string, receiverId : string, inner : Expression[], outer : Type, participants: participantMap, encrypted : boolean) : participantMap{
         // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
         if (!encrypted){
@@ -307,6 +310,7 @@ export class Program {
         return this.messageSendStmnt(senderId, receiverId, inner, participants, encrypted)
     }
 
+    // Insert given knowledge into given participant or update existing knowledge, from given participants
     setKnowledge(participant : string, knowledge : string, participants: participantMap, encrypted : boolean, value : string = "") : participantMap{
         let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
 
@@ -334,7 +338,7 @@ export class Program {
         if (index >= 0) {
             return participants[participant].knowledge[index].value
         } else {
-            throw new Error("Invalid json: participant does not have knowledge!");
+            return ""
         }
     }
 
