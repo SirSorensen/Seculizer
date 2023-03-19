@@ -43,7 +43,6 @@ const Arrow = createToken({ name: "Arrow", pattern: /->/ });
 const Equal = createToken({ name: "Equal", pattern: /=/ });
 const Set = createToken({ name: "Set", pattern: /:=/ });
 const Slash = createToken({ name: "Slash", pattern: /\// });
-const As = createToken({ name: "As", pattern: /as/ });
 const Pipe = createToken({ name: "Pipe", pattern: /\|/ });
 const Dollar = createToken({ name: "Dollar", pattern: /\$/ });
 const Semicolon = createToken({ name: "Semicolon", pattern: /;/ });
@@ -82,7 +81,6 @@ const allTokens = [
   Comma,
   Colon,
   Arrow,
-  As,
   Semicolon,
   End,
   Slash,
@@ -369,15 +367,7 @@ export class SepoParser extends CstParser {
   private messageSend = this.RULE("messageSend", () => {
     this.MANY_SEP({
       SEP: Comma,
-      DEF: () => this.SUBRULE(this.messageSendElement),
-    });
-  });
-
-  private messageSendElement = this.RULE("messageSendElement", () => {
-    this.SUBRULE(this.expression);
-    this.OPTION(() => {
-      this.CONSUME(As);
-      this.CONSUME(Id);
+      DEF: () => this.SUBRULE(this.expression),
     });
   });
 
@@ -396,7 +386,7 @@ export class SepoParser extends CstParser {
       DEF: () => this.SUBRULE(this.expression),
     });
     this.CONSUME(RightBrace);
-    this.SUBRULE1(this.expression);
+    this.SUBRULE(this.type);
   });
 
   private sign = this.RULE("sign", () => {
@@ -408,6 +398,6 @@ export class SepoParser extends CstParser {
     });
     this.CONSUME1(Pipe);
     this.CONSUME(RightBrace);
-    this.SUBRULE1(this.expression);
+    this.SUBRULE(this.type);
   });
 }

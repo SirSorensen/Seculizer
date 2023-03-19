@@ -1,10 +1,10 @@
 <script lang="ts">
   import Editor from "$lib/components/Editor.svelte";
+  import FileUpload from "$lib/components/FileUpload.svelte";
   import Header from "$lib/components/Header.svelte";
   import {Program} from "$lib/program";
   import {test} from "$lib/test.js";
   let content = test;
-
   let parsed: any = undefined;
 
   function parseContent() {
@@ -21,6 +21,8 @@
         parsed = data;
       })
   }
+
+  
 </script>
 
 <div id="main">
@@ -29,6 +31,7 @@
     {#if parsed}
       <pre>{JSON.stringify(parsed, null, 2)}</pre>
     {:else}
+      <FileUpload bind:content />
       <Editor bind:content />
       <button disabled={content.trim() === ""} on:click={parseContent}>Generate</button>
     {/if}

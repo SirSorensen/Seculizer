@@ -37,7 +37,8 @@
   .editor-container {
     position: relative;
     width: 60vw;
-    height: 100px;
+    height: 400px;
+    max-height: 80vh;
     margin: 0 auto;
   }
   .editor,

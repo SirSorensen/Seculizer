@@ -2,7 +2,7 @@ export interface ASTNode {
   type: string;
 }
 
-export type Type = StringLiteral | NumberLiteral | Id | FunctionCall | null
+export type Type = StringLiteral | NumberLiteral | Id | FunctionCall
 
 export interface StringLiteral extends ASTNode {
   type: "string";
@@ -76,8 +76,8 @@ export interface Equations extends ASTNode {
 
 export interface Equation extends ASTNode {
   type: "equation";
-  left: Function;
-  right: Function;
+  left: FunctionCall;
+  right: FunctionCall;
 }
 
 export interface Format extends ASTNode {
@@ -87,7 +87,7 @@ export interface Format extends ASTNode {
 
 export interface FormatItem extends ASTNode {
   type: "formatItem";
-  function: Function;
+  function: FunctionCall;
   format: StringLiteral | LatexLiteral;
 }
 
@@ -109,10 +109,7 @@ export interface Knowledge extends ASTNode {
 export interface KnowledgeItem extends ASTNode {
   type: "knowledgeItem";
   id: Id;
-  children: {
-    functions: FunctionCall[];
-    ids: Id[];
-  };
+  children: Type[];
 }
 
 export interface Protocol extends ASTNode {
@@ -122,7 +119,7 @@ export interface Protocol extends ASTNode {
 
 export interface Statement extends ASTNode {
   type: "statement";
-  child: ClearStatement | ParticipantStatement | SendStatement | null;
+  child: ClearStatement | ParticipantStatement | SendStatement;
 }
 
 export interface ClearStatement extends ASTNode {
@@ -133,7 +130,7 @@ export interface ClearStatement extends ASTNode {
 export interface ParticipantStatement extends ASTNode {
   type: "participantStatement";
   id: Id;
-  child: NewStatement | SetStatement | null;
+  child: NewStatement | SetStatement;
 }
 
 export interface NewStatement extends ASTNode {
@@ -151,18 +148,12 @@ export interface SendStatement extends ASTNode {
   type: "sendStatement";
   leftId: Id;
   rightId: Id;
-  child: MessageSendStatement | MatchStatement | null;
+  child: MessageSendStatement | MatchStatement;
 }
 
 export interface MessageSendStatement extends ASTNode {
   type: "messageSendStatement";
-  ids: MessageSendElement[];
-}
-
-export interface MessageSendElement extends ASTNode {
-  type: "messageSendElement";
-  expression: Expression;
-  alias: Id | null;
+  expressions: Expression[];
 }
 
 export interface MatchStatement extends ASTNode {
@@ -186,10 +177,10 @@ export interface Expression extends ASTNode {
 export interface EncryptExpression extends ASTNode {
     type: "encryptExpression";
     inner: Expression[];
-    outer: Expression;
+    outer: Type;
 } 
 export interface SignExpression extends ASTNode {
     type: "signExpression";
     inner: Expression[];
-    outer: Expression;
+    outer: Type;
 } 

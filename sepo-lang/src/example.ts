@@ -3,7 +3,7 @@ import parse from "./index.js";
 //import { Parser } from './parser/parser.js';
 const lexerTest = async (): Promise<void> => {
   await fs.readFile(
-    "./examples/test.st",
+    "./examples/test.sepo",
     (err: NodeJS.ErrnoException | null, data: any) => {
       if (err !== null) {
         console.error(err);

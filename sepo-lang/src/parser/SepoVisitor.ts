@@ -1,6 +1,6 @@
 import { SepoParser } from "./parser.js";
 import { throwSimpleParseError } from './ParseError';
-import { ClearStatement, EncryptExpression, Equation, Equations, Expression, Format, FormatItem, FunctionCall, FunctionDefItem, FunctionsDef, Icons, Id, KeyRelation, KeyRelations, Knowledge, KnowledgeItem, LatexLiteral, MatchCase, MatchStatement, MessageSendElement, MessageSendStatement, NewStatement, Participant, Participants, ParticipantStatement, Protocol, SetStatement, SignExpression, Statement, Type } from "./interfaces.js";
+import { ClearStatement, EncryptExpression, Equation, Equations, Expression, Format, FormatItem, FunctionCall, FunctionDefItem, FunctionsDef, Icons, Id, KeyRelation, KeyRelations, Knowledge, KnowledgeItem, LatexLiteral, MatchCase, MatchStatement, MessageSendStatement, NewStatement, Participant, Participants, ParticipantStatement, Protocol, SetStatement, SignExpression, Statement, Type } from "./interfaces.js";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -63,8 +63,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
       }
     }
     
-    throwSimpleParseError("Unknown type", ctx[Object.keys(ctx)[0]][0], this.template)
-    return null;
+    return throwSimpleParseError("Unknown type", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
   knowledgeList(ctx: any): Knowledge {
@@ -205,7 +204,10 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   latex(ctx: any):LatexLiteral {
     let latex = ctx.latexLiteral[0].image;
-    return { type: "latex", value: latex };
+    return { 
+      type: "latex", 
+      value: latex 
+    };
   }
 
   protocol(ctx: any):Protocol {
@@ -284,10 +286,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         }
     }
     //TODO THROW ERROR HERE and remove possibility of null
-    return {
-        type: "statement",
-        child: null
-    }
+    return throwSimpleParseError("Uknown statement", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
   clear(ctx: any):ClearStatement {
@@ -317,11 +316,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         }
     }
     //TODO THROW ERROR HERE and remove possibility of null
-    return {
-        type: "participantStatement",
-        id: id,
-        child: null
-    };
+    return throwSimpleParseError("Uknown participant statement", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
   new(ctx: any):NewStatement {
@@ -361,20 +356,10 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   messageSend(ctx: any):MessageSendStatement {
-    const elements = ctx.messageSendElement.map((m: any) => this.visit(m));
+    const elements = ctx.expression.map((e: any) => this.visit(e));
     return {
         type: "messageSendStatement",
-        ids: elements
-    }
-  }
-
-  messageSendElement(ctx: any):MessageSendElement {
-    const expression = this.visit(ctx.expression);
-    const alias = ctx.Id && ctx.Id[0] ? ctx.Id[0].image : null;
-    return {
-        type: "messageSendElement",
-        expression: expression,
-        alias: alias
+        expressions: elements
     }
   }
 
@@ -407,22 +392,22 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   encrypt(ctx: any):EncryptExpression {
+    const type:Type = this.visit(ctx.type);
     const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
-    const [last, ...rest] = expressions;
     return {
         type: "encryptExpression",
-        inner: rest,
-        outer: last
+        inner: expressions,
+        outer: type
     }
   }
 
   sign(ctx: any):SignExpression {
+    const type:Type = this.visit(ctx.type);
     const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
-    const [last, ...rest] = expressions;
     return {
         type: "signExpression",
-        inner: rest,
-        outer: last
+        inner: expressions,
+        outer: type
     }
   }
 }
