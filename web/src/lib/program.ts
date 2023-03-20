@@ -209,7 +209,7 @@ export class Program {
     }
 
     newFrame(stmnt : any, participants: participantMap, last : frame) : frame{
-        //if (this.log) console.log("New frame created", stmnt, participants, last)
+        if (this.log) console.log("New frame created", stmnt, participants, last)
 
         let tmp_last = {
             next: null,
@@ -339,6 +339,7 @@ export class Program {
 
     // Find value of knowledge of participant
     findKnowledgeValue(participant : string, knowledge : Type, participants: participantMap) : string{
+        if (this.log) console.log("findKnowledgeValue", participant, knowledge, participants)
         let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
 
         if (index >= 0) {

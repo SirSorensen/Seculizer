@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import parse from "$lang/index.js"
 
 
-test('Program with simple.st', () => {
+test('Program with simple.sepo', () => {
     let fileStr = readFileSync("tests/sepo/simple.sepo");
     let json = parse(fileStr, false)
     let program = new Program(json, true)
@@ -12,7 +12,7 @@ test('Program with simple.st', () => {
     expect(program).toBeTruthy()
 })
 
-test('Program with simple.st', () => {
+test('Program with TPM.sepo', () => {
     let fileStr = readFileSync("tests/sepo/TPM.sepo");
     let json = parse(fileStr, false)
     let program = new Program(json, true)

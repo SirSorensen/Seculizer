@@ -5,7 +5,7 @@
         "name": "Debug npm run example",
         "type": "node",
         "request": "launch",
-        "cwd": "${workspaceRoot}/Language",
+        "cwd": "${workspaceRoot}/sepo-lang",
         "runtimeExecutable": "npm",
         "runtimeArgs": [
           "run",
