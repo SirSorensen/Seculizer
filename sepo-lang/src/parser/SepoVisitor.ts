@@ -1,6 +1,7 @@
 import { SepoParser } from "./parser.js";
 import { throwSimpleParseError } from './ParseError';
-import { ClearStatement, EncryptExpression, Equation, Equations, Expression, Format, FormatItem, FunctionCall, FunctionDefItem, FunctionsDef, Icons, Id, KeyRelation, KeyRelations, Knowledge, KnowledgeItem, LatexLiteral, MatchCase, MatchStatement, MessageSendStatement, NewStatement, Participant, Participants, ParticipantStatement, Protocol, SetStatement, SignExpression, Statement, Type } from "./interfaces.js";
+import { ClearCST, ClearStatement, EncryptCST, EncryptExpression, Equation, EquationCST, EquationElementCST, Equations, Expression, ExpressionCST, Format, FormatCST, FormatElementCST, FormatItem, FunctionCall, FunctionCallCST, FunctionDefItem, FunctionItemCST, FunctionsDef, FunctionsDefCST, Icons, IconsCST, IconSetCST, Id, KeyRelation, KeyRelationCST, KeyRelationListCST, KeyRelations, Knowledge, KnowledgeCST, KnowledgeItem, KnowledgeListCST, LatexCST, LatexLiteral, MatchCase, MatchCaseCST, MatchCST, MatchStatement, MessageSendCST, MessageSendStatement, NewCST, NewStatement, Participant, ParticipantCST, Participants, ParticipantsCST, ParticipantStatement, ParticipantStatementCST, ProgramCST, Protocol, ProtocolCST, PublicKeyRelationCST, SecretKeyRelationCST, SetCST, SetStatement, SignCST, SignExpression, Statement, StatementCST, Type, TypeCST } from "./interfaces.js";
+import { IToken } from "chevrotain";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -13,7 +14,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     this.validateVisitor();
   }
 
-  program(ctx: any) {
+  program(ctx: ProgramCST) {
     const participants = this.visit(ctx.participants);
     const knowledge = this.visit(ctx.knowledgeList);
     const keyRelations = this.visit(ctx.keyRelationList);
@@ -36,7 +37,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  type(ctx: any):Type {
+  type(ctx: TypeCST):Type {
     const functionChild = this.visit(ctx.function);
     if (functionChild) {
         return functionChild
@@ -52,7 +53,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     if (numberChild && numberChild.length > 0) {
         return {
           type: "number",
-          value: numberChild[0].image,
+          value: parseInt(numberChild[0].image),
       }
     }
     const stringChild = ctx.StringLiteral;
@@ -66,18 +67,18 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     return throwSimpleParseError("Unknown type", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
-  knowledgeList(ctx: any): Knowledge {
-    const knowledge : KnowledgeItem[] = ctx.knowledge.map((k: any) => this.visit(k));
+  knowledgeList(ctx: KnowledgeListCST): Knowledge {
+    const knowledge : KnowledgeItem[] = ctx.knowledge.map((k: KnowledgeCST) => this.visit(k));
     return {
       type: "knowledge",
       knowledge: knowledge,
     };
   }
 
-  knowledge(ctx: any): KnowledgeItem {
+  knowledge(ctx: KnowledgeCST): KnowledgeItem {
 
     const id:string = ctx.Id[0].image;
-    const children = ctx.type.map((t: any) => this.visit(t));
+    const children = ctx.type.map((t: TypeCST) => this.visit(t));
     return {
         type: "knowledgeItem",
         id: {
@@ -88,15 +89,15 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     }
   }
 
-  keyRelationList(ctx: any): KeyRelations {
-    const keyRelations = ctx.keyRelation.map((k: any) => this.visit(k));
+  keyRelationList(ctx: KeyRelationListCST): KeyRelations {
+    const keyRelations = ctx.keyRelation.map((k: KeyRelationCST) => this.visit(k));
     return {
       type: "keyRelations",
       keyRelations: keyRelations,
     };
   }
 
-  keyRelation(ctx: any): KeyRelation {
+  keyRelation(ctx: KeyRelationCST): KeyRelation {
     const sk = this.visit(ctx.secretKeyRelation);
     const pk = this.visit(ctx.publicKeyRelation);
     return {
@@ -106,7 +107,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  secretKeyRelation(ctx: any): Id {
+  secretKeyRelation(ctx: SecretKeyRelationCST): Id {
     const id:string = ctx.Id[0].image;
     return  {
               type: "id",
@@ -114,7 +115,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
             };
   }
 
-  publicKeyRelation(ctx: any): Id {
+  publicKeyRelation(ctx: PublicKeyRelationCST): Id {
     const id:string = ctx.Id[0].image;
     return {
         type: "id",
@@ -122,9 +123,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
       };
   }
 
-  function(ctx: any): FunctionCall {
+  function(ctx: FunctionCallCST): FunctionCall {
     const id:string = ctx.Id[0].image;
-    const params = ctx.type.map((p: any) => this.visit(p));
+    const params = ctx.type.map((p: TypeCST) => this.visit(p));
     return  {
               type: "function",
               id: id,
@@ -132,8 +133,8 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
             };
   }
 
-  participants(ctx: any): Participants {
-    const participants = ctx.participant.map((p: any) => this.visit(p));
+  participants(ctx: ParticipantsCST): Participants {
+    const participants = ctx.participant.map((p: ParticipantCST) => this.visit(p));
 
     return {
       type: "participants",
@@ -141,7 +142,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  participant(ctx: any): Participant {
+  participant(ctx: ParticipantCST): Participant {
     const id:string = ctx.Id[0].image;
     return {
       type: "participant",
@@ -152,17 +153,17 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  functionsDef(ctx: any): FunctionsDef {
-    const functions = ctx.functionItem.map((f: any) => this.visit(f));
+  functionsDef(ctx: FunctionsDefCST): FunctionsDef {
+    const functions = ctx.functionItem.map((f: FunctionItemCST) => this.visit(f));
     return {
       type: "functionsDef",
       functions: functions,
     };
   }
 
-  functionItem(ctx: any): FunctionDefItem {
+  functionItem(ctx: FunctionItemCST): FunctionDefItem {
     const id:string = ctx.Id[0].image;
-    const params = ctx.NumberLiteral[0].image;
+    const params = parseInt(ctx.NumberLiteral[0].image);
     return {
       type: "functionDef",
       id: {
@@ -173,17 +174,17 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  equation(ctx: any): Equations {
-    const equations = ctx.equationElement.map((e: any) => this.visit(e));
+  equation(ctx: EquationCST): Equations {
+    const equations = ctx.equationElement.map((e: EquationElementCST) => this.visit(e));
     return {
       type: "equations",
       equations: equations,
     };
   }
 
-  equationElement(ctx: any): Equation {
+  equationElement(ctx: EquationElementCST): Equation {
     const leftFunction = this.visit(ctx.function[0]);
-    const rightFunction = this.visit(ctx.function[0]);
+    const rightFunction = this.visit(ctx.function[1]);
     return {
       type: "equation",
       left: leftFunction,
@@ -191,15 +192,15 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  format(ctx: any): Format {
-    const formats = ctx.formatElement.map((f: any) => this.visit(f));
+  format(ctx: FormatCST): Format {
+    const formats = ctx.formatElement.map((f: FormatElementCST) => this.visit(f));
     return {
       type: "format",
       formats: formats,
     };
   }
 
-  formatElement(ctx: any): FormatItem {
+  formatElement(ctx: FormatElementCST): FormatItem {
     const functionCall = this.visit(ctx.function);
     const string = ctx.StringLiteral;
     if (string && string.length > 0) {
@@ -217,7 +218,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  latex(ctx: any):LatexLiteral {
+  latex(ctx: LatexCST):LatexLiteral {
     let latex = ctx.latexLiteral[0].image;
     return { 
       type: "latex", 
@@ -225,18 +226,18 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  protocol(ctx: any):Protocol {
-    const statements = ctx.statement.map((s: any) => this.visit(s));
+  protocol(ctx: ProtocolCST):Protocol {
+    const statements = ctx.statement.map((s: StatementCST) => this.visit(s));
     return {
         type: "protocol",
         statements: statements
     }
   }
 
-  icons(ctx: any): Icons {
+  icons(ctx: IconsCST): Icons {
     let map = new Map<Id, string>();
     
-    ctx.iconSet.forEach((icon: any) => {
+    ctx.iconSet.forEach((icon: IconSetCST) => {
       let set = this.visit(icon)
       set.ids.forEach((id: Id) => {
         map.set(id, set.emoji);
@@ -249,15 +250,15 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  iconSet(ctx: any) {
+  iconSet(ctx: IconSetCST) {
     const emoji = ctx.StringLiteral[0].image;
-    let ids = ctx.Id.map((id:any) => {
+    let ids = ctx.Id.map((id:IToken) => {
       return id.image;
     });
     return {emoji: emoji, ids: ids};
   }
 
-  statement(ctx: any):Statement {
+  statement(ctx: StatementCST):Statement {
     const clear = this.visit(ctx.clear);
     if (clear) {
         return {
@@ -316,7 +317,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     return throwSimpleParseError("Uknown statement", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
-  clear(ctx: any):ClearStatement {
+  clear(ctx: ClearCST):ClearStatement {
     const id:string = ctx.Id[0].image;
     return {
         type: "clearStatement",
@@ -327,9 +328,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     }
   }
 
-  participantStatement(ctx: any):ParticipantStatement {
+  participantStatement(ctx: ParticipantStatementCST):ParticipantStatement {
     const id:string = ctx.Id[0].image;
-    const newStatement = this.visit(ctx.new);
+    const newStatement:NewStatement = this.visit(ctx.new);
     if (newStatement) {
         return {
             type: "participantStatement",
@@ -340,7 +341,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
             child: newStatement
         }
     }
-    const setStatement = this.visit(ctx.set);
+    const setStatement:SetStatement = this.visit(ctx.set);
     if (setStatement) {
         return {
             type: "participantStatement",
@@ -355,7 +356,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     return throwSimpleParseError("Uknown participant statement", ctx[Object.keys(ctx)[0]][0], this.template)
   }
 
-  new(ctx: any):NewStatement {
+  new(ctx: NewCST):NewStatement {
     const id:string = ctx.Id[0].image;
     return {
         type: "newStatement",
@@ -366,7 +367,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     }
   }
 
-  set(ctx: any):SetStatement {
+  set(ctx: SetCST):SetStatement {
     const id:string = ctx.Id[0].image;
     const type = this.visit(ctx.type);
     return {
@@ -379,17 +380,17 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     }
   }
 
-  match(ctx: any):MatchStatement {
-    const cases : MatchCase[] = ctx.matchCase.map((c: any) => this.visit(c));
+  match(ctx: MatchCST):MatchStatement {
+    const cases : MatchCase[] = ctx.matchCase.map((c: MatchCaseCST) => this.visit(c));
     return {
         type: "matchStatement",
         cases: cases
     }
   }
 
-  matchCase(ctx: any):MatchCase {
+  matchCase(ctx: MatchCaseCST):MatchCase {
     const type:Type = this.visit(ctx.Type);
-    const statements:Statement[] = ctx.statement.map((s: any) => this.visit(s));
+    const statements:Statement[] = ctx.statement.map((s: StatementCST) => this.visit(s));
     return {
         type: "matchCase",
         case: type,
@@ -397,15 +398,15 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  messageSend(ctx: any):MessageSendStatement {
-    const elements = ctx.expression.map((e: any) => this.visit(e));
+  messageSend(ctx: MessageSendCST):MessageSendStatement {
+    const elements = ctx.expression.map((e: ExpressionCST) => this.visit(e));
     return {
         type: "messageSendStatement",
         expressions: elements
     }
   }
 
-  expression(ctx: any):Expression {
+  expression(ctx: ExpressionCST):Expression {
 
     const type:Type = this.visit(ctx.type);
     if(type) {
@@ -433,9 +434,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     throw new Error("Expression not found");
   }
 
-  encrypt(ctx: any):EncryptExpression {
+  encrypt(ctx: EncryptCST):EncryptExpression {
     const type:Type = this.visit(ctx.type);
-    const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
+    const expressions:Expression[] = ctx.expression.map((e: ExpressionCST) => this.visit(e));
     return {
         type: "encryptExpression",
         inner: expressions,
@@ -443,9 +444,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     }
   }
 
-  sign(ctx: any):SignExpression {
+  sign(ctx: SignCST):SignExpression {
     const type:Type = this.visit(ctx.type);
-    const expressions:Expression[] = ctx.expression.map((e: any) => this.visit(e));
+    const expressions:Expression[] = ctx.expression.map((e: ExpressionCST) => this.visit(e));
     return {
         type: "signExpression",
         inner: expressions,
