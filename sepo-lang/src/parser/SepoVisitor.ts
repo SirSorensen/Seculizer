@@ -76,11 +76,14 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   knowledge(ctx: any): KnowledgeItem {
 
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     const children = ctx.type.map((t: any) => this.visit(t));
     return {
         type: "knowledgeItem",
-        id: id,
+        id: {
+              type: "id",
+              value: id,
+            },
         children: children
     }
   }
@@ -104,23 +107,29 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   secretKeyRelation(ctx: any): Id {
-    const id = ctx.Id[0].image;
-    return id;
+    const id:string = ctx.Id[0].image;
+    return  {
+              type: "id",
+              value: id,
+            };
   }
 
   publicKeyRelation(ctx: any): Id {
-    const id = ctx.Id[0].image;
-    return id;
+    const id:string = ctx.Id[0].image;
+    return {
+        type: "id",
+        value: id,
+      };
   }
 
   function(ctx: any): FunctionCall {
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     const params = ctx.type.map((p: any) => this.visit(p));
-    return {
-      type: "function",
-      id: id,
-      params: params,
-    };
+    return  {
+              type: "function",
+              id: id,
+              params: params,
+            };
   }
 
   participants(ctx: any): Participants {
@@ -152,11 +161,14 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   functionItem(ctx: any): FunctionDefItem {
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     const params = ctx.NumberLiteral[0].image;
     return {
       type: "functionDef",
-      id: id,
+      id: {
+            type: "id",
+            value: id,
+          },
       params: params,
     };
   }
@@ -293,20 +305,26 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   clear(ctx: any):ClearStatement {
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     return {
         type: "clearStatement",
-        id: id
+        id: {
+              type: "id",
+              value: id,
+            }
     }
   }
 
   participantStatement(ctx: any):ParticipantStatement {
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     const newStatement = this.visit(ctx.new);
     if (newStatement) {
         return {
             type: "participantStatement",
-            id: id,
+            id: {
+                  type: "id",
+                  value: id,
+                },
             child: newStatement
         }
     }
@@ -314,7 +332,10 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     if (setStatement) {
         return {
             type: "participantStatement",
-            id: id,
+            id: {
+                  type: "id",
+                  value: id,
+                },
             child: setStatement
         }
     }
@@ -323,19 +344,25 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   new(ctx: any):NewStatement {
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     return {
         type: "newStatement",
-        id: id
+        id: {
+              type: "id",
+              value: id,
+            }
     }
   }
 
   set(ctx: any):SetStatement {
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     const type = this.visit(ctx.type);
     return {
         type: "setStatement",
-        id: id,
+        id: {
+              type: "id",
+              value: id,
+            },
         value: type
     }
   }
