@@ -68,8 +68,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 60vw;
-    margin: auto;
+    width: 100%;
     background-color: rgb(235, 235, 235);
     border: 0.2rem dashed rgb(200, 200, 200);
     padding: 1rem;
