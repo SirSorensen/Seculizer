@@ -36,7 +36,7 @@
 <style>
   .editor-container {
     position: relative;
-    width: 60vw;
+    width: 100%;
     height: 400px;
     max-height: 80vh;
     margin: 0 auto;
