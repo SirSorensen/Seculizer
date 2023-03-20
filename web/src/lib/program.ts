@@ -16,7 +16,7 @@ type _participant = {
 }
 
 type _knowledge = {
-    id: string
+    id: Type
     value: string
     encrypted : boolean
 }
@@ -33,7 +33,7 @@ type frame = {
 type _format = {
     //Function
     id: string
-    params: string[]
+    params: Type[]
 
     //Latex
     latex: string
@@ -82,14 +82,11 @@ export class Program {
         if (json.knowledge){
             json.knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
                 knowledge.children.forEach((child: Type) => {
-                    if (child.type == "function") throw new Error("Invalid json: stmnt child value type not implemented");
-                    else {
-                        this.init_participants[knowledge.id.value].knowledge.push({
-                            id: String(child.value),
+                    this.init_participants[knowledge.id.value].knowledge.push({
+                            id: child,
                             value: "",
                             encrypted: false
                         })
-                    }
                 })
             })
             if (log) console.log("Knowledge added to participants", this.init_participants);
@@ -138,8 +135,7 @@ export class Program {
                 }
 
                 format.function.params.forEach((param: Type) => {
-                    if (param.type == "function") throw new Error("Invalid json: stmnt child value type not implemented");
-                    else tmp_format.params.push(String(param.value));
+                    tmp_format.params.push(param);
                 })
 
                 this.formats[format.function.id] = tmp_format
@@ -169,6 +165,7 @@ export class Program {
     }
 
     parseProtocol(statements: Statement[] | Statement, last : frame) : frame {
+        console.log("Parseprotocol! Last = ", last)
         if (last == null) throw new Error("Invalid json: last frame not properly initialized")
 
         if (statements instanceof Array && statements.length > 0) 
@@ -223,19 +220,17 @@ export class Program {
 
         switch (stmnt.child.type) {
             case "clearStatement":
-                return this.clearStmnt(stmnt.child.id.value, participants)
+                return this.clearStmnt(stmnt.child.id, participants)
             case "participantStatement":
                 return this.participantStmnt(stmnt.child, participants)
-                // TODO: create methond for newStatement
             case "sendStatement":
                 return this.sendStmnt(stmnt.child, participants)
-                // TODO: create methond for newStatement
             default:
                 throw new Error("Invalid json: stmnt type not found");    
         }
     }
 
-    clearStmnt(knowledge: string, participants: participantMap) : participantMap{
+    clearStmnt(knowledge: Type, participants: participantMap) : participantMap{
         Object.keys(participants).forEach((participant: string) => {
             participants[participant].knowledge =  participants[participant].knowledge.filter(
                                                             (item: _knowledge) => item.id != knowledge
@@ -247,22 +242,21 @@ export class Program {
     participantStmnt(stmnt : ParticipantStatement, participants: participantMap) : participantMap{        
         // Pipe ParticipantStatement
         if (stmnt.child.type == "newStatement"){
-            return this.newStmnt(stmnt.id.value, stmnt.child.id.value, participants)
+            return this.newStmnt(stmnt.id.value, stmnt.child.id, participants)
         } else if (stmnt.child.type == "setStatement"){
-            if (stmnt.child.value.type == "function") throw new Error("Invalid json: stmnt child value type not implemented");
-            else return this.setStmnt(stmnt.id.value, stmnt.child.id.value, String(stmnt.child.value.value), participants)
+            return this.setStmnt(stmnt.id.value, stmnt.child.id, String(stmnt.child.value), participants)
         } else {
             throw new Error("Invalid json: stmnt child type not implemented");
         }
     }
 
     // New Statement
-    newStmnt(participant : string, newKnowledge : string, participants: participantMap) : participantMap{
+    newStmnt(participant : string, newKnowledge : Type, participants: participantMap) : participantMap{
         return this.setKnowledge(participant, newKnowledge, participants, true)
     }
 
     // Set Statement
-    setStmnt(participant : string, knowledge : string, value : string, participants: participantMap) : participantMap{
+    setStmnt(participant : string, knowledge : Type, value : string, participants: participantMap) : participantMap{
         return this.setKnowledge(participant, knowledge, participants, true, value)
     }
 
@@ -285,9 +279,8 @@ export class Program {
             } else if(expression.child.type == "signExpression"){
                 participants = this.messageSendStmnt(senderId, receiverId, expression.child.inner, participants, encrypted)
             } else {
-                if (expression.child.type == "function") throw new Error("Invalid json: stmnt child value type not implemented");
-                let val = this.findKnowledgeValue(senderId, String(expression.child.value), participants)
-                participants = this.setKnowledge(receiverId, String(expression.child.value), participants, encrypted, val)
+                let val = this.findKnowledgeValue(senderId, expression.child, participants)
+                participants = this.setKnowledge(receiverId, expression.child, participants, encrypted, val)
             }
         })
         return participants
@@ -311,7 +304,7 @@ export class Program {
     }
 
     // Insert given knowledge into given participant or update existing knowledge, from given participants
-    setKnowledge(participant : string, knowledge : string, participants: participantMap, encrypted : boolean, value : string = "") : participantMap{
+    setKnowledge(participant : string, knowledge : Type, participants: participantMap, encrypted : boolean, value : string = "") : participantMap{
         let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
 
         if (index >= 0) {
@@ -332,7 +325,7 @@ export class Program {
     }
 
     // Find value of knowledge of participant
-    findKnowledgeValue(participant : string, knowledge : string, participants: participantMap) : string{
+    findKnowledgeValue(participant : string, knowledge : Type, participants: participantMap) : string{
         let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
 
         if (index >= 0) {
@@ -344,14 +337,14 @@ export class Program {
 
     // Check if participant has knowledge of given key
     checkKeyKnowledge(participant : string, key : Type,  participants: participantMap) : boolean {
-        if (key.type == "function") throw new Error("Invalid json: key type not implemented");
-        let key_str = String(key)
         
         // Check if key has a key relation
-        let tmp_key = this.keyRelations[key_str]
-        if (tmp_key) key_str = tmp_key
+        if (key.type == "id") {
+            let tmp_key = this.keyRelations[key.value]
+            if (tmp_key) key.value = tmp_key
+        }
 
-        let index = participants[participant].knowledge.find((element) => element.id == key_str)
+        let index = participants[participant].knowledge.find((element) => element.id == key)
 
         return (index != undefined)
     }    
