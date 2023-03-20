@@ -8,6 +8,7 @@
     "build": "rollup -c",
     "test": "rollup -c && vitest",
     "example": "rollup -c rollup.config.example.js && node ./dist/example.js",
+    "diagram": "rollup -c rollup.config.diagram.js && node ./dist/diagram.js",
     "coverage": "rollup -c && vitest run --coverage"
   },
   "repository": {

@@ -133,10 +133,13 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   participant(ctx: any): Participant {
-    const id = ctx.Id[0].image;
+    const id:string = ctx.Id[0].image;
     return {
       type: "participant",
-      id: id,
+      id: {
+        type: "id",
+        value: id,
+      },
     };
   }
 

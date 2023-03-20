@@ -23,7 +23,7 @@ type _knowledge = {
 
 type participantMap = {[id: string]: _participant}
 
-type frame = {
+export type frame = {
     next : frame | {[id: string]: frame}
     prev : frame
     participants :  participantMap
@@ -61,6 +61,8 @@ export class Program {
         // Participants:
         // Create participants
         if (json.participants){
+            console.log(json.participants.participants);
+            
             json.participants.participants.forEach((participant: Participant) => {
                 this.init_participants[participant.id.value] = {
                     name: participant.id.value,
