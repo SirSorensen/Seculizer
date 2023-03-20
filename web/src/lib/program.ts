@@ -7,7 +7,8 @@ import type { Participant, Statement, ParticipantStatement,
     FunctionDefItem,
     FormatItem,
     Expression,
-    MatchCase} from '$lang/types/parser/interfaces';
+    MatchCase,
+    KeyRelation} from '$lang/types/parser/interfaces';
 
 
 type _participant = {
@@ -103,8 +104,11 @@ export class Program {
 
         // KeyRelations:
         if (json.keyRelations){
-            json.keyRelations.keyRelations.forEach((keyRelation: any) => 
-                this.keyRelations[keyRelation.name] = keyRelation.value
+            json.keyRelations.keyRelations.forEach((keyRelation: KeyRelation) => {
+                let sk = keyRelation.sk.value
+                let pk = keyRelation.pk.value
+                this.keyRelations[pk] = sk
+            }
             )
             if (this.log) console.log("KeyRelations created", this.keyRelations);
         } else if (this.log) console.log("No keyRelations found");
