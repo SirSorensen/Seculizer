@@ -19,3 +19,27 @@ test('Program with TPM.sepo', () => {
     console.log(" ")
     expect(program).toBeTruthy()
 })
+
+test('Program with key-relation.sepo', () => {
+    let fileStr = readFileSync("tests/sepo/key-relation.sepo");
+    let json = parse(fileStr, false)
+    let program = new Program(json, true)
+    console.log(" ")
+    expect(program).toBeTruthy()
+})
+
+test('Program with send.sepo', () => {
+    let fileStr = readFileSync("tests/sepo/send.sepo");
+    let json = parse(fileStr, false)
+    let program = new Program(json, true)
+    console.log(" ")
+    expect(program).toBeTruthy()
+})
+
+test('Program with send-with-enc.sepo', () => {
+    let fileStr = readFileSync("tests/sepo/send-with-enc.sepo");
+    let json = parse(fileStr, false)
+    let program = new Program(json, true)
+    console.log(" ")
+    expect(program).toBeTruthy()
+})
