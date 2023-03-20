@@ -67,7 +67,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   knowledgeList(ctx: any): Knowledge {
-    const knowledge = ctx.knowledge.map((k: any) => this.visit(k));
+    const knowledge : KnowledgeItem[] = ctx.knowledge.map((k: any) => this.visit(k));
     return {
       type: "knowledge",
       knowledge: knowledge,
@@ -273,16 +273,22 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         }
     }
     if(ctx.Id && ctx.Id.length >= 2){
-        const leftId = ctx.Id[0].image;
-        const rightId = ctx.Id[1].image;
+        const leftId: string = ctx.Id[0].image;
+        const rightId: string = ctx.Id[1].image;
         const match = this.visit(ctx.match);
         if(match) {
             return {
                 type: "statement",
                 child: {
                     type: "sendStatement",
-                    leftId: leftId,
-                    rightId: rightId,
+                    leftId: {
+                      type: "id",
+                      value: leftId,
+                    },
+                    rightId: {
+                      type: "id",
+                      value: rightId,
+                    },
                     child: match
                 }
             }
@@ -293,8 +299,14 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
                 type: "statement",
                 child: {
                     type: "sendStatement",
-                    leftId: leftId,
-                    rightId: rightId,
+                    leftId: {
+                      type: "id",
+                      value: leftId,
+                    },
+                    rightId: {
+                      type: "id",
+                      value: rightId,
+                    },
                     child: messageSend
                 }
             }
@@ -368,7 +380,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   match(ctx: any):MatchStatement {
-    const cases = ctx.matchCase.map((c: any) => this.visit(c));
+    const cases : MatchCase[] = ctx.matchCase.map((c: any) => this.visit(c));
     return {
         type: "matchStatement",
         cases: cases
