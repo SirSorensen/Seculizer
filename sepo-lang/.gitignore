@@ -3,3 +3,5 @@
 test.json
 test.ast.json
 test.cst.json
+.DS_Store
+diagrams/*.html

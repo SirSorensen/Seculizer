@@ -1,11 +1,13 @@
 <script lang="ts">
   import Editor from "$lib/components/Editor.svelte";
   import FileUpload from "$lib/components/FileUpload.svelte";
+  import Frame from "$lib/components/Frame.svelte";
   import Header from "$lib/components/Header.svelte";
+  import Participants from "$lib/components/Participants.svelte";
   import {Program} from "$lib/program";
   import {test} from "$lib/test.js";
   let content = test;
-  let parsed: any = undefined;
+  let program: Program | undefined = undefined;
 
   function parseContent() {
     fetch("/api/generate", {
@@ -17,8 +19,7 @@
     })
       .then((res) => res.json())
       .then((data) => {
-        new Program(data, true);
-        parsed = data;
+        program = new Program(data, true);
       })
   }
 
@@ -28,8 +29,8 @@
 <div id="main">
   <Header />
   <div id="content">
-    {#if parsed}
-      <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    {#if program}
+      <Frame frame={program.first}></Frame>
     {:else}
       <FileUpload bind:content />
       <Editor bind:content />
