@@ -7,7 +7,7 @@
   import Participants from "$lib/components/Participants.svelte";
   import { Program } from "$lib/program";
   import { test } from "$lib/test.js";
-  let content = test;
+  let content = test.replaceAll(";", ";\n").replaceAll("{ ", "{\n ").replaceAll("} ", "}\n ");
   let program: Program | undefined = undefined;
   let error: string | undefined = undefined;
   function parseContent() {
