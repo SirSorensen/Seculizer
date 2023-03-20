@@ -10,26 +10,9 @@ import type { Participant, Statement, ParticipantStatement,
     MatchCase,
     KeyRelation} from '$lang/types/parser/interfaces';
 
-
-type _participant = {
-    name: string
-    knowledge: _knowledge[]
-}
-
-type _knowledge = {
-    id: Type
-    value: string
-    encrypted : boolean
-}
-
-type participantMap = {[id: string]: _participant}
-
-export type frame = {
-    next : frame | {[id: string]: frame}
-    prev : frame
-    participants :  participantMap
-    presentation : Statement
-} | null
+import { Frame } from './utils/Frame';
+import { _Participant } from './utils/Participant';
+import { ParticipantMap } from './utils/ParticipantMap';
 
 type _format = {
     //Function
@@ -41,9 +24,9 @@ type _format = {
 }
 
 export class Program {
-    init_participants: participantMap = {}
+    init_participants: ParticipantMap = new ParticipantMap()
 
-    first : frame = null
+    first : Frame | null = null
 
     keyRelations: {[id: string]: string} = {}
     functions: {[id: string]: Number} = {}
@@ -67,20 +50,14 @@ export class Program {
             console.log(json.participants.participants);
             
             json.participants.participants.forEach((participant: Participant) => {
-                this.init_participants[participant.id.value] = {
-                    name: participant.id.value,
-                    knowledge: []
-                }
+                this.init_participants.addParticipant(participant.id.value)
             })
             if (this.log) console.log("Participants created", this.init_participants);
         } else if (this.log) console.log("No participants found");
         
 
         // Add shared knowledge
-        this.init_participants["Shared"] = {
-            name: "Shared",
-            knowledge: []
-        }
+        this.init_participants.addParticipant("Shared")
 
         if (this.log) console.log("Participants", this.init_participants);
 
@@ -89,12 +66,7 @@ export class Program {
         if (json.knowledge){
             json.knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
                 knowledge.children.forEach((child: Type) => {
-                    console.log("Knowledge", knowledge, child);
-                    this.init_participants[knowledge.id.value].knowledge.push({
-                            id: child,
-                            value: "",
-                            encrypted: false
-                        })
+                    this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, child, false)
                 })
             })
             if (this.log) console.log("Knowledge added to participants", this.init_participants);
@@ -164,19 +136,20 @@ export class Program {
         } else if (this.log) console.log("No icons found");
 
         //Setup first frame
-        let last = this.newFrame(null, this.init_participants, this.first)
+        this.first = new Frame(null, null, this.init_participants)
         if (this.log) console.log("First frame created", this.first);
         if (this.first == null) throw new Error("Invalid json: no first frame created! First frame not properly initialized")
         
         // Protocol:
         if (json.protocol.statements){
-            this.first.next = this.parseProtocol(json.protocol.statements, last)
+            this.parseProtocol(json.protocol.statements, this.first)
+            if (this.log) console.log("Protocol created", this.first);
         } else if (this.log) console.log("No protocol found");
         
         console.log("Program created");
     }
 
-    parseProtocol(statements: Statement[] | Statement, last : frame) : frame {
+    parseProtocol(statements: Statement[] | Statement, last : Frame) {
         if (last == null) throw new Error("Invalid json: last frame not properly initialized")
 
         if (statements instanceof Array && statements.length > 0) 
@@ -184,183 +157,124 @@ export class Program {
             let stmnt = statements.shift()
             if (stmnt == undefined) throw new Error("Invalid json: stmnt is undefined! Check if statements array is empty (parseProtocol)")
 
-            last.next = this.parseProtocol(stmnt, last)
-            if (last.next == null) throw new Error("Invalid json: next frame not properly initialized! (parseProtocol)")
-            if (statements.length > 0) last.next.next = this.parseProtocol(statements, last)
+            this.parseProtocol(stmnt, last)
+            if (last.isNextNull()) throw new Error("Invalid json: next frame not properly initialized! (parseProtocol)")
+            if (statements.length > 0) this.parseProtocol(statements, last.getNext() as Frame)
         } 
         else if (!(statements instanceof Array))
         {
             let stmnt = statements
             
             if (stmnt.child.type == "sendStatement" && stmnt.child.child.type == "matchStatement"){                    
-                    last.next = {}
+                    last.setNext({})
                     for (const caseIndex in stmnt.child.child.cases) {
                         const matchCase = stmnt.child.child.cases[caseIndex];
-                        last.next[caseIndex] = this.parseProtocol(matchCase.children, last.next[caseIndex])
+
+                        last.setMatchCase(caseIndex)
+
+                        this.parseProtocol(matchCase.children, last.getNextFrame(caseIndex))
                     }
             } else {
-                let tmp_participants = this.pipeStmnt(stmnt, last.participants)
-                last = this.newFrame(stmnt, tmp_participants, last)
+                last.setNext(Frame.newFrame(stmnt, last.getParticipants(), last))
+                this.pipeStmnt(stmnt, last.getNext() as Frame)
             }
         }
-        
-        return last;
-        
-    }
-
-    newFrame(stmnt : any, participants: participantMap, last : frame) : frame{
-        if (this.log) console.log("New frame created", stmnt, participants, last)
-
-        let tmp_last = {
-            next: null,
-            prev: last,
-            participants: participants,
-            presentation: stmnt
-        }
-
-        if (last != null) last.next = tmp_last
-        else this.first = tmp_last
-
-        return tmp_last
     }
 
     checkIfMatchStmnt(stmnt: Statement) : boolean{
         return stmnt.child.type == "sendStatement" && stmnt.child.child.type == "matchStatement"
     }
 
-    pipeStmnt(stmnt: Statement, participants: participantMap | undefined) : participantMap{
-        if (!participants) throw new Error("Invalid json: participants is undefined");
-
+    pipeStmnt(stmnt: Statement, last: Frame){
+        if (this.log) console.log("Piping statement", stmnt);
+        
         switch (stmnt.child.type) {
             case "clearStatement":
-                return this.clearStmnt(stmnt.child.id, participants)
+                this.clearStmnt(stmnt.child.id, last)
+                break
             case "participantStatement":
-                return this.participantStmnt(stmnt.child, participants)
+                this.participantStmnt(stmnt.child, last)
+                break
             case "sendStatement":
-                return this.sendStmnt(stmnt.child, participants)
+                this.sendStmnt(stmnt.child, last)
+                break
             default:
-                throw new Error("Invalid json: stmnt type not found");    
+                throw new Error("Invalid json: stmnt type not found!");    
         }
     }
 
-    clearStmnt(knowledge: Type, participants: participantMap) : participantMap{
-        Object.keys(participants).forEach((participant: string) => {
-            participants[participant].knowledge =  participants[participant].knowledge.filter(
-                                                            (item: _knowledge) => item.id != knowledge
-                                                        )
-        })
-        return participants;
+    clearStmnt(knowledge: Type, last: Frame) {
+        last.clearKnowledgeElement(knowledge)
     }
 
-    participantStmnt(stmnt : ParticipantStatement, participants: participantMap) : participantMap{        
+    participantStmnt(stmnt : ParticipantStatement, last: Frame){        
         // Pipe ParticipantStatement
         if (stmnt.child.type == "newStatement"){
-            return this.newStmnt(stmnt.id.value, stmnt.child.id, participants)
+            this.newStmnt(stmnt.id.value, stmnt.child.id, last)
         } else if (stmnt.child.type == "setStatement"){
-            return this.setStmnt(stmnt.id.value, stmnt.child.id, String(stmnt.child.value), participants)
+            this.setStmnt(stmnt.id.value, stmnt.child.id, String(stmnt.child.value), last)
         } else {
             throw new Error("Invalid json: stmnt child type not implemented");
         }
     }
 
     // New Statement
-    newStmnt(participant : string, newKnowledge : Type, participants: participantMap) : participantMap{
-        return this.setKnowledge(participant, newKnowledge, participants, true)
+    newStmnt(participant : string, newKnowledge : Type, last: Frame) {
+        last.setKnowledge(participant, newKnowledge, false)
     }
 
     // Set Statement
-    setStmnt(participant : string, knowledge : Type, value : string, participants: participantMap) : participantMap{
-        return this.setKnowledge(participant, knowledge, participants, true, value)
+    setStmnt(participant : string, knowledge : Type, value : string, last: Frame) {
+        last.setKnowledge(participant, knowledge, false, value)
     }
 
     // Pipe SendStatement to messageSendStatement, or matchStatement
-    sendStmnt(stmnt : SendStatement, participants: participantMap) : participantMap{
+    sendStmnt(stmnt : SendStatement, last: Frame){
         if (stmnt.child.type == "messageSendStatement"){
-            return this.messageSendStmnt(stmnt.leftId.value, stmnt.rightId.value, stmnt.child.expressions, participants)
+            this.messageSendStmnt(stmnt.leftId.value, stmnt.rightId.value, stmnt.child.expressions, last)
         } else if (stmnt.child.type == "matchStatement"){
-            return this.matchStmnt(stmnt.child, participants)
+            return this.matchStmnt(stmnt.child, last)
         } else {
             throw new Error("Invalid json: stmnt child type not implemented");
         }
     }
 
     // Pipe MessageSendStatement to encryptExpression, signExpression, or setStatement
-    messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], participants: participantMap, encrypted : boolean = false) : participantMap{
+    messageSendStmnt(senderId : string,  receiverId : string, knowledge : Expression[], last : Frame, encrypted : boolean = false) {
         knowledge.forEach((expression) => {
             if(expression.child.type == "encryptExpression"){
-                participants = this.encryptExpr(senderId, receiverId, expression.child.inner, expression.child.outer, participants, encrypted)
+                this.encryptExpr(senderId, receiverId, expression.child.inner, expression.child.outer, last, encrypted)
             } else if(expression.child.type == "signExpression"){
-                participants = this.messageSendStmnt(senderId, receiverId, expression.child.inner, participants, encrypted)
+                this.messageSendStmnt(senderId, receiverId, expression.child.inner, last, encrypted)
             } else {
-                let val = this.findKnowledgeValue(senderId, expression.child, participants)
-                participants = this.setKnowledge(receiverId, expression.child, participants, encrypted, val)
+                last.transferKnowledge(senderId, receiverId, expression.child, encrypted)
             }
         })
-        return participants
     }
 
     // TODO : implement matchStmnt
-    matchStmnt(stmnt : MatchStatement, participants: participantMap) : participantMap{
-        return participants
+    matchStmnt(stmnt : MatchStatement, last: Frame) {
+        
     }
 
     // Acoomodate encryption of knowledge in messages
-    encryptExpr(senderId : string, receiverId : string, inner : Expression[], outer : Type, participants: participantMap, encrypted : boolean) : participantMap{
+    encryptExpr(senderId : string, receiverId : string, inner : Expression[], outer : Type, last: Frame, encrypted : boolean) {
         // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
         if (!encrypted){
             // decryptable = true if receiver knows the key, it is therefore not encrypted
-            let decryptable = this.checkKeyKnowledge(receiverId, outer, participants)
+            let decryptable = last.getParticipants().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer))
             encrypted = !decryptable
         }
 
-        return this.messageSendStmnt(senderId, receiverId, inner, participants, encrypted)
+        this.messageSendStmnt(senderId, receiverId, inner, last, encrypted)
     }
 
-    // Insert given knowledge into given participant or update existing knowledge, from given participants
-    setKnowledge(participant : string, knowledge : Type, participants: participantMap, encrypted : boolean, value : string = "") : participantMap{
-        let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
-
-        if (index >= 0) {
-            participants[participant].knowledge[index] = {
-                id: knowledge,
-                value: value,
-                encrypted: encrypted
-            }
-        } else {
-            participants[participant].knowledge.push({
-                id: knowledge,
-                value: value,
-                encrypted: encrypted
-            })
-        }
-
-        return participants
-    }
-
-    // Find value of knowledge of participant
-    findKnowledgeValue(participant : string, knowledge : Type, participants: participantMap) : string{
-        if (this.log) console.log("findKnowledgeValue", participant, knowledge, participants)
-        let index = participants[participant].knowledge.findIndex((element) => element.id == knowledge)
-
-        if (index >= 0) {
-            return participants[participant].knowledge[index].value
-        } else {
-            return ""
-        }
-    }
-
-    // Check if participant has knowledge of given key
-    checkKeyKnowledge(participant : string, key : Type,  participants: participantMap) : boolean {
-        
-        // Check if key has a key relation
+    checkKeyRelation(key : Type) : Type{
         if (key.type == "id") {
             let tmp_key = this.keyRelations[key.value]
             if (tmp_key) key.value = tmp_key
         }
-
-        let index = participants[participant].knowledge.find((element) => element.id == key)
-
-        return (index != undefined)
-    }    
+        return key
+    }
 }
 
