@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { frame } from "$lib/program";
+  import { getStringFromType } from "$lib/utils/stringUtil";
+  import CommonKnowledge from "./CommonKnowledge.svelte";
   import Participants from "./Participants.svelte";
   export let frame: frame;
 
@@ -9,6 +11,8 @@
     Emoji: String;
     Knowledge: { id: String; emoji: String }[];
   }[] = [];
+  let commonKnowledge: { id: String; emoji: String }[] = [];
+
   $: {
     if (frame && frame.participants) {
       Object.keys(frame.participants).forEach((key) => {
@@ -22,7 +26,7 @@
           Name: participant.name,
           Emoji: "👨‍💻", //participant.emoji
           Knowledge: participant.knowledge.map((k) => {
-            return { id: k.id, emoji: "👨‍💻" };
+            return { id: getStringFromType(k.id), emoji: "👨‍💻" };
           })
         };
         participants.push(obj);
@@ -30,4 +34,5 @@
     }
   }
 </script>
+<CommonKnowledge knowledges={commonKnowledge} />
 <Participants participants={participants} />
