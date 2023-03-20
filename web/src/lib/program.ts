@@ -49,9 +49,11 @@ export class Program {
     formats: {[id: string]: _format} = {}
     equations: {[id: string]: string} = {}
     icons: {[id: string]: string} = {}
+    log : boolean = false
 
     constructor(json: any, log: boolean = false) {
-        if (log) console.log("Program started!");
+        this.log = log
+        if (this.log) console.log("Program started!");
 
         // Check if json is valid
         if (json.type != "program" ) {
@@ -69,8 +71,8 @@ export class Program {
                     knowledge: []
                 }
             })
-            if (log) console.log("Participants created", this.init_participants);
-        } else if (log) console.log("No participants found");
+            if (this.log) console.log("Participants created", this.init_participants);
+        } else if (this.log) console.log("No participants found");
         
 
         // Add shared knowledge
@@ -79,11 +81,14 @@ export class Program {
             knowledge: []
         }
 
+        if (this.log) console.log("Participants", this.init_participants);
+
         // Knowledge:
         // Add knowledge to participants
         if (json.knowledge){
             json.knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
                 knowledge.children.forEach((child: Type) => {
+                    console.log("Knowledge", knowledge, child);
                     this.init_participants[knowledge.id.value].knowledge.push({
                             id: child,
                             value: "",
@@ -91,8 +96,8 @@ export class Program {
                         })
                 })
             })
-            if (log) console.log("Knowledge added to participants", this.init_participants);
-        } else if (log) console.log("No knowledge found");
+            if (this.log) console.log("Knowledge added to participants", this.init_participants);
+        } else if (this.log) console.log("No knowledge found");
         
 
 
@@ -101,16 +106,16 @@ export class Program {
             json.keyRelations.keyRelations.forEach((keyRelation: any) => 
                 this.keyRelations[keyRelation.name] = keyRelation.value
             )
-            if (log) console.log("KeyRelations created", this.keyRelations);
-        } else if (log) console.log("No keyRelations found");
+            if (this.log) console.log("KeyRelations created", this.keyRelations);
+        } else if (this.log) console.log("No keyRelations found");
 
         // Functions:
         if (json.functions){
             json.functions.functions.forEach((func: FunctionDefItem) =>
                 this.functions[func.id.value] = func.params
             )
-            if (log) console.log("Functions created", this.functions);
-        } else if (log) console.log("No functions found");
+            if (this.log) console.log("Functions created", this.functions);
+        } else if (this.log) console.log("No functions found");
 
 
         // Equations:
@@ -122,8 +127,8 @@ export class Program {
                 })
                 this.equations[equation.left.id] = tmp_equation
             })
-            if (log) console.log("Equations created", this.equations);
-        } else if (log) console.log("No equations found");
+            if (this.log) console.log("Equations created", this.equations);
+        } else if (this.log) console.log("No equations found");
 
         // Format:
         // Add format to functions
@@ -144,30 +149,30 @@ export class Program {
 
             })
 
-            if (log) console.log("Formats created", this.formats);
-        } else if (log) console.log("No formats found");
+            if (this.log) console.log("Formats created", this.formats);
+        } else if (this.log) console.log("No formats found");
 
 
         // Icons:
         if (json.icons){
             this.icons = json.icons.icons
-            if (log) console.log("Icons created", this.icons);
-        } else if (log) console.log("No icons found");
+            if (this.log) console.log("Icons created", this.icons);
+        } else if (this.log) console.log("No icons found");
 
         //Setup first frame
         let last = this.newFrame(null, this.init_participants, this.first)
+        if (this.log) console.log("First frame created", this.first);
         if (this.first == null) throw new Error("Invalid json: no first frame created! First frame not properly initialized")
         
         // Protocol:
         if (json.protocol.statements){
             this.first.next = this.parseProtocol(json.protocol.statements, last)
-        } else if (log) console.log("No protocol found");
+        } else if (this.log) console.log("No protocol found");
         
         console.log("Program created");
     }
 
     parseProtocol(statements: Statement[] | Statement, last : frame) : frame {
-        console.log("Parseprotocol! Last = ", last)
         if (last == null) throw new Error("Invalid json: last frame not properly initialized")
 
         if (statements instanceof Array && statements.length > 0) 
@@ -200,6 +205,8 @@ export class Program {
     }
 
     newFrame(stmnt : any, participants: participantMap, last : frame) : frame{
+        //if (this.log) console.log("New frame created", stmnt, participants, last)
+
         let tmp_last = {
             next: null,
             prev: last,
