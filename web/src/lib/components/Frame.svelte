@@ -29,7 +29,8 @@
             return { id: getStringFromType(k.id), emoji: "👨‍💻" };
           })
         };
-        participants.push(obj);
+        if(obj.Name === "Shared") commonKnowledge = obj.Knowledge;
+        else participants.push(obj);
       });
     }
   }
