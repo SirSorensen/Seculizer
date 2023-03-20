@@ -7,11 +7,11 @@
 
   $: console.log(frame);
   let participants: {
-    Name: String;
-    Emoji: String;
-    Knowledge: { id: String; emoji: String }[];
+    Name: string;
+    Emoji: string;
+    Knowledge: { id: string; emoji: string }[];
   }[] = [];
-  let commonKnowledge: { id: String; emoji: String }[] = [];
+  let commonKnowledge: { id: string; emoji: string }[] = [];
 
   $: {
     if (frame && frame.participants) {
@@ -19,9 +19,9 @@
         if (!frame) return;
         const participant = frame.participants[key];
         const obj: {
-          Name: String;
-          Emoji: String;
-          Knowledge: { id: String; emoji: String }[];
+          Name: string;
+          Emoji: string;
+          Knowledge: { id: string; emoji: string }[];
         } = {
           Name: participant.name,
           Emoji: "👨‍💻", //participant.emoji

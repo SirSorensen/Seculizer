@@ -1,16 +1,21 @@
 <script>
-    import ActionBox from "$lib/components/messages/ActionBox.svelte";
-    import CommonKnowledge from "$lib/components/CommonKnowledge.svelte";
-    import MessageBox from "$lib/components/messages/MessageBox.svelte";
-    import Participants from "$lib/components/Participants.svelte";
-    import Item from "$lib/components/Item.svelte";
-  </script>
-  
-  <CommonKnowledge />
-  <ActionBox title="test">
-    <Item id="test" emoji="oma-key" />
-  </ActionBox>
-  <!--<MessageBox signie={{ name: "Alice", emoji: "oma-woman" }}>
+  import ActionBox from "$lib/components/messages/ActionBox.svelte";
+  import CommonKnowledge from "$lib/components/CommonKnowledge.svelte";
+  import MessageBox from "$lib/components/messages/MessageBox.svelte";
+  import Participants from "$lib/components/Participants.svelte";
+  import Item from "$lib/components/Item.svelte";
+  import Emoji from "../../lib/components/Emoji.svelte";
+</script>
+
+<CommonKnowledge />
+<ActionBox title="test">
+  <Item id="test" emoji="key" />
+</ActionBox>
+
+<Emoji content="👨‍👨‍👧‍👧" />
+<Emoji content="👨" />
+<Emoji content="heart-with-arrow" />
+<!--<MessageBox signie={{ name: "Alice", emoji: "oma-woman" }}>
     <MessageBox encryptKey={{ id: "Key", emoji: "oma-key" }}>
       <MessageBox encryptKey={{ id: "Key", emoji: "oma-key" }}>
         <Item id="test" emoji="oma-key" />
@@ -32,30 +37,29 @@
   >
     <Item id="test" emoji="oma-key" />
   </MessageBox>-->
-  
-  <Participants
-    participants={[
-      {
-        Name: "Alice",
-        Emoji: "oma-woman",
-        Knowledge: [
-          { id: "a_sk", emoji: "oma-key" },
-          { id: "long text long text", emoji: "oma-pregnant-woman" },
-        ],
-      },
-      {
-        Name: "Adversary",
-        Emoji: "oma-smiling-face-with-horns",
-        Knowledge: [],
-      },
-      {
-        Name: "Bob",
-        Emoji: "oma-man",
-        Knowledge: [
-          { id: "b_sk", emoji: "oma-key" },
-          { id: "long text long text", emoji: "oma-pregnant-man" },
-        ],
-      },
-    ]}
-  />
-  
+<Emoji />
+<Participants
+  participants={[
+    {
+      Name: "Alice",
+      Emoji: "woman",
+      Knowledge: [
+        { id: "a_sk", emoji: "key" },
+        { id: "long text long text", emoji: "pregnant-woman" },
+      ],
+    },
+    {
+      Name: "Adversary",
+      Emoji: "smiling-face-with-horns",
+      Knowledge: [],
+    },
+    {
+      Name: "Bob",
+      Emoji: "man",
+      Knowledge: [
+        { id: "b_sk", emoji: "key" },
+        { id: "long text long text", emoji: "pregnant-man" },
+      ],
+    },
+  ]}
+/>

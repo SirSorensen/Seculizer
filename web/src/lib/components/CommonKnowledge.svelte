@@ -1,15 +1,19 @@
 <script lang="ts">
   import Item from "./Item.svelte";
 
-  export let knowledges: { id: String; emoji: String }[] = [];
+  export let knowledges: { id: string; emoji: string }[] = [];
 </script>
 
 <div class="container">
   <p class="header">Common knowledge</p>
   <div class="knowledges">
-    {#each knowledges as knowledge}
-      <Item id={knowledge.id} emoji={knowledge.emoji} />
-    {/each}
+    {#if knowledges.length === 0}
+      <p class="emptyText">Empty</p>
+    {:else}
+      {#each knowledges as knowledge}
+        <Item id={knowledge.id} emoji={knowledge.emoji} />
+      {/each}
+    {/if}
   </div>
 </div>
 
@@ -38,5 +42,11 @@
     margin-bottom: 0.5rem;
     padding: 0;
     text-align: center;
+  }
+  p.emptyText{
+    margin: 0;
+    font-size: .8rem;
+    font-style: italic;
+    color: gray;
   }
 </style>

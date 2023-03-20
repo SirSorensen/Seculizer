@@ -1,16 +1,17 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  export let emoji: String;
-  export let id: String;
+  import Emoji from "./Emoji.svelte";
+  export let emoji: string;
+  export let id: string;
 </script>
 
 <div transition:fade={{ delay: 250, duration: 300 }} class="item">
-  <p class="emoji"><i class="oma {emoji}" /></p>
+  <Emoji content={emoji}/>
   <p>{id}</p>
 </div>
 
 <style>
-  .emoji {
+  .item :global(.emoji) {
     font-size: 3rem;
   }
 

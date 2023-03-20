@@ -1,8 +1,8 @@
 <script lang="ts">
   import Item from "./Item.svelte";
-  export let name: String;
-  export let emoji: String;
-  export let knowledge: { id: String; emoji: String }[] = [];
+  export let name: string;
+  export let emoji: string;
+  export let knowledge: { id: string; emoji: string }[] = [];
   
   let container: HTMLDivElement;
   let showKnowledge = false;
@@ -62,9 +62,13 @@
   <div class="container">
     <Item id={name} emoji={emoji}/>
     <div class="knowledges" use:accordion={showKnowledge}>
-      {#each knowledge as { id, emoji }}
-        <Item id={id} emoji={emoji}/>
-      {/each}
+      {#if knowledge.length === 0}
+        <p class="emptyText">Empty</p>
+      {:else}
+        {#each knowledge as knowledge}
+          <Item id={knowledge.id} emoji={knowledge.emoji} />
+        {/each}
+      {/if}
     </div>
   </div>
 </div>
@@ -89,6 +93,11 @@
   .knowledges {
     overflow: hidden;
     transition: all 2s ease-in-out;
+  }
+  .emptyText {
+    font-size: 1rem;
+    font-style: italic;
+    color: gray
   }
 
 </style>
