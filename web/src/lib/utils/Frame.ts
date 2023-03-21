@@ -56,6 +56,11 @@ export class Frame {
         return this.next[caseIndex];
     }
 
+    //Return the previous frame
+    getPrev(): Frame | null {
+        return this.prev;
+    }
+
 
     setNextOfNext(frame : Frame){
         if(this.next === null){
@@ -79,11 +84,9 @@ export class Frame {
         return this.next === null;
     }
 
-    //TODO: Make it a clone
     getParticipants() : ParticipantMap {
         return this.participants;
     }
-
 
     //TODO: Mayve do this in a better way than static
     static newFrame(stmnt : any, participants: ParticipantMap, last : Frame) : Frame{

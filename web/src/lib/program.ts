@@ -60,7 +60,7 @@ export class Program {
     if (json.participants) {
       console.log(json.participants.participants);
 
-        json.participants.participants.forEach((participant: ParticipantAST) => {
+      json.participants.participants.forEach((participant: ParticipantAST) => {
         this.init_participants.addParticipant(participant.id.value);
       });
       if (this.log) console.log("Participants created", this.init_participants);
@@ -153,39 +153,44 @@ export class Program {
 
   parseProtocol(statements: Statement[] | Statement, last: Frame) {
     if (statements instanceof Array && statements.length > 0) {
-      const stmnt = statements.shift();
-      if (stmnt == undefined)
-        throw new Error(
-          "Invalid json: stmnt is undefined! Check if statements array is empty (parseProtocol)"
-        );
-
-      this.parseProtocol(stmnt, last);
-      if (last.isNextNull())
-        throw new Error(
-          "Invalid json: next frame not properly initialized! (parseProtocol)"
-        );
-      if (statements.length > 0)
-        this.parseProtocol(statements, last.getNext() as Frame);
+      this.parseStmntList(statements, last);
     } else if (!(statements instanceof Array)) {
-      const stmnt = statements;
+      this.parseStmnt(statements, last);
+    }
+  }
 
-      if (this.isMatchStatement(stmnt)) {
-        last.setNext({});
-        const sendStatement: SendStatement = stmnt.child as SendStatement;
-        const matchStatement: MatchStatement =
-          sendStatement.child as MatchStatement;
-        for (const caseIndex in matchStatement.cases) {
-          const matchCase: MatchCase = matchStatement.cases[caseIndex];
+  parseStmntList(stmntList: Statement[], last: Frame) {
+    const stmnt = stmntList.shift();
+    if (stmnt == undefined)
+      throw new Error(
+        "Invalid json: stmnt is undefined! Check if statements array is empty (parseProtocol)"
+      );
 
-                        last.createNewMatchCase(caseIndex);
+    this.parseProtocol(stmnt, last);
+    if (last.isNextNull())
+      throw new Error(
+        "Invalid json: next frame not properly initialized! (parseProtocol)"
+      );
+    if (stmntList.length > 0)
+      this.parseProtocol(stmntList, last.getNext() as Frame);
+  }
 
-                        this.parseProtocol(matchCase.children, last.getNextFrame(caseIndex))
-                    
-        }
-      } else {
-        last.setNext(Frame.newFrame(stmnt, last.getParticipants(), last));
-        this.pipeStmnt(stmnt, last.getNext() as Frame);
+  parseStmnt(stmnt: Statement, last: Frame) {
+    if (this.isMatchStatement(stmnt)) {
+      last.setNext({});
+      const sendStatement: SendStatement = stmnt.child as SendStatement;
+      const matchStatement: MatchStatement =
+        sendStatement.child as MatchStatement;
+      for (const caseIndex in matchStatement.cases) {
+        const matchCase: MatchCase = matchStatement.cases[caseIndex];
+
+        last.createNewMatchCase(caseIndex);
+
+        this.parseProtocol(matchCase.children, last.getNextFrame(caseIndex));
       }
+    } else {
+      last.setNext(Frame.newFrame(stmnt, last.getParticipants(), last));
+      this.pipeStmnt(stmnt, last.getNext() as Frame);
     }
   }
 

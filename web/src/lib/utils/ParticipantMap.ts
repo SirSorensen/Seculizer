@@ -11,7 +11,6 @@ export class ParticipantMap{
             )
     }
 
-    //TODO: Make it a clone
     getParticipants() : {[id: string]: Participant} {
         return this.participants;
     }
