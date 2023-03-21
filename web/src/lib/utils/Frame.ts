@@ -29,26 +29,26 @@ export class Frame {
     }
 
     //TODO: Make it a clone?
-    getNext(caseIndex : string = "") : Frame | {[id: string]: Frame} | null {
-        if(caseIndex != "") {
+    getNext() : Frame | {[id: string]: Frame} | null {
+        return this.next;
+    }
+
+    //TODO: Make it a clone?
+    getNextFrame(caseIndex : string = "") : Frame {
+        if (this.next === null) throw new Error("Next is null");
+
+        if (caseIndex != "") {
             return this.getNextWithIndex(caseIndex)
+        }
+        else if(!(this.next instanceof Frame)) {
+            throw new Error("Next is a map!");
         }
 
         return this.next;
     }
 
     //TODO: Make it a clone?
-    getNextFrame(caseIndex : string = "") : Frame {
-        let tmp_next = this.getNext(caseIndex);
-
-        if(tmp_next === null) throw new Error("Next is null");
-        if(!(tmp_next instanceof Frame)) throw new Error("Next is a map!");
-
-        return tmp_next;
-    }
-
-    //TODO: Make it a clone?
-    getNextWithIndex(caseIndex : string) : Frame {
+    private getNextWithIndex(caseIndex : string) : Frame {
         if (this.next === null) throw new Error("Next is null");
         if (this.next instanceof Frame) throw new Error("Next is a frame not a dictionary! Don't use caseIndex!");
         if (this.next[caseIndex] === undefined) throw new Error("Case index not found!");
