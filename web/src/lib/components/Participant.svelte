@@ -3,7 +3,7 @@
   export let name: string;
   export let emoji: string;
   export let knowledge: { id: string; emoji: string }[] = [];
-  
+
   let container: HTMLDivElement;
   let showKnowledge = false;
   export function accordion(node: HTMLDivElement, showKnowledge: boolean) {
@@ -60,16 +60,18 @@
   }}
 >
   <div class="container">
-    <Item id={name} emoji={emoji}/>
-    <div class="knowledges" use:accordion={showKnowledge}>
-      {#if knowledge.length === 0}
-        <p class="emptyText">Empty</p>
-      {:else}
-        {#each knowledge as knowledge}
-          <Item id={knowledge.id} emoji={knowledge.emoji} />
-        {/each}
-      {/if}
-    </div>
+    <Item id={name} {emoji} />
+    {#key knowledge.length}
+      <div class="knowledges" use:accordion={showKnowledge}>
+        {#if knowledge.length === 0}
+          <p class="emptyText">Empty</p>
+        {:else}
+          {#each knowledge as knowledge}
+            <Item id={knowledge.id} emoji={knowledge.emoji} />
+          {/each}
+        {/if}
+      </div>
+    {/key}
   </div>
 </div>
 
@@ -97,7 +99,6 @@
   .emptyText {
     font-size: 1rem;
     font-style: italic;
-    color: gray
+    color: gray;
   }
-
 </style>

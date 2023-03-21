@@ -5,7 +5,7 @@
   import Participants from "./Participants.svelte";
   export let frame: Frame;
 
-  $: console.log(frame);
+  $: console.log("Current frame:", frame);
   let participants: {
     Name: string;
     Emoji: string;
@@ -14,10 +14,11 @@
   let commonKnowledge: { id: string; emoji: string }[] = [];
 
   $: {
+    participants = [];
     if (frame && frame.getParticipants()) {
-      Object.keys(frame.getParticipants()).forEach((key) => {
-        if (!frame) return;
+      for (const key in frame.getParticipants().getParticipants()) {
         const participant = frame.getParticipants().getParticipant(key);
+
         const obj: {
           Name: string;
           Emoji: string;
@@ -27,13 +28,31 @@
           Emoji: "👨‍💻", //participant.emoji
           Knowledge: participant.getKnowledgeList().map((k) => {
             return { id: getStringFromType(k.id), emoji: "👨‍💻" };
-          })
+          }),
         };
-        if(obj.Name === "Shared") commonKnowledge = obj.Knowledge;
+        if (obj.Name === "Shared") commonKnowledge = obj.Knowledge;
         else participants.push(obj);
-      });
+
+        participants = participants;
+      }
     }
   }
 </script>
-<CommonKnowledge knowledges={commonKnowledge} />
-<Participants participants={participants} />
+
+<div class="frame">
+  <CommonKnowledge knowledges={commonKnowledge} />
+  <div class="participants">
+    <Participants {participants} />
+  </div>
+</div>
+
+<style>
+  .frame {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .participants {
+    flex: 1;
+  }
+</style>

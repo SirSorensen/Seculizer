@@ -2,7 +2,7 @@
   import Logo from "$lib/assets/logo.png"
 </script>
 <header>
-    <img src={Logo} alt="">
+    <a href="/"><img src={Logo} alt=""></a>
 </header>
 <style>
     header {
@@ -14,7 +14,10 @@
     background: #eeeeee;
 }
 
-img {
+a {
     height: 90%;
+}
+a img{
+    height: 100%;
 }
 </style>
