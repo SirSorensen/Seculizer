@@ -34,6 +34,7 @@ export interface Program extends ASTNode {
   equations: Equations;
   format: Format;
   knowledge: Knowledge;
+  keyRelations: KeyRelations;
   icons: Icons;
   protocol: Protocol;
 }
@@ -94,7 +95,7 @@ export interface FormatItem extends ASTNode {
 
 export interface Icons extends ASTNode {
   type: "icons";
-  icons: Map<Id, String>;
+  icons: Map<Id, string>;
 }
 
 export interface LatexLiteral extends ASTNode {
@@ -120,44 +121,50 @@ export interface Protocol extends ASTNode {
 
 export interface Statement extends ASTNode {
   type: "statement";
-  child: ClearStatement | ParticipantStatement | SendStatement;
+  child: StatementNode;
 }
 
-export interface ClearStatement extends ASTNode {
+export interface StatementNode extends ASTNode {}
+
+export interface ClearStatement extends StatementNode {
   type: "clearStatement";
   id: Id;
 }
 
-export interface ParticipantStatement extends ASTNode {
+export interface ParticipantStatement extends StatementNode {
   type: "participantStatement";
   id: Id;
-  child: NewStatement | SetStatement;
+  child: ParticipantStatementNode;
 }
 
-export interface NewStatement extends ASTNode {
+export interface ParticipantStatementNode extends ASTNode {}
+
+export interface NewStatement extends ParticipantStatementNode {
   type: "newStatement";
   id: Id;
 }
 
-export interface SetStatement extends ASTNode {
+export interface SetStatement extends ParticipantStatementNode {
   type: "setStatement";
   id: Id;
   value: Type;
 }
 
-export interface SendStatement extends ASTNode {
+export interface SendStatement extends StatementNode {
   type: "sendStatement";
   leftId: Id;
   rightId: Id;
-  child: MessageSendStatement | MatchStatement;
+  child: SendStatementNode;
 }
 
-export interface MessageSendStatement extends ASTNode {
+export interface SendStatementNode extends ASTNode {}
+
+export interface MessageSendStatement extends SendStatementNode {
   type: "messageSendStatement";
   expressions: Expression[];
 }
 
-export interface MatchStatement extends ASTNode {
+export interface MatchStatement extends SendStatementNode {
   type: "matchStatement";
   cases: MatchCase[];
 }
@@ -168,17 +175,19 @@ export interface MatchCase extends ASTNode {
   children: Statement[];
 }
 
-export interface Expression extends ASTNode {
+export interface ExpressionNode extends ASTNode {}
+
+export interface Expression extends ExpressionNode {
   type: "expression";
-  child: Type | EncryptExpression | SignExpression;
+  child: ExpressionNode;
 }
 
-export interface EncryptExpression extends ASTNode {
+export interface EncryptExpression extends ExpressionNode {
   type: "encryptExpression";
   inner: Expression[];
   outer: Type;
 }
-export interface SignExpression extends ASTNode {
+export interface SignExpression extends ExpressionNode {
   type: "signExpression";
   inner: Expression[];
   outer: Type;

@@ -62,7 +62,16 @@ export class _Participant{
         return structuredClone(result)
     }
 
-    getKnowledgeArray() : _knowledge[] {
+        
+    cloneKnowledgeList() : _knowledge[] {
         return structuredClone(this.knowledge)
+    }
+    
+    getKnowledgeList() : _knowledge[] {
+        return this.knowledge
+    }
+
+    getName() : string {
+        return this.name
     }
 }

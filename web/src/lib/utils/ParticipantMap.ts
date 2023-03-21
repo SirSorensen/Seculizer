@@ -7,13 +7,17 @@ export class ParticipantMap{
 
     constructor(participants : {[id: string]: _Participant} = {}){
         Object.keys(participants).forEach((participant: string) =>
-            this.participants[participant] = new _Participant(participant, participants[participant].getKnowledgeArray())
+            this.participants[participant] = new _Participant(participant, participants[participant].cloneKnowledgeList())
             )
     }
 
     //TODO: Make it a clone
     getParticipants() : {[id: string]: _Participant} {
         return this.participants;
+    }
+
+    getParticipant(name : string) : _Participant {
+        return this.participants[name];
     }
 
     // Add participant to map
