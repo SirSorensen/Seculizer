@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import Participant from "./Participant.svelte";
   export let participants: {
     Name: string;
@@ -6,74 +7,106 @@
     Knowledge: { id: string; emoji: string }[];
   }[] = [];
 
-  function calcPositions(margin: number, amount: number, box: HTMLElement) {
+  function calcPositions(amount: number, box: HTMLElement) {
     const boxRect = box.getBoundingClientRect();
 
-    let xMargin = boxRect.width * margin;
-    let yMargin = boxRect.height * margin;
-    console.log("xMargin", xMargin);
-    console.log("yMargin", yMargin);
-    console.log("boxRect", boxRect);
-
-    let xMid = boxRect.left + box.offsetWidth / 2;
-    let xHalfMid = boxRect.left + xMargin + (box.offsetWidth - xMargin) / 4;
-    let x3HalfMid =
-      boxRect.left + xMargin + 3 * ((box.offsetWidth - xMargin) / 4);
-    let yMid = boxRect.top + box.offsetHeight / 2;
-    let yHalfMid = boxRect.top + yMargin + (box.offsetHeight - yMargin) / 4;
-    let y3HalfMid =
-      boxRect.top + yMargin + 3 * ((box.offsetHeight - yMargin) / 4);
-
-    let pos1 = { x: boxRect.left + xMargin, y: yMid };
-    let pos2 = { x: xHalfMid, y: yHalfMid };
-    let pos3 = { x: xMid, y: boxRect.top + yMargin };
-    let pos4 = { x: x3HalfMid, y: yHalfMid };
-
-    let pos5 = { x: boxRect.right - xMargin, y: yMid };
-    let pos6 = { x: x3HalfMid, y: y3HalfMid };
-    let pos7 = { x: xMid, y: boxRect.bottom - yMargin };
-    let pos8 = { x: xHalfMid, y: y3HalfMid };
-    console.log("boxRect", box.offsetHeight, box.offsetTop);
-
-    let options = [
-      [pos1, pos5],
-      [pos2, pos4, pos7],
-      [pos2, pos4, pos6, pos8],
-      [pos2, pos3, pos4, pos6, pos8],
-      [pos2, pos3, pos4, pos6, pos7, pos8],
-      [pos1, pos2, pos3, pos4, pos5, pos6, pos8],
-      [pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8],
+    const pos1 =[
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+    ];
+    const pos2 =[
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 1, 0, 1, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+    ];
+    const pos3 =[
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 1],
+      [0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0],
+    ];
+    const pos4 =[
+      [0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 1],
+      [0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0],
+    ];
+    const pos5 =[
+      [1, 0, 0, 0, 1],
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 1],
+      [0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0],
+    ];
+    const pos6 =[
+      [0, 1, 0, 1, 0],
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 1],
+      [0, 0, 0, 0, 0],
+      [0, 1, 0, 1, 0],
+    ];
+    const pos7 =[
+      [1, 0, 1, 0, 1],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 1],
+      [0, 1, 0, 1, 0],
+    ];
+    const pos8 =[
+      [0, 1, 0, 1, 0],
+      [1, 0, 0, 0, 1],
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 1],
+      [0, 1, 0, 1, 0],
     ];
 
-    return options[amount - 2] || [];
+    let options = [pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8];
+    const pos = options[amount-1];
+    let flat: {
+      x: number;
+      y: number;
+    }[] = pos
+      .flatMap((row, y) => {
+        let xWidth = boxRect.width / row.length;
+        return row.map((col, x) => {
+          let yWidth = boxRect.height / pos.length;
+          return (col ? { x: (x * xWidth)+xWidth/2, y: (y * yWidth)+yWidth/2} : null)});
+      })
+      .filter((point): point is { x: number; y: number } => point !== null);
+    return flat;
   }
   let container: HTMLElement;
+  let containerWidth: number;
+  let containerHeight: number;
   let positions: { x: number; y: number }[] = [];
   $: {
-    if (container)
-      positions = calcPositions(0.1, 3, container);
+    if (container) positions = calcPositions(3, container);
   }
+  onMount(() => {
+    const resizeObserver = new ResizeObserver((_) => {
+      // We're only watching one element
+      positions = calcPositions(3, container);
+    });
+
+    resizeObserver.observe(container);
+
+    // This callback cleans up the observer
+    return () => resizeObserver.unobserve(container);
+  });
 </script>
 
-<div class="container" bind:this={container}>
+<div class="container" bind:this={container} bind:offsetWidth={containerWidth} bind:offsetHeight={containerHeight}>
   {#if positions.length > 0}
-    {#each positions as pos}
-      <div class="test" style:left={pos.x + "px"} style:top={pos.y + "px"}>
-        X:{pos.x}
-        Y:{pos.y}
-      </div>
-    {/each}
     {#each participants as parti, index}
-      <div
-        class="participantContainer"
-        style:left={positions[index].x + "px"}
-        style:top={positions[index].y + "px"}
-      >
-        <Participant
-          name={parti.Name}
-          emoji={parti.Emoji}
-          knowledge={parti.Knowledge}
-        />
+      <div class="participantContainer" style:left={positions[index].x + "px"} style:top={positions[index].y + "px"}>
+        <Participant name={parti.Name} emoji={parti.Emoji} knowledge={parti.Knowledge} />
       </div>
     {/each}
   {/if}
@@ -86,20 +119,12 @@
     justify-content: space-around;
     align-items: flex-start;
     height: 100%;
-    background-color: rgb(255, 218, 218);
+    position: relative;
   }
 
   div.participantContainer {
     position: absolute;
-    background-color: aliceblue;
-
-    transform: translate(-100%)
+    transform: translate(-50%, -25%);
   }
 
-  .test {
-    position: absolute;
-    background-color: red;
-    z-index: 10000;
-    transform: translate(-100%)
-  }
 </style>
