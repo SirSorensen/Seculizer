@@ -104,4 +104,8 @@ export class Frame {
   transferKnowledge(sender: string, receiver: string, knowledge: Type, encrypted: boolean | null = null) {
     this.participants.transferKnowledge(sender, receiver, knowledge, encrypted);
   }
+
+  getPresentation(): Statement | null {
+    return this.presentation;
+  }
 }

@@ -7,14 +7,13 @@
   export let fromId:string;
   export let toId:string;
   export let messageExpressions:ExpressionAST[];
-  export let alias:string | undefined;
 </script>
 
 <div class="message">
   {#each messageExpressions as messageExpression}
-      <ExpressionBox program={program} expression={messageExpression} />
+      <ExpressionBox {program} expression={messageExpression} />
   {/each}
-  <p>Alias: {alias} From: {fromId} To: {toId}</p>
+  <p>From: {fromId} To: {toId}</p>
 </div>
 
 <style>

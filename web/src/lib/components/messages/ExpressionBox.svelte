@@ -1,5 +1,12 @@
 <script lang="ts">
-  import type { Expression as ExpressionAST } from "$lang/types/parser/interfaces";
+  import type {
+    EncryptExpression,
+    Expression as ExpressionAST,
+    ExpressionNode,
+    Id,
+    SignExpression,
+    Type,
+  } from "$lang/types/parser/interfaces";
   import type { Program } from "$lib/program";
   import { getStringFromType } from "$lib/utils/stringUtil.js";
   import Item from "$lib/components/Item.svelte";
@@ -8,29 +15,38 @@
 
   export let program: Program;
   export let expression: ExpressionAST;
-  $: child = expression.child;
+  let child = expression.child;
+
+  const castToEncryptExpression = (x: ExpressionNode) => x as EncryptExpression;
+  const castToSignExpression = (x: ExpressionNode) => x as SignExpression;
+  const castToType = (x: ExpressionNode) => x as Type;
+  const castToId = (x: ExpressionNode) => x as Id;
 </script>
 
 {#if !child}
   <p>Invalid statement</p>
 {:else if child.type === "encryptExpression"}
-  {@const inner = child.inner}
+  {@const encryptExpression = castToEncryptExpression(child)}
+  {@const inner = encryptExpression.inner}
   {#each inner as innerExpression}
     <svelte:self expression={innerExpression} />
   {/each}
-  {@const outer = child.outer}
-  <EncryptIcon {program} encryptExpression={outer} />
+  {@const outer = encryptExpression.outer}
+  <EncryptIcon encryptType={outer} />
 {:else if child.type === "signExpression"}
-  {@const inner = child.inner}
+  {@const signExpression = castToSignExpression(child)}
+  {@const inner = signExpression.inner}
   {#each inner as innerExpression}
     <svelte:self expression={innerExpression} />
   {/each}
-  {@const outer = child.outer}
-  <SignIcon {program} signExpression={outer} signieIcon={"oma-red-question-mark"}/>
+  {@const outer = signExpression.outer}
+  <SignIcon signType={outer} signieIcon={"red-question-mark"} />
 {:else if child.type === "string" || child.type === "number" || child.type === "function"}
-  <p>{getStringFromType(child)}</p>
+  {@const type = castToType(child)}
+  <p>{getStringFromType(type)}</p>
 {:else if child.type === "id"}
-  <Item id={child.value} emoji={program.icons[child.value]} />
+  {@const id = castToId(child)}
+  <Item id={id.value} emoji={program.icons.get(id) || "red-question-mark"} />
 {/if}
 
 <style>

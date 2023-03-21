@@ -5,7 +5,7 @@
 <div class="message">
   <div class="header">{title}</div>
   <div class="message-inner">
-    <slot >No content was provided</slot>
+    <slot>No content was provided</slot>
   </div>
 </div>
 
@@ -28,8 +28,8 @@
     width: 100%;
     text-align: center;
     font-weight: bold;
-    padding: .5rem;
-    border-radius:15px 15px 0 0;
+    padding: 0.5rem;
+    border-radius: 15px 15px 0 0;
     background: #ffcc30;
   }
 </style>

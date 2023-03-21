@@ -1,15 +1,13 @@
 <script lang="ts">
-  import type { Expression as ExpressionAST} from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/program";
-  import ExpressionBox from "$lib/components/messages/ExpressionBox.svelte";
-  export let program: Program;
-  export let encryptExpression: ExpressionAST;
+  import type { Type } from "$lang/types/parser/interfaces";
+  import { getStringFromType } from "$lib/utils/stringUtil";
+  export let encryptType: Type;
 </script>
 
 <div class="encrypt-icon">
   <i class="oma oma-locked emoji" />
   <div class="id-container">
-    <ExpressionBox program={program} expression={encryptExpression} />
+    <p>{getStringFromType(encryptType)}</p>
   </div>
 </div>
 

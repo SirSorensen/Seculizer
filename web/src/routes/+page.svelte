@@ -104,7 +104,7 @@
         <div class="button-area">
           <PrevButton {navigation} {prevFrame} />
         </div>
-        <Frame frame={current} />
+        <Frame {program} frame={current} />
         <div class="button-area">
           <NextButton {navigation} {nextFrame} />
         </div>
@@ -128,7 +128,7 @@
   #main {
     display: flex;
     flex-direction: column;
-    width: 100vw;
+    width: 100%;
     min-height: 100vh;
   }
 
@@ -136,7 +136,7 @@
     flex: 1;
     padding: 1rem;
 
-    width: 60vw;
+    width: 60%;
     margin: auto;
   }
 

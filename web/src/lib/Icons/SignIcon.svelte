@@ -1,9 +1,7 @@
 <script lang="ts">
-  import type { Expression as ExpressionAST } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/program";
-  import ExpressionBox from "$lib/components/messages/ExpressionBox.svelte";
-  export let program: Program;
-  export let signExpression: ExpressionAST;
+  import type { Type } from "$lang/types/parser/interfaces";
+  import { getStringFromType } from "$lib/utils/stringUtil";
+  export let signType: Type;
   export let signieIcon: string;
 </script>
 
@@ -12,7 +10,7 @@
     <i class="oma oma-pen emoji" />
     <i class="oma {signieIcon} signie-emoji" />
   </div>
-  <ExpressionBox program={program} expression={signExpression} />
+  <p>{getStringFromType(signType)}</p>
 </div>
 
 <style>
