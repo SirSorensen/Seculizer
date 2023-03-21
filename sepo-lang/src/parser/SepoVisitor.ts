@@ -1,6 +1,70 @@
 import { SepoParser } from "./parser.js";
-import { throwSimpleParseError } from './ParseError';
-import { ClearCST, ClearStatement, EncryptCST, EncryptExpression, Equation, EquationCST, EquationElementCST, Equations, Expression, ExpressionCST, Format, FormatCST, FormatElementCST, FormatItem, FunctionCall, FunctionCallCST, FunctionDefItem, FunctionItemCST, FunctionsDef, FunctionsDefCST, Icons, IconsCST, IconSetCST, Id, KeyRelation, KeyRelationCST, KeyRelationListCST, KeyRelations, Knowledge, KnowledgeCST, KnowledgeItem, KnowledgeListCST, LatexCST, LatexLiteral, MatchCase, MatchCaseCST, MatchCST, MatchStatement, MessageSendCST, MessageSendStatement, NewCST, NewStatement, Participant, ParticipantCST, Participants, ParticipantsCST, ParticipantStatement, ParticipantStatementCST, ProgramCST, Protocol, ProtocolCST, PublicKeyRelationCST, SecretKeyRelationCST, SetCST, SetStatement, SignCST, SignExpression, Statement, StatementCST, Type, TypeCST } from "./interfaces.js";
+import { throwSimpleParseError } from "./ParseError";
+import {
+  ClearCST,
+  ClearStatement,
+  EncryptCST,
+  EncryptExpression,
+  Equation,
+  EquationCST,
+  EquationElementCST,
+  Equations,
+  Expression,
+  ExpressionCST,
+  Format,
+  FormatCST,
+  FormatElementCST,
+  FormatItem,
+  FunctionCall,
+  FunctionCallCST,
+  FunctionDefItem,
+  FunctionItemCST,
+  FunctionsDef,
+  FunctionsDefCST,
+  Icons,
+  IconsCST,
+  IconSetCST,
+  Id,
+  KeyRelation,
+  KeyRelationCST,
+  KeyRelationListCST,
+  KeyRelations,
+  Knowledge,
+  KnowledgeCST,
+  KnowledgeItem,
+  KnowledgeListCST,
+  LatexCST,
+  LatexLiteral,
+  MatchCase,
+  MatchCaseCST,
+  MatchCST,
+  MatchStatement,
+  MessageSendCST,
+  MessageSendStatement,
+  NewCST,
+  NewStatement,
+  Participant,
+  ParticipantCST,
+  Participants,
+  ParticipantsCST,
+  ParticipantStatement,
+  ParticipantStatementCST,
+  ProgramCST,
+  Protocol,
+  ProtocolCST,
+  PublicKeyRelationCST,
+  SecretKeyRelationCST,
+  SendStatement,
+  SendStatementNode,
+  SetCST,
+  SetStatement,
+  SignCST,
+  SignExpression,
+  Statement,
+  StatementCST,
+  Type,
+  TypeCST,
+} from "./interfaces.js";
 import { IToken } from "chevrotain";
 const parserInstance = new SepoParser();
 
@@ -8,7 +72,7 @@ const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
 
 export class SepoToAstVisitor extends BaseSepoVisitor {
   template: string;
-  constructor(template:string) {
+  constructor(template: string) {
     super();
     this.template = template;
     this.validateVisitor();
@@ -37,38 +101,44 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  type(ctx: TypeCST):Type {
+  type(ctx: TypeCST): Type {
     const functionChild = this.visit(ctx.function);
     if (functionChild) {
-        return functionChild
+      return functionChild;
     }
     const idChild = ctx.Id;
     if (idChild && idChild.length > 0) {
-        return {
-          type: "id",
-          value: idChild[0].image,
-      }
+      return {
+        type: "id",
+        value: idChild[0].image,
+      };
     }
     const numberChild = ctx.NumberLiteral;
     if (numberChild && numberChild.length > 0) {
-        return {
-          type: "number",
-          value: parseInt(numberChild[0].image),
-      }
+      return {
+        type: "number",
+        value: parseInt(numberChild[0].image),
+      };
     }
     const stringChild = ctx.StringLiteral;
     if (stringChild && stringChild.length > 0) {
-        return {
-          type: "string",
-          value: stringChild[0].image,
-      }
+      return {
+        type: "string",
+        value: stringChild[0].image,
+      };
     }
-    
-    return throwSimpleParseError("Unknown type", ctx[Object.keys(ctx)[0]][0], this.template)
+
+    return throwSimpleParseError(
+      "Unknown type",
+      ctx[Object.keys(ctx)[0]][0],
+      this.template
+    );
   }
 
   knowledgeList(ctx: KnowledgeListCST): Knowledge {
-    const knowledge : KnowledgeItem[] = ctx.knowledge.map((k: KnowledgeCST) => this.visit(k));
+    const knowledge: KnowledgeItem[] = ctx.knowledge.map((k: KnowledgeCST) =>
+      this.visit(k)
+    );
     return {
       type: "knowledge",
       knowledge: knowledge,
@@ -76,21 +146,22 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   knowledge(ctx: KnowledgeCST): KnowledgeItem {
-
-    const id:string = ctx.Id[0].image;
+    const id: string = ctx.Id[0].image;
     const children = ctx.type.map((t: TypeCST) => this.visit(t));
     return {
-        type: "knowledgeItem",
-        id: {
-              type: "id",
-              value: id,
-            },
-        children: children
-    }
+      type: "knowledgeItem",
+      id: {
+        type: "id",
+        value: id,
+      },
+      children: children,
+    };
   }
 
   keyRelationList(ctx: KeyRelationListCST): KeyRelations {
-    const keyRelations = ctx.keyRelation.map((k: KeyRelationCST) => this.visit(k));
+    const keyRelations = ctx.keyRelation.map((k: KeyRelationCST) =>
+      this.visit(k)
+    );
     return {
       type: "keyRelations",
       keyRelations: keyRelations,
@@ -108,33 +179,35 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   secretKeyRelation(ctx: SecretKeyRelationCST): Id {
-    const id:string = ctx.Id[0].image;
-    return  {
-              type: "id",
-              value: id,
-            };
+    const id: string = ctx.Id[0].image;
+    return {
+      type: "id",
+      value: id,
+    };
   }
 
   publicKeyRelation(ctx: PublicKeyRelationCST): Id {
-    const id:string = ctx.Id[0].image;
+    const id: string = ctx.Id[0].image;
     return {
-        type: "id",
-        value: id,
-      };
+      type: "id",
+      value: id,
+    };
   }
 
   function(ctx: FunctionCallCST): FunctionCall {
-    const id:string = ctx.Id[0].image;
+    const id: string = ctx.Id[0].image;
     const params = ctx.type.map((p: TypeCST) => this.visit(p));
-    return  {
-              type: "function",
-              id: id,
-              params: params,
-            };
+    return {
+      type: "function",
+      id: id,
+      params: params,
+    };
   }
 
   participants(ctx: ParticipantsCST): Participants {
-    const participants = ctx.participant.map((p: ParticipantCST) => this.visit(p));
+    const participants = ctx.participant.map((p: ParticipantCST) =>
+      this.visit(p)
+    );
 
     return {
       type: "participants",
@@ -143,7 +216,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   participant(ctx: ParticipantCST): Participant {
-    const id:string = ctx.Id[0].image;
+    const id: string = ctx.Id[0].image;
     return {
       type: "participant",
       id: {
@@ -154,7 +227,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   functionsDef(ctx: FunctionsDefCST): FunctionsDef {
-    const functions = ctx.functionItem.map((f: FunctionItemCST) => this.visit(f));
+    const functions = ctx.functionItem.map((f: FunctionItemCST) =>
+      this.visit(f)
+    );
     return {
       type: "functionsDef",
       functions: functions,
@@ -162,20 +237,22 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   functionItem(ctx: FunctionItemCST): FunctionDefItem {
-    const id:string = ctx.Id[0].image;
+    const id: string = ctx.Id[0].image;
     const params = parseInt(ctx.NumberLiteral[0].image);
     return {
       type: "functionDef",
       id: {
-            type: "id",
-            value: id,
-          },
+        type: "id",
+        value: id,
+      },
       params: params,
     };
   }
 
   equation(ctx: EquationCST): Equations {
-    const equations = ctx.equationElement.map((e: EquationElementCST) => this.visit(e));
+    const equations = ctx.equationElement.map((e: EquationElementCST) =>
+      this.visit(e)
+    );
     return {
       type: "equations",
       equations: equations,
@@ -193,7 +270,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   format(ctx: FormatCST): Format {
-    const formats = ctx.formatElement.map((f: FormatElementCST) => this.visit(f));
+    const formats = ctx.formatElement.map((f: FormatElementCST) =>
+      this.visit(f)
+    );
     return {
       type: "format",
       formats: formats,
@@ -218,32 +297,32 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  latex(ctx: LatexCST):LatexLiteral {
+  latex(ctx: LatexCST): LatexLiteral {
     let latex = ctx.latexLiteral[0].image;
-    return { 
-      type: "latex", 
-      value: latex 
+    return {
+      type: "latex",
+      value: latex,
     };
   }
 
-  protocol(ctx: ProtocolCST):Protocol {
+  protocol(ctx: ProtocolCST): Protocol {
     const statements = ctx.statement.map((s: StatementCST) => this.visit(s));
     return {
-        type: "protocol",
-        statements: statements
-    }
+      type: "protocol",
+      statements: statements,
+    };
   }
 
   icons(ctx: IconsCST): Icons {
     let map = new Map<Id, string>();
-    
+
     ctx.iconSet.forEach((icon: IconSetCST) => {
-      let set = this.visit(icon)
+      let set = this.visit(icon);
       set.ids.forEach((id: Id) => {
         map.set(id, set.emoji);
       });
     });
-      
+
     return {
       type: "icons",
       icons: map,
@@ -252,205 +331,221 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   iconSet(ctx: IconSetCST) {
     const emoji = ctx.StringLiteral[0].image;
-    let ids = ctx.Id.map((id:IToken) => {
+    let ids = ctx.Id.map((id: IToken) => {
       return id.image;
     });
-    return {emoji: emoji, ids: ids};
+    return { emoji: emoji, ids: ids };
   }
 
-  statement(ctx: StatementCST):Statement {
+  statement(ctx: StatementCST): Statement {
     const clear = this.visit(ctx.clear);
     if (clear) {
-        return {
-            type: "statement",
-            child: clear
-        }
+      return {
+        type: "statement",
+        child: clear,
+      };
     }
     const participantStatement = this.visit(ctx.participantStatement);
-    if(participantStatement) {
-        return {
-            type: "statement",
-            child: participantStatement
-        }
+    if (participantStatement) {
+      return {
+        type: "statement",
+        child: participantStatement,
+      };
     }
-    if(ctx.Id && ctx.Id.length >= 2){
-        const leftId: string = ctx.Id[0].image;
-        const rightId: string = ctx.Id[1].image;
-        const match = this.visit(ctx.match);
-        if(match) {
-            return {
-                type: "statement",
-                child: {
-                    type: "sendStatement",
-                    leftId: {
-                      type: "id",
-                      value: leftId,
-                    },
-                    rightId: {
-                      type: "id",
-                      value: rightId,
-                    },
-                    child: match
-                }
-            }
+    if (ctx.Id && ctx.Id.length >= 2) {
+      const leftId: string = ctx.Id[0].image;
+      const rightId: string = ctx.Id[1].image;
+      const match = this.visit(ctx.match);
+      if (match) {
+        let send: SendStatement = {
+          type: "sendStatement",
+          leftId: {
+            type: "id",
+            value: leftId,
+          },
+          rightId: {
+            type: "id",
+            value: rightId,
+          },
+          child: match,
+        };
+        return {
+          type: "statement",
+          child: send,
+        };
+      }
+      const messageSend = this.visit(ctx.messageSend);
+      if (messageSend) {
+        let send: SendStatement = {
+          type: "sendStatement",
+          leftId: {
+            type: "id",
+            value: leftId,
+          },
+          rightId: {
+            type: "id",
+            value: rightId,
+          },
+          child: messageSend,
         }
-        const messageSend = this.visit(ctx.messageSend);
-        if(messageSend) {
-            return {
-                type: "statement",
-                child: {
-                    type: "sendStatement",
-                    leftId: {
-                      type: "id",
-                      value: leftId,
-                    },
-                    rightId: {
-                      type: "id",
-                      value: rightId,
-                    },
-                    child: messageSend
-                }
-            }
-        }
+        return {
+          type: "statement",
+          child: send,
+        };
+      }
     }
     //TODO THROW ERROR HERE and remove possibility of null
-    return throwSimpleParseError("Uknown statement", ctx[Object.keys(ctx)[0]][0], this.template)
+    return throwSimpleParseError(
+      "Uknown statement",
+      ctx[Object.keys(ctx)[0]][0],
+      this.template
+    );
   }
 
-  clear(ctx: ClearCST):ClearStatement {
-    const id:string = ctx.Id[0].image;
+  clear(ctx: ClearCST): ClearStatement {
+    const id: string = ctx.Id[0].image;
     return {
-        type: "clearStatement",
-        id: {
-              type: "id",
-              value: id,
-            }
-    }
-  }
-
-  participantStatement(ctx: ParticipantStatementCST):ParticipantStatement {
-    const id:string = ctx.Id[0].image;
-    const newStatement:NewStatement = this.visit(ctx.new);
-    if (newStatement) {
-        return {
-            type: "participantStatement",
-            id: {
-                  type: "id",
-                  value: id,
-                },
-            child: newStatement
-        }
-    }
-    const setStatement:SetStatement = this.visit(ctx.set);
-    if (setStatement) {
-        return {
-            type: "participantStatement",
-            id: {
-                  type: "id",
-                  value: id,
-                },
-            child: setStatement
-        }
-    }
-    //TODO THROW ERROR HERE and remove possibility of null
-    return throwSimpleParseError("Uknown participant statement", ctx[Object.keys(ctx)[0]][0], this.template)
-  }
-
-  new(ctx: NewCST):NewStatement {
-    const id:string = ctx.Id[0].image;
-    return {
-        type: "newStatement",
-        id: {
-              type: "id",
-              value: id,
-            }
-    }
-  }
-
-  set(ctx: SetCST):SetStatement {
-    const id:string = ctx.Id[0].image;
-    const type = this.visit(ctx.type);
-    return {
-        type: "setStatement",
-        id: {
-              type: "id",
-              value: id,
-            },
-        value: type
-    }
-  }
-
-  match(ctx: MatchCST):MatchStatement {
-    const cases : MatchCase[] = ctx.matchCase.map((c: MatchCaseCST) => this.visit(c));
-    return {
-        type: "matchStatement",
-        cases: cases
-    }
-  }
-
-  matchCase(ctx: MatchCaseCST):MatchCase {
-    const type:Type = this.visit(ctx.Type);
-    const statements:Statement[] = ctx.statement.map((s: StatementCST) => this.visit(s));
-    return {
-        type: "matchCase",
-        case: type,
-        children: statements
+      type: "clearStatement",
+      id: {
+        type: "id",
+        value: id,
+      },
     };
   }
 
-  messageSend(ctx: MessageSendCST):MessageSendStatement {
-    const elements = ctx.expression.map((e: ExpressionCST) => this.visit(e));
-    return {
-        type: "messageSendStatement",
-        expressions: elements
+  participantStatement(ctx: ParticipantStatementCST): ParticipantStatement {
+    const id: string = ctx.Id[0].image;
+    const newStatement: NewStatement = this.visit(ctx.new);
+    if (newStatement) {
+      return {
+        type: "participantStatement",
+        id: {
+          type: "id",
+          value: id,
+        },
+        child: newStatement,
+      };
     }
+    const setStatement: SetStatement = this.visit(ctx.set);
+    if (setStatement) {
+      return {
+        type: "participantStatement",
+        id: {
+          type: "id",
+          value: id,
+        },
+        child: setStatement,
+      };
+    }
+    //TODO THROW ERROR HERE and remove possibility of null
+    return throwSimpleParseError(
+      "Uknown participant statement",
+      ctx[Object.keys(ctx)[0]][0],
+      this.template
+    );
   }
 
-  expression(ctx: ExpressionCST):Expression {
+  new(ctx: NewCST): NewStatement {
+    const id: string = ctx.Id[0].image;
+    return {
+      type: "newStatement",
+      id: {
+        type: "id",
+        value: id,
+      },
+    };
+  }
 
-    const type:Type = this.visit(ctx.type);
-    if(type) {
-        return {
-            type: "expression",
-            child: type
-        }
+  set(ctx: SetCST): SetStatement {
+    const id: string = ctx.Id[0].image;
+    const type = this.visit(ctx.type);
+    return {
+      type: "setStatement",
+      id: {
+        type: "id",
+        value: id,
+      },
+      value: type,
+    };
+  }
+
+  match(ctx: MatchCST): MatchStatement {
+    const cases: MatchCase[] = ctx.matchCase.map((c: MatchCaseCST) =>
+      this.visit(c)
+    );
+    return {
+      type: "matchStatement",
+      cases: cases,
+    };
+  }
+
+  matchCase(ctx: MatchCaseCST): MatchCase {
+    const type: Type = this.visit(ctx.Type);
+    const statements: Statement[] = ctx.statement.map((s: StatementCST) =>
+      this.visit(s)
+    );
+    return {
+      type: "matchCase",
+      case: type,
+      children: statements,
+    };
+  }
+
+  messageSend(ctx: MessageSendCST): MessageSendStatement {
+    const elements = ctx.expression.map((e: ExpressionCST) => this.visit(e));
+    return {
+      type: "messageSendStatement",
+      expressions: elements,
+    };
+  }
+
+  expression(ctx: ExpressionCST): Expression {
+    const type: Type = this.visit(ctx.type);
+    if (type) {
+      return {
+        type: "expression",
+        child: type,
+      };
     }
     const encrypt = this.visit(ctx.encrypt);
-    if(encrypt) {
-        return {
-            type: "expression",
-            child: encrypt
-        }
+    if (encrypt) {
+      return {
+        type: "expression",
+        child: encrypt,
+      };
     }
     const sign = this.visit(ctx.sign);
-    if(sign) {
-        return {
-            type: "expression",
-            child: sign
-        }
+    if (sign) {
+      return {
+        type: "expression",
+        child: sign,
+      };
     }
-    
-    
+
     throw new Error("Expression not found");
   }
 
-  encrypt(ctx: EncryptCST):EncryptExpression {
-    const type:Type = this.visit(ctx.type);
-    const expressions:Expression[] = ctx.expression.map((e: ExpressionCST) => this.visit(e));
+  encrypt(ctx: EncryptCST): EncryptExpression {
+    const type: Type = this.visit(ctx.type);
+    const expressions: Expression[] = ctx.expression.map((e: ExpressionCST) =>
+      this.visit(e)
+    );
     return {
-        type: "encryptExpression",
-        inner: expressions,
-        outer: type
-    }
+      type: "encryptExpression",
+      inner: expressions,
+      outer: type,
+    };
   }
 
-  sign(ctx: SignCST):SignExpression {
-    const type:Type = this.visit(ctx.type);
-    const expressions:Expression[] = ctx.expression.map((e: ExpressionCST) => this.visit(e));
+  sign(ctx: SignCST): SignExpression {
+    const type: Type = this.visit(ctx.type);
+    const expressions: Expression[] = ctx.expression.map((e: ExpressionCST) =>
+      this.visit(e)
+    );
     return {
-        type: "signExpression",
-        inner: expressions,
-        outer: type
-    }
+      type: "signExpression",
+      inner: expressions,
+      outer: type,
+    };
   }
 }

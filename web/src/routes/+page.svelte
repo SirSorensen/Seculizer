@@ -28,7 +28,7 @@
 <div id="main">
   <Header />
   <div id="content">
-    {#if program}
+    {#if program && program.first}
       <Frame frame={program.first} />
     {:else}
       {#if error}
