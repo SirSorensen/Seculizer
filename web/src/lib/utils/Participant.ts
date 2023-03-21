@@ -59,7 +59,7 @@ export class _Participant{
                 encrypted: false
             }
         }
-        return structuredClone(result)
+        return result
     }
 
         

@@ -152,9 +152,6 @@ export class Program {
   }
 
   parseProtocol(statements: Statement[] | Statement, last: Frame) {
-    if (last == null)
-      throw new Error("Invalid json: last frame not properly initialized");
-
     if (statements instanceof Array && statements.length > 0) {
       const stmnt = statements.shift();
       if (stmnt == undefined)
