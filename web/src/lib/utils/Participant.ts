@@ -1,22 +1,22 @@
 import type { Type } from '$lang/types/parser/interfaces';
 
-export type _knowledge = {
+export type knowledge = {
     id: Type
     value: string
     encrypted : boolean
 }
 
-export class _Participant{
+export class Participant{
     private name: string
-    private knowledge: _knowledge[]
+    private knowledge: knowledge[]
 
-    constructor(name: string, knowledge: _knowledge[] = []){
+    constructor(name: string, knowledge: knowledge[] = []){
         this.name = name;
         this.knowledge = knowledge;
     }
 
     setKnowledge(knowledge : Type, encrypted : boolean, value : string = ""){
-        let tmp_knowledge = {
+        let tmpknowledge = {
                 id: knowledge,
                 value: value,
                 encrypted: encrypted
@@ -25,9 +25,9 @@ export class _Participant{
         let index = this.findKnowledgeIndex(knowledge)
         
         if (index >= 0) {
-            this.knowledge[index] = tmp_knowledge
+            this.knowledge[index] = tmpknowledge
         } else {
-            this.knowledge.push(tmp_knowledge)
+            this.knowledge.push(tmpknowledge)
         }
     }
 
@@ -43,11 +43,11 @@ export class _Participant{
 
     clearKnowledgeElement(elem : Type) {
         this.knowledge.filter(
-            (item: _knowledge) => item.id != elem
+            (item: knowledge) => item.id != elem
         )
     }
 
-    getKnowledge(knowledge : Type) : _knowledge {
+    getKnowledge(knowledge : Type) : knowledge {
         let result = this.knowledge.find((item) => JSON.stringify(item.id) == JSON.stringify(knowledge))
         
         if (result === undefined) {
@@ -63,11 +63,11 @@ export class _Participant{
     }
 
         
-    cloneKnowledgeList() : _knowledge[] {
+    cloneKnowledgeList() : knowledge[] {
         return structuredClone(this.knowledge)
     }
     
-    getKnowledgeList() : _knowledge[] {
+    getKnowledgeList() : knowledge[] {
         return this.knowledge
     }
 

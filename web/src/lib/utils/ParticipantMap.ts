@@ -1,28 +1,28 @@
 import type { Statement, Type} from '$lang/types/parser/interfaces';
-import { _Participant, type _knowledge } from './Participant';
+import { Participant, type knowledge } from './Participant';
 
 
 export class ParticipantMap{
-    private participants : {[id: string]: _Participant} = {}
+    private participants : {[id: string]: Participant} = {}
 
-    constructor(participants : {[id: string]: _Participant} = {}){
+    constructor(participants : {[id: string]: Participant} = {}){
         Object.keys(participants).forEach((participant: string) =>
-            this.participants[participant] = new _Participant(participant, participants[participant].cloneKnowledgeList())
+            this.participants[participant] = new Participant(participant, participants[participant].cloneKnowledgeList())
             )
     }
 
     //TODO: Make it a clone
-    getParticipants() : {[id: string]: _Participant} {
+    getParticipants() : {[id: string]: Participant} {
         return this.participants;
     }
 
-    getParticipant(name : string) : _Participant {
+    getParticipant(name : string) : Participant {
         return this.participants[name];
     }
 
     // Add participant to map
-    addParticipant(name : string, knowledge : _knowledge[] = []){
-        this.participants[name] = new _Participant(name, knowledge)
+    addParticipant(name : string, knowledge : knowledge[] = []){
+        this.participants[name] = new Participant(name, knowledge)
     }
 
     // Insert given knowledge into given participant or update existing knowledge

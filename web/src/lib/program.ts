@@ -1,5 +1,5 @@
 import type {
-  Participant,
+  Participant as ParticipantAST,
   Statement,
   ParticipantStatement,
   SendStatement,
@@ -22,7 +22,7 @@ import type {
 } from "$lang/types/parser/interfaces";
 
 import { Frame } from "./utils/Frame";
-import { _Participant } from "./utils/Participant";
+import { Participant } from "./utils/Participant";
 import { ParticipantMap } from "./utils/ParticipantMap";
 
 type _format = {
@@ -60,7 +60,7 @@ export class Program {
     if (json.participants) {
       console.log(json.participants.participants);
 
-      json.participants.participants.forEach((participant: Participant) => {
+        json.participants.participants.forEach((participant: ParticipantAST) => {
         this.init_participants.addParticipant(participant.id.value);
       });
       if (this.log) console.log("Participants created", this.init_participants);

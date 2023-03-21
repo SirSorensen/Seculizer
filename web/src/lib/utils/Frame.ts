@@ -1,5 +1,5 @@
 import type { Statement, Type} from '$lang/types/parser/interfaces';
-import type { _Participant } from './Participant';
+import type { Participant } from './Participant';
 import { ParticipantMap } from './ParticipantMap';
 
 
@@ -10,7 +10,7 @@ export class Frame {
     private participants : ParticipantMap
     private presentation : Statement | null
 
-    constructor(stmnt : Statement | null, prev : Frame | null, participants : ParticipantMap | {[id: string]: _Participant}){
+    constructor(stmnt : Statement | null, prev : Frame | null, participants : ParticipantMap | {[id: string]: Participant}){
         this.next = null;
         this.prev = prev;
 
