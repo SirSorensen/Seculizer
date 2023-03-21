@@ -6,9 +6,12 @@ export class ParticipantMap{
     private participants : {[id: string]: _Participant} = {}
 
     constructor(participants : {[id: string]: _Participant} = {}){
-        this.participants = participants;
+        Object.keys(participants).forEach((participant: string) =>
+            this.participants[participant] = new _Participant(participant, participants[participant].getKnowledgeArray())
+            )
     }
 
+    //TODO: Make it a clone
     getParticipants() : {[id: string]: _Participant} {
         return this.participants;
     }
@@ -18,6 +21,7 @@ export class ParticipantMap{
         this.participants[name] = new _Participant(name, knowledge)
     }
 
+    // Insert given knowledge into given participant or update existing knowledge
     setKnowledgeOfParticipant(participant : string, knowledge : Type, encrypted : boolean, value : string = ""){
         this.participants[participant].setKnowledge(knowledge, encrypted, value)
     }
@@ -38,12 +42,9 @@ export class ParticipantMap{
         )
     }
 
-    // Insert given knowledge into given participant or update existing knowledge, from given participants
-    setKnowledge(participant : string, knowledge : Type, encrypted : boolean, value : string = "") {
-        this.participants[participant].setKnowledge(knowledge, encrypted, value)
-    }
-    
     transferKnowledge(sender : string, receiver : string, knowledge : Type, encrypted : boolean | null = null){
+        if (this.participants[sender] === undefined || this.participants[sender] == null) throw new Error("Sender not found!")
+        console.log (this.participants[sender])
         let tmp_knowledge = this.participants[sender].getKnowledge(knowledge)
 
         if (encrypted == null) this.participants[receiver].setKnowledge(tmp_knowledge.id, tmp_knowledge.encrypted, tmp_knowledge.value)

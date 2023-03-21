@@ -170,7 +170,7 @@ export class Program {
                     for (const caseIndex in stmnt.child.child.cases) {
                         const matchCase = stmnt.child.child.cases[caseIndex];
 
-                        last.setMatchCase(caseIndex)
+                        last.createNewMatchCase(caseIndex)
 
                         this.parseProtocol(matchCase.children, last.getNextFrame(caseIndex))
                     }

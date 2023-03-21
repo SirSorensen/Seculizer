@@ -32,7 +32,7 @@ export class _Participant{
     }
 
     findKnowledgeIndex(element : Type) : number {
-        return this.knowledge.findIndex((item) => item.id == element)
+        return this.knowledge.findIndex((item) => JSON.stringify(item.id) == JSON.stringify(element))
     }
 
     doesKnowledgeExist(element : Type) : boolean {
@@ -48,11 +48,10 @@ export class _Participant{
     }
 
     getKnowledge(knowledge : Type) : _knowledge {
-
         let result = this.knowledge.find((item) => JSON.stringify(item.id) == JSON.stringify(knowledge))
         
         if (result === undefined) {
-            console.log("Knowledge not found!")
+            console.error("Knowledge not found!")
             
             return {
                 id: knowledge,
@@ -60,8 +59,10 @@ export class _Participant{
                 encrypted: false
             }
         }
-        return result
+        return structuredClone(result)
     }
 
-
+    getKnowledgeArray() : _knowledge[] {
+        return structuredClone(this.knowledge)
+    }
 }
