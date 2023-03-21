@@ -19,6 +19,13 @@ import type {
   MessageSendStatement,
   EncryptExpression,
   SignExpression,
+  Participants,
+  Knowledge,
+  KeyRelations,
+  FunctionsDef,
+  Format,
+  Icons,
+  Protocol,
 } from "$lang/types/parser/interfaces";
 
 import { Frame } from "./utils/Frame";
@@ -56,11 +63,41 @@ export class Program {
     }
 
     // Participants:
-    // Create participants
-    if (json.participants) {
-      console.log(json.participants.participants);
+    this.constructParticipants(json.participants);
+    if (this.log) console.log("Participants", this.init_participants);
 
-      json.participants.participants.forEach((participant: ParticipantAST) => {
+    // Knowledge:
+    this.constructKnowledge(json.knowledge);
+
+    // KeyRelations:
+    this.constructKeyRelations(json.keyRelations);
+
+    // Functions:
+    this.constructFunctions(json.functions);
+
+    // Equations:
+    //GIANT TODO HERE hehe
+
+    // Format:
+    // Add format to functions
+    this.constructFormat(json.format);
+
+    // Icons:
+    this.constructIcons(json.icons);
+
+    // Protocol & Frames:
+    this.constructProtocol(json.protocol);
+
+    console.log("Program created");
+  }
+
+  // Construct Participants
+  constructParticipants(participants: Participants) {
+    // Add given participants
+    if (participants) {
+      console.log(participants.participants);
+
+      participants.participants.forEach((participant: ParticipantAST) => {
         this.init_participants.addParticipant(participant.id.value);
       });
       if (this.log) console.log("Participants created", this.init_participants);
@@ -68,43 +105,43 @@ export class Program {
 
     // Add shared knowledge
     this.init_participants.addParticipant("Shared");
+  }
 
-    if (this.log) console.log("Participants", this.init_participants);
-
-    // Knowledge:
-    // Add knowledge to participants
-    if (json.knowledge) {
-      json.knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
+  // Construct Knowledge
+  constructKnowledge(knowledge: Knowledge) {
+    //Add given knowledge to participants
+    if (knowledge) {
+      knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
         knowledge.children.forEach((child: Type) => {
           this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, child, false);
         });
       });
       if (this.log) console.log("Knowledge added to participants", this.init_participants);
     } else if (this.log) console.log("No knowledge found");
+  }
 
-    // KeyRelations:
-    if (json.keyRelations) {
-      json.keyRelations.keyRelations.forEach((keyRelation: KeyRelation) => {
+  // Construct KeyRelations
+  constructKeyRelations(keyRelations : KeyRelations){
+    if (keyRelations) {
+      keyRelations.keyRelations.forEach((keyRelation: KeyRelation) => {
         let sk = keyRelation.sk.value;
         let pk = keyRelation.pk.value;
         this.keyRelations[pk] = sk;
       });
       if (this.log) console.log("KeyRelations created", this.keyRelations);
     } else if (this.log) console.log("No keyRelations found");
+  }
 
-    // Functions:
-    if (json.functions) {
-      json.functions.functions.forEach((func: FunctionDefItem) => (this.functions[func.id.value] = func.params));
+  constructFunctions(functions: FunctionsDef){
+    if (functions) {
+      functions.functions.forEach((func: FunctionDefItem) => (this.functions[func.id.value] = func.params));
       if (this.log) console.log("Functions created", this.functions);
     } else if (this.log) console.log("No functions found");
+  }
 
-    // Equations:
-    //GIANT TODO HERE hehe
-
-    // Format:
-    // Add format to functions
-    if (json.format) {
-      json.format.formats.forEach((format: FormatItem) => {
+  constructFormat(format : Format){
+    if (format) {
+      format.formats.forEach((format: FormatItem) => {
         let tmp_format: _format = {
           id: format.function.id,
           params: [],
@@ -120,25 +157,25 @@ export class Program {
 
       if (this.log) console.log("Formats created", this.formats);
     } else if (this.log) console.log("No formats found");
+  }
 
-    // Icons:
-    if (json.icons) {
-      this.icons = json.icons.icons;
+  constructIcons(icons : Icons){
+    if (icons) {
+      this.icons = icons.icons;
       if (this.log) console.log("Icons created", this.icons);
     } else if (this.log) console.log("No icons found");
+  }
 
+  constructProtocol(protocol : Protocol){
     //Setup first frame
     this.first = new Frame(null, null, this.init_participants);
     if (this.log) console.log("First frame created", this.first);
     if (this.first == null) throw new Error("Invalid json: no first frame created! First frame not properly initialized");
 
-    // Protocol:
-    if (json.protocol.statements) {
-      this.parseProtocol(json.protocol.statements, this.first);
+    if (protocol.statements) {
+      this.parseProtocol(protocol.statements, this.first);
       if (this.log) console.log("Protocol created", this.first);
     } else if (this.log) console.log("No protocol found");
-
-    console.log("Program created");
   }
 
   parseProtocol(statements: Statement[] | Statement, last: Frame) {
