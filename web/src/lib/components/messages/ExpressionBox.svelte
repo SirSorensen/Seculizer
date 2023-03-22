@@ -7,7 +7,7 @@
     SignExpression,
     Type,
   } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/program";
+  import type { Program } from "$lib/models/program";
   import { getStringFromType } from "$lib/utils/stringUtil.js";
   import Item from "$lib/components/Item.svelte";
   import EncryptIcon from "$lib/Icons/EncryptIcon.svelte";
@@ -46,7 +46,7 @@
   <p>{getStringFromType(type)}</p>
 {:else if child.type === "id"}
   {@const id = castToId(child)}
-  <Item id={id.value} emoji={program.getIcon(id)} />
+  <Item id={id.value} emoji={program.getIcon(id.value)} />
 {/if}
 
 <style>

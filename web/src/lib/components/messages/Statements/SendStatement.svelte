@@ -5,7 +5,7 @@
     SendStatementNode,
     MatchStatement,
   } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/program";
+  import type { Program } from "$lib/models/program";
   import MessageBox from "../MessageBox.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
 

@@ -3,7 +3,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 
 export default [
-    {
+  {
     input: "src/example.ts",
     output: {
       file: "dist/example.js",
@@ -19,5 +19,5 @@ export default [
       }),
       commonjs(),
     ],
-  }
+  },
 ];

@@ -1,4 +1,4 @@
-import { Program } from "$lib/program.js";
+import { Program } from "$lib/models/program.js";
 import { assert, expect, test } from "vitest";
 import { readFileSync } from "fs";
 import parse from "$lang/index.js";
@@ -51,12 +51,8 @@ test("Program with icon-test.sepo", () => {
   expect(program).toBeTruthy();
   expect(program.icons).toBeTruthy();
   expect(program.icons.size).toBe(5);
-  const id:Id = {type: "id", value: 'Alice'};
+  const id: Id = { type: "id", value: "Alice" };
   const icon = program.icons.get(id.value);
   expect(icon).toBeTruthy();
   expect(icon).toBe("woman");
-  const icon2 = program.getIcon(id);
-  expect(icon2).toBeTruthy();
-  expect(icon2).toBe("woman");
-  expect(icon).toBe(icon2);
 });

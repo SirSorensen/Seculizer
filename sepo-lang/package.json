@@ -9,7 +9,8 @@
     "test": "rollup -c && vitest",
     "example": "rollup -c rollup.config.example.js && node ./dist/example.js",
     "diagram": "rollup -c rollup.config.diagram.js && node ./dist/diagram.js",
-    "coverage": "rollup -c && vitest run --coverage"
+    "coverage": "rollup -c && vitest run --coverage",
+    "pretty": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -30,11 +31,10 @@
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5",
-    "vitest": "^0.28.4"
+    "vitest": "^0.28.4",
+    "prettier": "2.8.6"
   },
   "dependencies": {
-    "chevrotain": "^10.4.2",
-    "gelex": "^0.0.7",
-    "rollup-plugin-dts": "^5.2.0"
+    "chevrotain": "^10.4.2"
   }
 }

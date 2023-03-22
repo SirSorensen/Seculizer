@@ -28,8 +28,8 @@ import type {
   Protocol,
 } from "$lang/types/parser/interfaces";
 
-import { Frame } from "./utils/Frame";
-import { ParticipantMap } from "./utils/ParticipantMap";
+import { Frame } from "./Frame";
+import { ParticipantMap } from "./ParticipantMap";
 
 type _format = {
   //Function
@@ -120,7 +120,7 @@ export class Program {
   }
 
   // Construct KeyRelations
-  constructKeyRelations(keyRelations : KeyRelations){
+  constructKeyRelations(keyRelations: KeyRelations) {
     if (keyRelations) {
       keyRelations.keyRelations.forEach((keyRelation: KeyRelation) => {
         let sk = keyRelation.sk.value;
@@ -131,14 +131,14 @@ export class Program {
     } else if (this.log) console.log("No keyRelations found");
   }
 
-  constructFunctions(functions: FunctionsDef){
+  constructFunctions(functions: FunctionsDef) {
     if (functions) {
       functions.functions.forEach((func: FunctionDefItem) => (this.functions[func.id.value] = func.params));
       if (this.log) console.log("Functions created", this.functions);
     } else if (this.log) console.log("No functions found");
   }
 
-  constructFormat(format : Format){
+  constructFormat(format: Format) {
     if (format) {
       format.formats.forEach((format: FormatItem) => {
         let tmp_format: _format = {
@@ -158,14 +158,14 @@ export class Program {
     } else if (this.log) console.log("No formats found");
   }
 
-  constructIcons(icons : Icons){
+  constructIcons(icons: Icons) {
     if (icons) {
       this.icons = icons.icons;
       if (this.log) console.log("Icons created", this.icons);
     } else if (this.log) console.log("No icons found");
   }
 
-  constructProtocol(protocol : Protocol){
+  constructProtocol(protocol: Protocol) {
     //Setup first frame
     this.first = new Frame(null, null, this.init_participants);
     if (this.log) console.log("First frame created", this.first);

@@ -8,9 +8,9 @@
   import Header from "$lib/components/Header.svelte";
   import NextButton from "$lib/components/navigation/NextButton.svelte";
   import PrevButton from "$lib/components/navigation/PrevButton.svelte";
-  import { Program } from "$lib/program";
-  import { test } from "$lib/test.js";
-  import type { Frame as FrameType } from "$lib/utils/Frame";
+  import { Program } from "$lib/models/program";
+  import { test } from "$lib/utils/test.js";
+  import type { Frame as FrameType } from "$lib/models/Frame";
   import LZString from "lz-string";
   import { onMount } from "svelte";
   let content = test

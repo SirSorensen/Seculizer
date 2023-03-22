@@ -17,7 +17,7 @@ export default [
         browser: true,
         preferBuiltins: true,
       }),
-      commonjs()
+      commonjs(),
     ],
-  }
+  },
 ];

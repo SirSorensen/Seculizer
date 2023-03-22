@@ -5,7 +5,7 @@
     NewStatement,
     SetStatement,
   } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/program";
+  import type { Program } from "$lib/models/program";
   import ActionBox from "../ActionBox.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
   import Item from "$lib/components/Item.svelte";
@@ -25,12 +25,12 @@
 {:else if child.type === "newStatement"}
   {@const newStmnt = castToNewStatement(child)}
   {@const id = newStmnt.id}
-  {@const icon = program.getIcon(id)}
+  {@const icon = program.getIcon(id.value)}
   <ActionBox title="new"><Item emoji={icon} id={id.value} /></ActionBox>
 {:else if child.type === "setStatement"}
   {@const setStmnt = castToSetStatement(child)}
   {@const id = setStmnt.id}
-  {@const icon = program.getIcon(id)}
+  {@const icon = program.getIcon(id.value)}
   {@const value = setStmnt.value}
   <ActionBox title="new"><div><Item emoji={icon} id={id.value} /> = {getStringFromType(value)}</div></ActionBox>
 {/if}

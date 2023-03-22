@@ -1,5 +1,5 @@
 import type { Type } from "$lang/types/parser/interfaces";
-import type { Program } from "$lib/program";
+import type { Program } from "$lib/models/program";
 export function getStringFromType(type: Type): string {
   if (!type) return "null";
   switch (type.type) {

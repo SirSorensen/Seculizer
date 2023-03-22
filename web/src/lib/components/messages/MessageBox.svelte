@@ -1,7 +1,7 @@
 <script lang="ts">
   import ExpressionBox from "./ExpressionBox.svelte";
   import type { Expression as ExpressionAST} from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/program";
+  import type { Program } from "$lib/models/program";
 
   export let program:Program;
   export let fromId:string;
