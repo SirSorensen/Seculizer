@@ -5,15 +5,15 @@ import { ParticipantMap } from "./ParticipantMap";
 export class Frame {
   private next: Frame | { [id: string]: Frame } | null;
   private prev: Frame | null;
-  private participants: ParticipantMap;
+  private participantMap: ParticipantMap;
   private presentation: Statement | null;
 
-  constructor(stmnt: Statement | null, prev: Frame | null, participants: ParticipantMap | { [id: string]: Participant }) {
+  constructor(stmnt: Statement | null, prev: Frame | null, participantMap: ParticipantMap | { [id: string]: Participant }) {
     this.next = null;
     this.prev = prev;
 
-    if (participants instanceof ParticipantMap) this.participants = new ParticipantMap(participants.getParticipants());
-    else this.participants = new ParticipantMap(participants);
+    if (participantMap instanceof ParticipantMap) this.participantMap = new ParticipantMap(participantMap.getParticipants());
+    else this.participantMap = new ParticipantMap(participantMap);
 
     this.presentation = stmnt;
   }
@@ -70,7 +70,7 @@ export class Frame {
       this.next = {};
     }
 
-    let tmp_frame = new Frame(null, this, this.participants);
+    let tmp_frame = new Frame(null, this, this.participantMap);
 
     this.next[caseIndex] = tmp_frame;
   }
@@ -79,8 +79,8 @@ export class Frame {
     return this.next === null;
   }
 
-  getParticipants(): ParticipantMap {
-    return this.participants;
+  getParticipantMap(): ParticipantMap {
+    return this.participantMap;
   }
 
   //TODO: Mayve do this in a better way than static
@@ -90,19 +90,6 @@ export class Frame {
     if (last != null) last.setNext(tmp_last);
 
     return tmp_last;
-  }
-
-  clearKnowledgeElement(elem: Type) {
-    this.participants.clearKnowledgeElement(elem);
-  }
-
-  // Insert given knowledge into given participant or update existing knowledge, from given participants
-  setKnowledge(participant: string, knowledge: Type, encrypted: boolean, value: string = "") {
-    this.participants.setKnowledgeOfParticipant(participant, knowledge, encrypted, value);
-  }
-
-  transferKnowledge(sender: string, receiver: string, knowledge: Type, encrypted: boolean | null = null) {
-    this.participants.transferKnowledge(sender, receiver, knowledge, encrypted);
   }
 
   getPresentation(): Statement | null {

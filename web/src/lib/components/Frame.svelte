@@ -19,9 +19,9 @@
   let presentation: StatementAST | null = null;
   $: {
     participants = [];
-    if (frame && frame.getParticipants()) {
-      for (const key in frame.getParticipants().getParticipants()) {
-        const participant = frame.getParticipants().getParticipant(key);
+    if (frame && frame.getParticipantMap()) {
+      for (const key in frame.getParticipantMap().getParticipants()) {
+        const participant = frame.getParticipantMap().getParticipant(key);
 
         const obj: {
           Name: string;

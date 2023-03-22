@@ -2,7 +2,9 @@ import { Program } from "$lib/models/program.js";
 import { assert, expect, test } from "vitest";
 import { readFileSync } from "fs";
 import parse from "$lang/index.js";
-import type { Id } from "$lang/types/parser/interfaces";
+import type { Id } from "$lang/types/parser/interfaces"
+import type { Participant } from "$lib/models/Participant";
+
 
 test("Program with simple.sepo", () => {
   let fileStr = readFileSync("tests/sepo/simple.sepo");
@@ -43,6 +45,18 @@ test("Program with send-with-enc.sepo", () => {
   console.log(" ");
   expect(program).toBeTruthy();
 });
+
+test("Program with send-and-clear.sepo", () => {
+  let fileStr = readFileSync("tests/sepo/send-and-clear.sepo");
+  let json = parse(fileStr, false);
+  let program = new Program(json, true);
+  console.log(" ");
+  expect(program).toBeTruthy();
+  expect(program.first?.getParticipantMap().getParticipants()).toBeDefined();
+  let amountOfParticipants = Object.keys(program.first?.getParticipantMap().getParticipants() as { [id: string]: Participant }).length;
+  expect(amountOfParticipants).toBe(3);
+});
+
 test("Program with icon-test.sepo", () => {
   let fileStr = readFileSync("tests/sepo/icon-test.sepo");
   let json = parse(fileStr, false);

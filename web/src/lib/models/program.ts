@@ -217,7 +217,7 @@ export class Program {
         this.parseProtocol(matchCase.children, last.getNextFrame(caseIndex));
       }
     } else {
-      last.setNext(Frame.newFrame(stmnt, last.getParticipants(), last));
+      last.setNext(Frame.newFrame(stmnt, last.getParticipantMap(), last));
       this.pipeStmnt(stmnt, last.getNext() as Frame);
     }
   }
@@ -250,7 +250,7 @@ export class Program {
   }
 
   clearStmnt(knowledge: Type, last: Frame) {
-    last.clearKnowledgeElement(knowledge);
+    last.getParticipantMap().clearKnowledgeElement(knowledge);
   }
 
   participantStmnt(stmnt: ParticipantStatement, last: Frame) {
@@ -268,12 +268,12 @@ export class Program {
 
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame) {
-    last.setKnowledge(participant, newKnowledge, false);
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, newKnowledge, false);
   }
 
   // Set Statement
   setStmnt(participant: string, knowledge: Type, value: string, last: Frame) {
-    last.setKnowledge(participant, knowledge, false, value);
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, knowledge, false, value);
   }
 
   // Pipe SendStatement to messageSendStatement, or matchStatement
@@ -300,7 +300,7 @@ export class Program {
         this.messageSendStmnt(senderId, receiverId, signExpression.inner, last, encrypted);
       } else {
         const type = expression.child as Type;
-        last.transferKnowledge(senderId, receiverId, type, encrypted);
+        last.getParticipantMap().transferKnowledge(senderId, receiverId, type, encrypted);
       }
     });
   }
@@ -313,7 +313,7 @@ export class Program {
     // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
     if (!encrypted) {
       // decryptable = true if receiver knows the key, it is therefore not encrypted
-      let decryptable = last.getParticipants().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
+      let decryptable = last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
       encrypted = !decryptable;
     }
 
