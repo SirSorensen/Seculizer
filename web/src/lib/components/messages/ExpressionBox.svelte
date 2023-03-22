@@ -29,7 +29,7 @@
   {@const encryptExpression = castToEncryptExpression(child)}
   {@const inner = encryptExpression.inner}
   {#each inner as innerExpression}
-    <svelte:self expression={innerExpression} />
+    <svelte:self {program} expression={innerExpression} />
   {/each}
   {@const outer = encryptExpression.outer}
   <EncryptIcon encryptType={outer} />
@@ -37,7 +37,7 @@
   {@const signExpression = castToSignExpression(child)}
   {@const inner = signExpression.inner}
   {#each inner as innerExpression}
-    <svelte:self expression={innerExpression} />
+    <svelte:self {program} expression={innerExpression} />
   {/each}
   {@const outer = signExpression.outer}
   <SignIcon signType={outer} signieIcon={"red-question-mark"} />

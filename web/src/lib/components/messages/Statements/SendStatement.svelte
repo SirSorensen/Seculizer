@@ -1,7 +1,6 @@
 <script lang="ts">
   import type {
     SendStatement,
-    StatementNode,
     MessageSendStatement,
     SendStatementNode,
     MatchStatement,
