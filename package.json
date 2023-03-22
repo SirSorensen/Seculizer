@@ -1,0 +1,21 @@
+{
+    "name": "seculizer",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "lang": "cd ./sepo-lang/ && npm run build",
+      "web": "cd ./web/ && npm run dev",
+      "dev": "npm run lang && npm run web"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/SirSorensen/Seculizer.git"
+    },
+    "author": "David Martin Sørensen & Philip Flyvholm",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/SirSorensen/Seculizer/issues"
+    },
+    "homepage": "https://github.com/SirSorensen/Seculizer#readme"
+  }

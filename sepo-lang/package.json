@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dasoITU/BachProj.git"
+    "url": "git+https://github.com/SirSorensen/Seculizer.git"
   },
   "author": "Philip Flyvholm & David Sørensen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dasoITU/BachProj/issues"
+    "url": "https://github.com/SirSorensen/Seculizer/issues"
   },
-  "homepage": "https://github.com/dasoITU/BachProj#readme",
+  "homepage": "https://github.com/SirSorensen/Seculizer#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
