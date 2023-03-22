@@ -44,8 +44,13 @@ export class ParticipantMap {
   }
 
   transferKnowledge(sender: string, receiver: string, knowledge: Type, encrypted: boolean | null = null) {
-    if (this.participants[sender] === undefined || this.participants[sender] == null) throw new Error("Sender not found!");
-    console.log(this.participants[sender]);
+    // Error handling
+    if (sender == receiver) throw new Error("Sender and receiver cannot be the same! You cannot send something to yourself!")
+    if (!this.participants[sender]) throw new Error("Sender not found!");
+    if (!this.participants[receiver]) throw new Error("Receiver not found!");
+    
+    if (knowledge.type == "string" || knowledge.type == "number") return;
+
     let tmp_knowledge = this.participants[sender].getKnowledge(knowledge);
 
     if (encrypted == null) this.participants[receiver].setKnowledge(tmp_knowledge.id, tmp_knowledge.encrypted, tmp_knowledge.value);
