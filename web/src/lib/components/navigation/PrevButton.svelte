@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Frame } from "$lib/utils/Frame";
+  import type { Frame } from "$lib/models/Frame";
 
   export let navigation: {
     prev: Frame | null;

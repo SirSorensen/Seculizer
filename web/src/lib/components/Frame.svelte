@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Frame } from "$lib/utils/Frame";
+  import type { Frame } from "$lib/models/Frame";
   import { getIconFromType, getStringFromType } from "$lib/utils/stringUtil";
   import CommonKnowledge from "./CommonKnowledge.svelte";
   import Statement from "./messages/Statements/Statement.svelte";
   import type { Statement as StatementAST } from "$lang/types/parser/interfaces";
   import Participants from "./Participants.svelte";
-  import type { Program } from "$lib/program";
+  import type { Program } from "$lib/models/program";
   export let frame: Frame;
   export let program: Program;
 

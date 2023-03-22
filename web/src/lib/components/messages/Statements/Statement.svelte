@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Statement as StatementAST, SendStatement as SendStatementAST, ClearStatement as ClearStatementAST, ParticipantStatement as ParticipantStatementAST, StatementNode } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/program";
+  import type { Program } from "$lib/models/program";
   import ClearStatement from "./ClearStatement.svelte";
   import SendStatement from "./SendStatement.svelte";
   import ParticipantStatement from "./ParticipantStatement.svelte";
