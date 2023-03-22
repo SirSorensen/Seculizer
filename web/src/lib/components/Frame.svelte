@@ -6,7 +6,6 @@
   import type { Statement as StatementAST } from "$lang/types/parser/interfaces";
   import Participants from "./Participants.svelte";
   import type { Program } from "$lib/models/program";
-  import type Participant from "$lib/components/Participant.svelte";
   export let frame: Frame;
   export let program: Program;
 
@@ -53,7 +52,9 @@
     <Participants bind:participantElements={participantElements.elements} {participants} />
   </div>
   {#if presentation !== null}
+    {#key JSON.stringify(presentation)}
     <Statement participantElements={participantElements} {program} statement={presentation} />
+    {/key}
   {/if}
 </div>
 

@@ -17,12 +17,19 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    transform: translate(50%, 70%);
+    transform: translate(20%, 50%);
   }
   .id-container {
     position: relative;
   }
+  .id-container p {
+    text-align: center;
+    font-size: 0.9rem;
+    margin: 0;
+  }
   .encrypt-icon :global(.emoji) {
     font-size: 2rem;
+    margin: 0;
+    text-align: center;
   }
 </style>

@@ -26,5 +26,5 @@
 {:else if statement.child.type === "sendStatement"}
   <SendStatement {program} {participantElements} stmnt={castToSendStatement(statement.child)} />
 {:else if statement.child.type === "participantStatement"}
-  <ParticipantStatement {program} stmnt={castToParticipantsStatement(statement.child)} />
+  <ParticipantStatement {program} {participantElements} stmnt={castToParticipantsStatement(statement.child)} />
 {/if}

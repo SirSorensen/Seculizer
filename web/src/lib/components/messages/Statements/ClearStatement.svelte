@@ -9,7 +9,18 @@
   export let stmnt: ClearStatement;
 
   const id = stmnt.id;
-  const icon = program.icons.get(id.value) || "question-mark";
+  const icon = program.getIcon(id.value);
 </script>
 
-<ActionBox title="clear"><Item emoji={icon} id={id.value} /></ActionBox>
+<div class="statement">
+  <ActionBox title="clear"><Item emoji={icon} id={id.value} /></ActionBox>
+</div>
+
+<style>
+  .statement {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>

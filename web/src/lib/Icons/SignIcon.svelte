@@ -13,7 +13,7 @@
       <Emoji content={signieIcon} />
     </span>
   </div>
-  <p>{getStringFromType(signType)}</p>
+  <p class="signie">{getStringFromType(signType)}</p>
 </div>
 
 <style>
@@ -26,12 +26,20 @@
   .emoji-container {
     position: relative;
   }
-  .emoji-container .signie-emoji {
+  .emoji-container .signie-emoji :global(.emoji) {
     position: absolute;
     bottom: 0;
     right: 0;
+    font-size: 1.3rem;
+  }
+  .signie{
+    text-align: center;
+    font-size: 0.9rem;
+    margin: 0;
   }
   .sign-icon :global(.emoji) {
     font-size: 2rem;
+    margin: 0;
+    text-align: center;
   }
 </style>

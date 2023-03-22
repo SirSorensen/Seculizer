@@ -60,7 +60,9 @@
   }}
 >
   <div class="container">
-    <Item id={name} {emoji} />
+    <div class="participant-item">
+      <Item id={name} {emoji} />
+    </div>
     {#key knowledge.length}
       <div class="knowledges" use:accordion={showKnowledge}>
         {#if knowledge.length === 0}

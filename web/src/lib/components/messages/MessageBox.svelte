@@ -27,6 +27,7 @@
     font-size: 1.2rem;
     border-radius: 15px;
     margin-bottom: 2rem;
+    min-height: 2rem;
   }
 
   .message :global(.message){

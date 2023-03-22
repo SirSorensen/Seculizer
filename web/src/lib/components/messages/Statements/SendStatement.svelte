@@ -113,7 +113,6 @@
     };
   });
 </script>
-
 {#if !child}
   <p>Invalid statement</p>
 {:else if child.type === "messageSendStatement"}
@@ -168,5 +167,7 @@
 
   .message.multiMessage {
     border: 2px dashed gray;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.699);
   }
 </style>
