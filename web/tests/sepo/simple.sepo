@@ -4,7 +4,8 @@ Knowledge: {
     Shared: tpm_pk;
 };
 KeyRelations: (sk:tmp_sk, pk:tpm_pk);
-Functions: hash/2;
+Functions: hash/2, add/2;
+Equations: add(a,b) = add(b,a);
 Format: hash(x,y) = $H(x||y)$;
 
 Protocol: {

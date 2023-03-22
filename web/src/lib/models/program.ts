@@ -26,7 +26,10 @@ import type {
   Format,
   Icons,
   Protocol,
+  Equations,
+  Equation,
 } from "$lang/types/parser/interfaces";
+import { EquationMap } from "./../utils/EquationMap";
 
 import { Frame } from "./Frame";
 import { ParticipantMap } from "./ParticipantMap";
@@ -48,7 +51,7 @@ export class Program {
   keyRelations: { [id: string]: string } = {};
   functions: { [id: string]: Number } = {};
   formats: { [id: string]: _format } = {};
-  equations: { [id: string]: string } = {};
+  equations: EquationMap = new EquationMap();
   icons: Map<string, string> = new Map();
   log: boolean = false;
 
@@ -75,7 +78,7 @@ export class Program {
     this.constructFunctions(json.functions);
 
     // Equations:
-    //GIANT TODO HERE hehe
+    this.constructEquations(json.equations)
 
     // Format:
     // Add format to functions
@@ -136,6 +139,13 @@ export class Program {
       functions.functions.forEach((func: FunctionDefItem) => (this.functions[func.id.value] = func.params));
       if (this.log) console.log("Functions created", this.functions);
     } else if (this.log) console.log("No functions found");
+  }
+
+  constructEquations(equations: Equations) {
+    if (equations) {
+      equations.equations.forEach((eq: Equation) => this.equations.addEquation(eq));
+      if (this.log) console.log("Equations created", this.functions);
+    } else if (this.log) console.log("No Equations found");
   }
 
   constructFormat(format: Format) {
