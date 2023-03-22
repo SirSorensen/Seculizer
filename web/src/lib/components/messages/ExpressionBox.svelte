@@ -46,7 +46,7 @@
   <p>{getStringFromType(type)}</p>
 {:else if child.type === "id"}
   {@const id = castToId(child)}
-  <Item id={id.value} emoji={program.icons.get(id) || "red-question-mark"} />
+  <Item id={id.value} emoji={program.getIcon(id)} />
 {/if}
 
 <style>

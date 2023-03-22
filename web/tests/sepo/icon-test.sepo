@@ -1,0 +1,14 @@
+Participants: Alice, Bob;
+Knowledge: {
+    Bob: B_sk;
+    Alice: B_pk, msg_A;
+};
+Icons: {
+    "woman": Alice;
+    "man": Bob;
+    "🔑": B_sk, B_pk;
+    "📝": msg_A;
+};
+Protocol: {
+    Alice -> Bob: {msg_A}B_pk;
+};

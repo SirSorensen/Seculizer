@@ -42,3 +42,15 @@ test("Program with send-with-enc.sepo", () => {
   console.log(" ");
   expect(program).toBeTruthy();
 });
+test("Program with icon-test.sepo", () => {
+  let fileStr = readFileSync("tests/sepo/icon-test.sepo");
+  let json = parse(fileStr, false);
+  let program = new Program(json, true);
+  console.log(" ");
+  expect(program).toBeTruthy();
+  console.log(program.icons);
+  expect(program.icons).toBeTruthy();
+  expect(program.icons.size).toBe(5);
+  expect(program.icons.get({type: "id", value: "Alice"})).toBeTruthy();
+  expect(program.icons.get({type: "id", value: "Alice"})).toBe("woman");
+});

@@ -29,7 +29,6 @@ import type {
 } from "$lang/types/parser/interfaces";
 
 import { Frame } from "./utils/Frame";
-import { Participant } from "./utils/Participant";
 import { ParticipantMap } from "./utils/ParticipantMap";
 
 type _format = {
@@ -317,5 +316,9 @@ export class Program {
       if (tmp_key) key.value = tmp_key;
     }
     return key;
+  }
+
+  getIcon(id: Id) {
+    return this.icons.get(id) || "red-question-mark";
   }
 }

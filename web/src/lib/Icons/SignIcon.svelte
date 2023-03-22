@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Type } from "$lang/types/parser/interfaces";
+  import Emoji from "$lib/components/Emoji.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
   export let signType: Type;
   export let signieIcon: string;
@@ -7,8 +8,10 @@
 
 <div class="sign-icon">
   <div class="emoji-container">
-    <i class="oma oma-pen emoji" />
-    <i class="oma {signieIcon} signie-emoji" />
+    <Emoji content="pen" />
+    <span class="signie-emoji">
+      <Emoji content={signieIcon} />
+    </span>
   </div>
   <p>{getStringFromType(signType)}</p>
 </div>
@@ -28,12 +31,7 @@
     bottom: 0;
     right: 0;
   }
-  .emoji {
+  .sign-icon :global(.emoji) {
     font-size: 2rem;
   }
-  /*p {
-    margin: 0;
-    text-align: center;
-    font-size: 1rem;
-  }*/
 </style>

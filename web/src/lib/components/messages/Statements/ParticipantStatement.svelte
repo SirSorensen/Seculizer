@@ -1,7 +1,6 @@
 <script lang="ts">
   import type {
     ParticipantStatement,
-    StatementNode,
     ParticipantStatementNode,
     NewStatement,
     SetStatement,
@@ -26,12 +25,12 @@
 {:else if child.type === "newStatement"}
   {@const newStmnt = castToNewStatement(child)}
   {@const id = newStmnt.id}
-  {@const icon = program.icons.get(id) || "question-mark"}
+  {@const icon = program.getIcon(id)}
   <ActionBox title="new"><Item emoji={icon} id={id.value} /></ActionBox>
 {:else if child.type === "setStatement"}
   {@const setStmnt = castToSetStatement(child)}
   {@const id = setStmnt.id}
-  {@const icon = program.icons.get(id) || "question-mark"}
+  {@const icon = program.getIcon(id)}
   {@const value = setStmnt.value}
   <ActionBox title="new"><div><Item emoji={icon} id={id.value} /> = {getStringFromType(value)}</div></ActionBox>
 {/if}

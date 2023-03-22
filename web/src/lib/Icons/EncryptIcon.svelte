@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { Type } from "$lang/types/parser/interfaces";
+    import Emoji from "$lib/components/Emoji.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
   export let encryptType: Type;
 </script>
 
 <div class="encrypt-icon">
-  <i class="oma oma-locked emoji" />
+  <Emoji content="locked" />
   <div class="id-container">
     <p>{getStringFromType(encryptType)}</p>
   </div>
@@ -21,7 +22,7 @@
   .id-container {
     position: relative;
   }
-  .emoji {
+  .encrypt-icon :global(.emoji) {
     font-size: 2rem;
   }
 </style>

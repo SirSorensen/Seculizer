@@ -49,7 +49,6 @@
   <div class="participants">
     <Participants {participants} />
   </div>
-  {presentation ? JSON.stringify(presentation) : null}
   {#if presentation !== null}
     <Statement {program} statement={presentation} />
   {/if}
