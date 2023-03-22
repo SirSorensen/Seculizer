@@ -4,8 +4,6 @@
   import type { Program } from "$lib/models/program";
 
   export let program:Program;
-  export let fromId:string;
-  export let toId:string;
   export let messageExpressions:ExpressionAST[];
 </script>
 
@@ -13,7 +11,6 @@
   {#each messageExpressions as messageExpression}
       <ExpressionBox {program} expression={messageExpression} />
   {/each}
-  <p>From: {fromId} To: {toId}</p>
 </div>
 
 <style>

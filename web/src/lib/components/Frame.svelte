@@ -6,6 +6,7 @@
   import type { Statement as StatementAST } from "$lang/types/parser/interfaces";
   import Participants from "./Participants.svelte";
   import type { Program } from "$lib/models/program";
+  import type Participant from "$lib/components/Participant.svelte";
   export let frame: Frame;
   export let program: Program;
 
@@ -42,15 +43,17 @@
     }
     presentation = frame.getPresentation();
   }
+
+  let participantElements: {container: HTMLElement | undefined, elements: { [key: string]: HTMLElement }} = {container: undefined, elements: {}};
 </script>
 
 <div class="frame">
   <CommonKnowledge knowledges={commonKnowledge} />
-  <div class="participants">
-    <Participants {participants} />
+  <div class="participants" bind:this={participantElements.container}>
+    <Participants bind:participantElements={participantElements.elements} {participants} />
   </div>
   {#if presentation !== null}
-    <Statement {program} statement={presentation} />
+    <Statement participantElements={participantElements} {program} statement={presentation} />
   {/if}
 </div>
 
@@ -59,6 +62,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
   .participants {
     flex: 1;

@@ -90,7 +90,8 @@
     text-align: center;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
     transition: all 2s ease-in-out;
-    max-width: 250px;
+    width: 125px;
+    min-height: 125px;
   }
   .knowledges {
     overflow: hidden;
