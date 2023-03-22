@@ -49,7 +49,7 @@ export class Program {
   functions: { [id: string]: Number } = {};
   formats: { [id: string]: _format } = {};
   equations: { [id: string]: string } = {};
-  icons: Map<Id, string> = new Map();
+  icons: Map<string, string> = new Map();
   log: boolean = false;
 
   constructor(json: ProgramAST, log: boolean = false) {
@@ -318,7 +318,7 @@ export class Program {
     return key;
   }
 
-  getIcon(id: Id) {
+  getIcon(id: string) {
     return this.icons.get(id) || "red-question-mark";
   }
 }

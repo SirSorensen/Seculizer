@@ -95,7 +95,7 @@ export interface FormatItem extends ASTNode {
 
 export interface Icons extends ASTNode {
   type: "icons";
-  icons: Map<Id, string>;
+  icons: Map<string, string>;
 }
 
 export interface LatexLiteral extends ASTNode {

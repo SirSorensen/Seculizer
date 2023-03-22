@@ -1,4 +1,5 @@
 import type { Type } from "$lang/types/parser/interfaces";
+import type { Program } from "$lib/program";
 export function getStringFromType(type: Type): string {
   if (!type) return "null";
   switch (type.type) {
@@ -17,6 +18,26 @@ export function getStringFromType(type: Type): string {
       break;
     default:
       return "null";
+      break;
+  }
+}
+export function getIconFromType(type: Type, program: Program): string {
+  if (!type) return "null";
+  switch (type.type) {
+    case "string":
+      return "📝";
+      break;
+    case "number":
+      return "input-numbers";
+      break;
+    case "id":
+      return program.getIcon(type.value);
+      break;
+    case "function":
+      return "gear";
+      break;
+    default:
+      return "red-question-mark";
       break;
   }
 }

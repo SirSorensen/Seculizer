@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Frame } from "$lib/utils/Frame";
-  import { getStringFromType } from "$lib/utils/stringUtil";
+  import { getIconFromType, getStringFromType } from "$lib/utils/stringUtil";
   import CommonKnowledge from "./CommonKnowledge.svelte";
   import Statement from "./messages/Statements/Statement.svelte";
   import type { Statement as StatementAST } from "$lang/types/parser/interfaces";
@@ -29,9 +29,9 @@
           Knowledge: { id: string; emoji: string }[];
         } = {
           Name: participant.getName(),
-          Emoji: "👨‍💻", //participant.emoji
+          Emoji: program.getIcon(participant.getName()), //participant.emoji
           Knowledge: participant.getKnowledgeList().map((k) => {
-            return { id: getStringFromType(k.id), emoji: "👨‍💻" };
+            return { id: getStringFromType(k.id), emoji: getIconFromType(k.id, program) };
           }),
         };
         if (obj.Name === "Shared") commonKnowledge = obj.Knowledge;

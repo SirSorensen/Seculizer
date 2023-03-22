@@ -65,7 +65,7 @@ import {
   Type,
   TypeCST,
 } from "./interfaces.js";
-import { IToken } from "chevrotain";
+import { CstNode, IToken } from "chevrotain";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -124,7 +124,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     if (stringChild && stringChild.length > 0) {
       return {
         type: "string",
-        value: stringChild[0].image,
+        value: stringChild[0].image.slice(1, -1),
       };
     }
 
@@ -286,7 +286,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
       return {
         type: "formatItem",
         function: functionCall,
-        format: { type: "string", value: string[0].image },
+        format: { type: "string", value: string[0].image.slice(1, -1) },
       };
     }
     const latex = this.visit(ctx.latex);
@@ -314,12 +314,12 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   icons(ctx: IconsCST): Icons {
-    let map = new Map<Id, string>();
+    let map = new Map<string, string>();
 
     ctx.iconSet.forEach((icon: IconSetCST) => {
       let set = this.visit(icon);
       set.ids.forEach((id: Id) => {
-        map.set(id, set.emoji);
+        map.set(id.value, set.emoji);
       });
     });
 
@@ -329,11 +329,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  iconSet(ctx: IconSetCST) {
-    const emoji = ctx.StringLiteral[0].image;
-    let ids = ctx.Id.map((id: IToken) => {
-      return id.image;
-    });
+  iconSet(ctx: IconSetCST):{emoji: string, ids: Id[]} {
+    const emoji = ctx.StringLiteral[0].image.slice(1, -1);
+    let ids:Id[] = ctx.Id.map((id: IToken) => ({ type: "id", value: id.image }));
     return { emoji: emoji, ids: ids };
   }
 
@@ -548,4 +546,5 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
       outer: type,
     };
   }
+
 }
