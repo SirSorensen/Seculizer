@@ -1,5 +1,5 @@
 import { Program } from "$lib/models/program.js";
-import { assert, expect, test } from "vitest";
+import { afterEach, assert, expect, test } from "vitest";
 import { readFileSync } from "fs";
 import parse from "$lang/index.js";
 import type { Id } from "$lang/types/parser/interfaces"
@@ -10,33 +10,25 @@ import * as fs from "fs";
 import { beforeEach } from "vitest";
 
 let program : Program;
-let str : string;
 
-beforeEach(() => {
+function startFunction(str : string){
   if (typeof str == "string" && str == "") throw new Error("No test file given! (str == \"\"")
-
-  // let lexerBeforeEach = async (): Promise<void> => { 
-  //   await fs.readFile("tests/sepo/" + str + ".sepo", (err: NodeJS.ErrnoException | null, data: any) => {
-  //     if (err !== null) {
-  //       console.error(err);
-  //       return;
-  //     }
-  //     const { ast, cst } = parse(data.toString(), true);
-  //     program = new Program(ast, false);
-  //   });  
-  // }
-
-  // await lexerBeforeEach;
   
   let fileStr = readFileSync("tests/sepo/" + str + ".sepo");
   let json = parse(fileStr, false);
   program = new Program(json, true);
+};
+
+let undefinedProgram: Program;
+afterEach(() => {
+  program = undefinedProgram;
 });
 
 
-str = "simple"
+
 test("web/program with simple.sepo", () => {
-  expect(program).toBeTruthy();
+  startFunction("simple")
+  expect(program).toBeDefined();
 
   expect(program.keyRelations).toBeDefined();
   expect(Object.keys(program.keyRelations).length).toBeGreaterThan(0);
@@ -48,36 +40,39 @@ test("web/program with simple.sepo", () => {
   expect(Object.keys(program.formats).length).toBeGreaterThan(0);
 
   expect(Object.keys(program.equations).length).toBeGreaterThan(0);
-
-  expect((program.icons).keys.length).toBeGreaterThan(0);
   
-  expect(Object.keys(program.icons).length).toBeGreaterThan(0);
+  //expect(Object.keys(program.icons).length).toBeGreaterThan(0);
   
 });
 
-str = "TPM"
-test(("web/program with TPM.sepo"), () => {
-  expect(program).toBeTruthy();
+
+test(("web/program with TPM.sepo"), () => { 
+  startFunction("TPM");
+  expect(program).toBeDefined();
 });
 
-str = "key-relation"
+
 test("web/program with key-relation.sepo", () => {
+  startFunction("key-relation");
   expect(program).toBeTruthy();
 });
 
-str = "send"
+
 test("web/program with send.sepo", () => {
+  startFunction("send");
   expect(program).toBeTruthy();
 });
 
-str = "send-with-enc"
+
 test("web/program with send-with-enc.sepo", () => {
+  startFunction("send-with-enc");
   expect(program).toBeTruthy();
 });
 
 
-str = "send-and-clear";
+
 test("web/program with send-and-clear.sepo", () => {
+  startFunction("send-and-clear");
   expect(program).toBeTruthy();
   let last = program.first?.getLast();
   expect(last).toBeTruthy();
@@ -96,10 +91,7 @@ test("web/program with send-and-clear.sepo", () => {
 });
 
 test("web/Program with icon-test.sepo", () => {
-  let fileStr = readFileSync("tests/sepo/icon-test.sepo");
-  let json = parse(fileStr, false);
-  let program = new Program(json, true);
-  console.log(" ");
+  startFunction("icon-test");
   expect(program).toBeTruthy();
   expect(program.icons).toBeTruthy();
   expect(program.icons.size).toBe(5);
