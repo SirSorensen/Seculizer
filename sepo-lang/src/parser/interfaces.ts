@@ -89,7 +89,7 @@ export interface Format extends ASTNode {
 
 export interface FormatItem extends ASTNode {
   type: "formatItem";
-  function: FunctionCall;
+  id: Type;
   format: StringLiteral | LatexLiteral;
 }
 
@@ -273,7 +273,7 @@ export interface FormatCST extends CstNode {
 }
 
 export interface FormatElementCST extends CstNode {
-  function: FunctionCallCST;
+  type: TypeCST;
   StringLiteral: IToken[];
   latex: LatexCST;
 }

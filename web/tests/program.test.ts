@@ -2,22 +2,24 @@ import { Program } from "$lib/models/program.js";
 import { afterEach, assert, expect, test } from "vitest";
 import { readFileSync } from "fs";
 import parse from "$lang/index.js";
-import type { Id } from "$lang/types/parser/interfaces";
+import type { Id, Type, FunctionCall } from "$lang/types/parser/interfaces";
 import type { Frame } from "$lib/models/Frame";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Participant } from '../src/lib/models/Participant';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const examplesFolder = path.resolve(__dirname, "../../specification/Examples");
 let program: Program;
+import { Latex } from "../src/lib/models/Latex";
 
 function startFunction(str: string) {
   if (typeof str == "string" && str == "") throw new Error('No test file given! (str == ""');
+
   let relativePath = path.resolve(examplesFolder, str + ".sepo");
   let fileStr = readFileSync(relativePath);
   let json = parse(fileStr, false);
+
   program = new Program(json, false);
 }
 
@@ -101,12 +103,12 @@ test("web/Program with clear.sepo", () => {
   expect(first).toBeTruthy();
   const firstParticipants = first?.getParticipantMap().getParticipants();
   expect(Object.keys(firstParticipants || {}).length).toBe(3);
-  
+
   for (const key of Object.keys(firstParticipants || {})) {
-    if(key === "Shared") continue;
-    if(!firstParticipants) throw new Error("firstParticipants is undefined");
+    if (key === "Shared") continue;
+    if (!firstParticipants) throw new Error("firstParticipants is undefined");
     const participant = firstParticipants[key];
-    
+
     expect(participant).toBeTruthy();
     expect(participant?.getKnowledgeList().length).toBe(1);
   }
@@ -118,4 +120,15 @@ test("web/Program with clear.sepo", () => {
   for (const participant of Object.values(participants || {})) {
     expect(participant.getKnowledgeList().length).toBe(0);
   }
+});
+
+test("test Latex class", () => {
+  let param1: Type = { type: "id", value: "x" };
+  let param2: Type = { type: "id", value: "y" };
+  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+
+  let latex = new Latex("$Hash(x||y)$", func);
+
+  //"$Hash(x||y)$"
+  //["$","Hash","(","x","||","y",")$"]
 });

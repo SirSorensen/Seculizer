@@ -42,26 +42,26 @@ export class EquationMap {
     return true;
   }
 
-  reformatFunctionCall(func: FunctionCall, eq : equation) {
+  reformatFunctionCall(func: FunctionCall, eq: equation) {
     let newFunc: FunctionCall = {
       type: "function",
       id: func.id,
       params: [],
     };
 
-    let indexArray : number[] = []
+    let indexArray: number[] = [];
 
     for (let i = 0; i < eq[0].params.length; i++) {
-
       let eq0_param = eq[0].params[i];
       let func_param = func.params[i];
-      
+
       for (let j = 0; j < eq[1].params.length; j++) {
         let eq1_param = eq[1].params[j];
 
         if (
           eq0_param.type == eq1_param.type &&
-          eq0_param.type != "function" && func_param.type != "function" &&
+          eq0_param.type != "function" &&
+          func_param.type != "function" &&
           eq0_param.value == func_param.value &&
           !indexArray.includes(j)
         ) {

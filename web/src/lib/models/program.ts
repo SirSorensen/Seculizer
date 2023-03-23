@@ -29,7 +29,7 @@ import type {
   Equations,
   Equation,
 } from "$lang/types/parser/interfaces";
-import { EquationMap } from "./../utils/EquationMap";
+import { EquationMap } from "./EquationMap";
 
 import { Frame } from "./Frame";
 import { ParticipantMap } from "./ParticipantMap";
@@ -64,8 +64,6 @@ export class Program {
       throw new Error("Invalid json");
     }
 
-    
-    
     // Participants:
     this.constructParticipants(json.participants);
     if (this.log) console.log("Participants", this.init_participants);
@@ -80,7 +78,7 @@ export class Program {
     this.constructFunctions(json.functions);
 
     // Equations:
-    this.constructEquations(json.equations)
+    this.constructEquations(json.equations);
 
     // Format:
     // Add format to functions
@@ -153,17 +151,26 @@ export class Program {
   constructFormat(format: Format) {
     if (format) {
       format.formats.forEach((format: FormatItem) => {
-        let tmp_format: _format = {
-          id: format.function.id,
-          params: [],
-          latex: format.format.value,
-        };
+        let tmp_format: _format;
+        if (format.id.type == "function") {
+          tmp_format = {
+            id: format.id.id,
+            params: [],
+            latex: format.format.value,
+          };
 
-        format.function.params.forEach((param: Type) => {
-          tmp_format.params.push(param);
-        });
+          format.id.params.forEach((param: Type) => {
+            tmp_format.params.push(param);
+          });
+        } else {
+          tmp_format = {
+            id: format.id.value as string,
+            params: [],
+            latex: format.format.value,
+          };
+        }
 
-        this.formats[format.function.id] = tmp_format;
+        this.formats[tmp_format.id] = tmp_format;
       });
 
       if (this.log) console.log("Formats created", this.formats);

@@ -53,10 +53,10 @@ export class ParticipantMap {
 
   transferKnowledge(sender: string, receiver: string, knowledge: Type, encrypted: boolean | null = null) {
     // Error handling
-    if (sender == receiver) throw new Error("Sender and receiver cannot be the same! You cannot send something to yourself!")
+    if (sender == receiver) throw new Error("Sender and receiver cannot be the same! You cannot send something to yourself!");
     if (!this.participants[sender]) throw new Error("Sender not found!");
     if (!this.participants[receiver]) throw new Error("Receiver not found!");
-    
+
     if (knowledge.type == "string" || knowledge.type == "number") return;
 
     let tmp_knowledge = this.participants[sender].getKnowledge(knowledge);
