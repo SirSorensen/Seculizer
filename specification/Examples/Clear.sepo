@@ -1,0 +1,9 @@
+Participants: Alice, Bob;
+Knowledge: {
+    Alice: key;
+    Bob: key;
+};
+
+Protocol: {
+    clear: key;
+};
