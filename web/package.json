@@ -13,7 +13,8 @@
     "pretty": "prettier --write ."
   },
   "dependencies": {
-    "lz-string": "^1.5.0"
+    "lz-string": "^1.5.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.0.0",

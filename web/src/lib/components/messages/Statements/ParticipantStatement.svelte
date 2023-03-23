@@ -9,7 +9,7 @@
   export let program: Program;
 
   export let stmnt: ParticipantStatement;
-  export let participantElements: { container: HTMLElement | undefined; elements: { [key: string]: HTMLElement } } = {
+  export let participantElements: ParticipantElements = {
     container: undefined,
     elements: {},
   };

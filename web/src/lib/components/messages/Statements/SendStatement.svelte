@@ -4,13 +4,15 @@
   import MessageBox from "../MessageBox.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
   import { onMount } from "svelte";
+  import type { NextFrameNavigation } from "src/types/app";
 
   export let program: Program;
   export let stmnt: SendStatement;
-  export let participantElements: { container: HTMLElement | undefined; elements: { [key: string]: HTMLElement } } = {
+  export let participantElements: ParticipantElements = {
     container: undefined,
     elements: {},
   };
+  export let nextFrame: NextFrameNavigation = () => {};
   const fromId = stmnt.leftId;
   const toId = stmnt.rightId;
   const child = stmnt.child;
@@ -41,7 +43,6 @@
       height: toParticipant.offsetHeight,
     };
     updateLine();
-    //updateMessage();
   }
 
   function updateLine() {
@@ -65,17 +66,6 @@
     message.style.setProperty("transform", `rotate(${shouldFlip ? rad : -rad}rad) ${shouldFlip ? "scaleY(-1)" : ""}`);
   }
 
-  function checkWithin(element1: HTMLElement, element2: HTMLElement): boolean {
-    const element1Rect = element1.getBoundingClientRect();
-    const element2Rect = element2.getBoundingClientRect();
-
-    const xOverlap = Math.min(element1Rect.right, element2Rect.right) - Math.max(element1Rect.left, element2Rect.left);
-
-    const yOverlap = Math.min(element1Rect.bottom, element2Rect.bottom) - Math.max(element1Rect.top, element2Rect.top);
-
-    return xOverlap > 0 && yOverlap > 0;
-  }
-
   onMount(() => {
     let container = participantElements.container;
     if (!container) return;
@@ -94,27 +84,31 @@
   });
 </script>
 
-{#if !child}
-  <p>Invalid statement</p>
-{:else if child.type === "messageSendStatement"}
-  {@const messageSendStatement = castToMessageStatement(child)}
-  {@const messageSendElements = messageSendStatement.expressions}
+<svelte:window on:resize={update} />
 
-  <div class="line" bind:this={sendLine}>
+<div class="line" bind:this={sendLine}>
+  {#if !child}
+    <p>Invalid statement</p>
+  {:else if child.type === "messageSendStatement"}
+    {@const messageSendStatement = castToMessageStatement(child)}
+    {@const messageSendElements = messageSendStatement.expressions}
     <div class="message" bind:this={message} class:multiMessage={messageSendElements.length > 1}>
       {#each messageSendElements as messageSendElement}
         {@const expression = messageSendElement}
         <MessageBox {program} messageExpressions={[expression]} />
       {/each}
     </div>
-  </div>
-{:else if child.type === "matchStatement"}
-  {@const matchStatement = castToMatchStatement(child)}
-  {@const cases = matchStatement.cases}
-  {#each cases as matchCase}
-    <button>{getStringFromType(matchCase.case)}</button>
-  {/each}
-{/if}
+  {:else if child.type === "matchStatement"}
+    {@const matchStatement = castToMatchStatement(child)}
+    {@const cases = matchStatement.cases}
+    <div class="message multiMessage" bind:this={message}>
+      {#each cases as matchCase}
+        {@const identifier = getStringFromType(matchCase.case)}
+        <button on:click={() => nextFrame(identifier)}>{identifier}</button>
+      {/each}
+    </div>
+  {/if}
+</div>
 
 <style>
   .line {

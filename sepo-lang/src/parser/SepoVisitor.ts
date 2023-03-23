@@ -452,7 +452,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   matchCase(ctx: MatchCaseCST): MatchCase {
-    const type: Type = this.visit(ctx.Type);
+    const type: Type = this.visit(ctx.type);
     const statements: Statement[] = ctx.statement.map((s: StatementCST) => this.visit(s));
     return {
       type: "matchCase",

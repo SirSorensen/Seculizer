@@ -6,9 +6,10 @@
   import type { Statement as StatementAST } from "$lang/types/parser/interfaces";
   import Participants from "./Participants.svelte";
   import type { Program } from "$lib/models/program";
+    import type { NextFrameNavigation } from "src/types/app";
   export let frame: Frame;
   export let program: Program;
-
+  export let nextFrame: NextFrameNavigation = () => {};
   $: console.log("Current frame:", frame);
   let participants: {
     Name: string;
@@ -43,7 +44,7 @@
     presentation = frame.getPresentation();
   }
 
-  let participantElements: {container: HTMLElement | undefined, elements: { [key: string]: HTMLElement }} = {container: undefined, elements: {}};
+  let participantElements: ParticipantElements = { container: undefined, elements: {} };
 </script>
 
 <div class="frame">
@@ -53,7 +54,7 @@
   </div>
   {#if presentation !== null}
     {#key JSON.stringify(presentation)}
-    <Statement participantElements={participantElements} {program} statement={presentation} />
+      <Statement {participantElements} {program} {nextFrame} statement={presentation} />
     {/key}
   {/if}
 </div>

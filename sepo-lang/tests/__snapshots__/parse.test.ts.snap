@@ -1,5 +1,81 @@
 // Vitest Snapshot v1
 
+exports[`should parse Clear.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": undefined,
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "key",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "key",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "id": {
+            "type": "id",
+            "value": "key",
+          },
+          "type": "clearStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
 exports[`should parse DF.sepo 1`] = `
 {
   "equations": {
@@ -65,7 +141,7 @@ exports[`should parse DF.sepo 1`] = `
           "type": "latex",
           "value": "$x^y$",
         },
-        "function": {
+        "id": {
           "id": "exp",
           "params": [
             {
@@ -86,7 +162,7 @@ exports[`should parse DF.sepo 1`] = `
           "type": "latex",
           "value": "$x^{y*z}$",
         },
-        "function": {
+        "id": {
           "id": "exp",
           "params": [
             {
@@ -419,7 +495,7 @@ exports[`should parse TPM.sepo 1`] = `
           "type": "latex",
           "value": "$H(x||y)$",
         },
-        "function": {
+        "id": {
           "id": "hash",
           "params": [
             {
@@ -1157,7 +1233,10 @@ exports[`should parse TPM.sepo 1`] = `
           "child": {
             "cases": [
               {
-                "case": undefined,
+                "case": {
+                  "type": "string",
+                  "value": "Refuse",
+                },
                 "children": [
                   {
                     "child": {
@@ -1388,7 +1467,10 @@ exports[`should parse TPM.sepo 1`] = `
                 "type": "matchCase",
               },
               {
-                "case": undefined,
+                "case": {
+                  "type": "string",
+                  "value": "Obtain",
+                },
                 "children": [
                   {
                     "child": {
@@ -2298,10 +2380,52 @@ exports[`should parse simple.sepo 1`] = `
       {
         "format": {
           "type": "latex",
-          "value": "$H(x||y)$",
+          "value": "$Hash(x||y)$",
         },
-        "function": {
+        "id": {
           "id": "hash",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "latex",
+          "value": "$g^{y}$",
+        },
+        "id": {
+          "id": "exp",
+          "params": [
+            {
+              "type": "id",
+              "value": "g",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "latex",
+          "value": "$function(x,y,x)$",
+        },
+        "id": {
+          "id": "fun",
           "params": [
             {
               "type": "id",
@@ -2433,6 +2557,239 @@ exports[`should parse simple.sepo 1`] = `
           "leftId": {
             "type": "id",
             "value": "TPM",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "id": "hash",
+                  "params": [
+                    {
+                      "type": "id",
+                      "value": "x",
+                    },
+                    {
+                      "id": "exp",
+                      "params": [
+                        {
+                          "type": "id",
+                          "value": "g",
+                        },
+                        {
+                          "type": "id",
+                          "value": "y",
+                        },
+                      ],
+                      "type": "function",
+                    },
+                  ],
+                  "type": "function",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse simple_match.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Bob" => "man",
+    },
+    "type": "icons",
+  },
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "akey",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "bkey",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "akey",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "cases": [
+              {
+                "case": {
+                  "type": "string",
+                  "value": "Refuse",
+                },
+                "children": [
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "type": "string",
+                              "value": "Refused",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "Bob",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "Alice",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                ],
+                "type": "matchCase",
+              },
+              {
+                "case": {
+                  "type": "string",
+                  "value": "Obtain",
+                },
+                "children": [
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "type": "string",
+                              "value": "Obtained",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "Bob",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "Alice",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                ],
+                "type": "matchCase",
+              },
+            ],
+            "type": "matchStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
           },
           "rightId": {
             "type": "id",

@@ -1,26 +1,15 @@
 <script lang="ts">
   import type { Frame } from "$lib/models/Frame";
+  import type { Navigation, NextFrameNavigation } from "src/types/app";
 
-
-  export let navigation: {
-    prev: Frame | null;
-    nextOptions: { name: string; frame: Frame }[];
-  } = {
+  export let navigation: Navigation = {
     prev: null,
-    nextOptions: [],
+    next: null,
   };
 
-  export let nextFrame: (frame: Frame) => void = () => {};
+  export let nextFrame: NextFrameNavigation= () => {};
 </script>
 
-{#if navigation.nextOptions.length > 0}
-  {#if navigation.nextOptions.length === 1}
-    <button on:click={() => nextFrame(navigation.nextOptions[0].frame)}
-      >Next</button
-    >
-  {:else}
-    {#each navigation.nextOptions as option}
-      <button on:click={() => nextFrame(option.frame)}>{option.name}</button>
-    {/each}
-  {/if}
+{#if navigation.next !== null}
+  <button on:click={() => {if(navigation.next !== null) nextFrame(navigation.next)}}>Next</button>
 {/if}

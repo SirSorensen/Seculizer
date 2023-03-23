@@ -1,12 +1,9 @@
 <script lang="ts">
-  import type { Frame } from "$lib/models/Frame";
+  import type { Navigation } from "src/types/app";
 
-  export let navigation: {
-    prev: Frame | null;
-    nextOptions: { name: string; frame: Frame }[];
-  } = {
+  export let navigation: Navigation = {
     prev: null,
-    nextOptions: [],
+    next: null,
   };
 
   export let prevFrame: () => void = () => {};

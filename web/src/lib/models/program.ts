@@ -29,6 +29,7 @@ import type {
   Equations,
   Equation,
 } from "$lang/types/parser/interfaces";
+import { getStringFromType } from "$lib/utils/stringUtil";
 import { EquationMap } from "./EquationMap";
 
 import { Frame } from "./Frame";
@@ -218,13 +219,15 @@ export class Program {
       last.setNext({});
       const sendStatement: SendStatement = stmnt.child as SendStatement;
       const matchStatement: MatchStatement = sendStatement.child as MatchStatement;
+      let matchFrame = Frame.newFrame(stmnt, last.getParticipantMap(), last);
       for (const caseIndex in matchStatement.cases) {
         const matchCase: MatchCase = matchStatement.cases[caseIndex];
+        let identifier = getStringFromType(matchCase.case);
+        matchFrame.createNewMatchCase(identifier);
 
-        last.createNewMatchCase(caseIndex);
-
-        this.parseProtocol(matchCase.children, last.getNextFrame(caseIndex));
+        this.parseProtocol(matchCase.children, matchFrame.getNextFrame(identifier));
       }
+      last.setNext(matchFrame);
     } else {
       last.setNext(Frame.newFrame(stmnt, last.getParticipantMap(), last));
       this.pipeStmnt(stmnt, last.getNext() as Frame);

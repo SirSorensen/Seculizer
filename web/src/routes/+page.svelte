@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
   import parse from "$lang";
   import Editor from "$lib/components/Editor.svelte";
   import FileUpload from "$lib/components/FileUpload.svelte";
@@ -8,24 +6,22 @@
   import Header from "$lib/components/Header.svelte";
   import NextButton from "$lib/components/navigation/NextButton.svelte";
   import PrevButton from "$lib/components/navigation/PrevButton.svelte";
+  import LZString from "lz-string";
+  import type { Navigation } from "src/types/app";
+  import { Frame as FrameType } from "$lib/models/Frame";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
   import { Program } from "$lib/models/program";
   import { test } from "$lib/utils/test.js";
-  import type { Frame as FrameType } from "$lib/models/Frame";
-  import LZString from "lz-string";
   import { onMount } from "svelte";
-  let content = test
-    .replaceAll(";", ";\n")
-    .replaceAll("{ ", "{\n ")
-    .replaceAll("} ", "}\n ");
+  import { z } from "zod";
+  let content = test.replaceAll(";", ";\n").replaceAll("{ ", "{\n ").replaceAll("} ", "}\n ");
   let program: Program | undefined = undefined;
   let error: string | undefined = undefined;
   let current: FrameType | null = null;
-  let navigation: {
-    prev: FrameType | null;
-    nextOptions: { name: string; frame: FrameType }[];
-  } = {
+  let navigation: Navigation = {
     prev: null,
-    nextOptions: [],
+    next: null,
   };
 
   onMount(() => {
@@ -41,13 +37,12 @@
     let ast;
     try {
       ast = parse(content, false);
-      
     } catch (errorMsg: any) {
       console.error(errorMsg);
       error = errorMsg.message;
       return;
     }
-    
+
     $page.url.searchParams.set("proto", LZString.compressToEncodedURIComponent(content));
     goto(`?${$page.url.searchParams.toString()}`);
 
@@ -57,27 +52,19 @@
   }
 
   function updateNavigation() {
-    if (current === null) {
+    if (!current || current === null) {
       navigation = {
         prev: null,
-        nextOptions: [],
+        next: null,
       };
     } else {
+      console.log(current, current.getPrev);
+      
       navigation.prev = current.getPrev();
-      const next = current.getNext();
-      navigation.nextOptions = [];
-      if (next !== null) {
-        if (Array.isArray(next)) {
-          const list = next as { [id: string]: FrameType };
-          for (const key in list) {
-            navigation.nextOptions.push({
-              name: key,
-              frame: list[key],
-            });
-          }
-        } else {
-          navigation.nextOptions = [{ name: "", frame: next as FrameType }];
-        }
+      const next = z.instanceof(FrameType).safeParse(current.getNext());
+      navigation.next = null;
+      if (next !== null) { 
+        navigation.next = next.success ? next.data : null;
       }
     }
   }
@@ -88,10 +75,14 @@
     updateNavigation();
   }
 
-  function nextFrame(frame: FrameType) {
+  function nextFrame(frame: FrameType | string) {
     if (current === null) return;
-
-    current = frame;
+    const isString = z.string().safeParse(frame).success;
+    if (isString) {
+      current = current.getNextFrame(frame as string);
+    } else {
+      current = frame as FrameType;
+    }
     updateNavigation();
   }
 </script>
@@ -104,7 +95,7 @@
         <div class="button-area">
           <PrevButton {navigation} {prevFrame} />
         </div>
-        <Frame {program} frame={current} />
+        <Frame {program} frame={current} {nextFrame}/>
         <div class="button-area">
           <NextButton {navigation} {nextFrame} />
         </div>
@@ -117,9 +108,7 @@
       {/if}
       <FileUpload bind:content />
       <Editor bind:content />
-      <button disabled={content.trim() === ""} on:click={parseContent}
-        >Generate</button
-      >
+      <button disabled={content.trim() === ""} on:click={parseContent}>Generate</button>
     </div>
   {/if}
 </div>

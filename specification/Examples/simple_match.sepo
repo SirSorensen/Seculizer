@@ -1,0 +1,21 @@
+Participants: Alice, Bob;
+Knowledge: {
+    Alice: akey;
+    Bob: bkey;
+};
+Icons:{
+    "woman": Alice;
+    "man": Bob;
+};
+Protocol: {
+    Alice -> Bob: akey;
+    Bob -> Alice: match {
+        "Refuse":{
+            Bob -> Alice: "Refused";
+        };
+        "Obtain":{
+            Bob -> Alice: "Obtained";
+        };
+
+    };
+};

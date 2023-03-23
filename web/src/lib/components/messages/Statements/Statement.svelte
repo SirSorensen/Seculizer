@@ -7,12 +7,14 @@
     StatementNode,
   } from "$lang/types/parser/interfaces";
   import type { Program } from "$lib/models/program";
+  import type { NextFrameNavigation } from "src/types/app";
   import ClearStatement from "./ClearStatement.svelte";
   import SendStatement from "./SendStatement.svelte";
   import ParticipantStatement from "./ParticipantStatement.svelte";
   export let statement: StatementAST;
   export let program: Program;
-  export let participantElements: {container: HTMLElement | undefined, elements: { [key: string]: HTMLElement }} = {container: undefined, elements: {}};
+  export let participantElements:ParticipantElements = {container: undefined, elements: {}};
+  export let nextFrame: NextFrameNavigation = () => {};
 
   const castToSendStatement = (x: StatementNode) => x as SendStatementAST;
   const castToClearStatement = (x: StatementNode) => x as ClearStatementAST;
@@ -24,7 +26,7 @@
 {:else if statement.child.type === "clearStatement"}
   <ClearStatement {program} stmnt={castToClearStatement(statement.child)} />
 {:else if statement.child.type === "sendStatement"}
-  <SendStatement {program} {participantElements} stmnt={castToSendStatement(statement.child)} />
+  <SendStatement {program} {participantElements} {nextFrame} stmnt={castToSendStatement(statement.child)} />
 {:else if statement.child.type === "participantStatement"}
   <ParticipantStatement {program} {participantElements} stmnt={castToParticipantsStatement(statement.child)} />
 {/if}

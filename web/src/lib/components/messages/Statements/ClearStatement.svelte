@@ -1,11 +1,10 @@
 <script lang="ts">
-  import type { ClearStatement, StatementNode } from "$lang/types/parser/interfaces";
+  import type { ClearStatement } from "$lang/types/parser/interfaces";
   import Item from "$lib/components/Item.svelte";
   import type { Program } from "$lib/models/program";
   import ActionBox from "../ActionBox.svelte";
 
   export let program: Program;
-
   export let stmnt: ClearStatement;
 
   const id = stmnt.id;
@@ -22,6 +21,5 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-
   }
 </style>

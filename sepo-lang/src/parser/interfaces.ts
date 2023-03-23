@@ -321,7 +321,7 @@ export interface MatchCST extends CstNode {
 }
 
 export interface MatchCaseCST extends CstNode {
-  Type: TypeCST;
+  type: TypeCST;
   statement: StatementCST[];
 }
 
