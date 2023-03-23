@@ -64,6 +64,8 @@ export class Program {
       throw new Error("Invalid json");
     }
 
+    
+    
     // Participants:
     this.constructParticipants(json.participants);
     if (this.log) console.log("Participants", this.init_participants);

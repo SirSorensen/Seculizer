@@ -40,7 +40,7 @@ export class Participant {
   }
 
   clearKnowledgeElement(elem: Type) {
-    this.knowledge.filter((item: knowledge) => item.id != elem);
+    this.knowledge = this.knowledge.filter((item: knowledge) => JSON.stringify(item.id) != JSON.stringify(elem));
   }
 
   getKnowledge(knowledge: Type): knowledge {
