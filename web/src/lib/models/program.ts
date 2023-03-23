@@ -64,8 +64,6 @@ export class Program {
       throw new Error("Invalid json");
     }
 
-    
-    
     // Participants:
     this.constructParticipants(json.participants);
     if (this.log) console.log("Participants", this.init_participants);
@@ -80,7 +78,7 @@ export class Program {
     this.constructFunctions(json.functions);
 
     // Equations:
-    this.constructEquations(json.equations)
+    this.constructEquations(json.equations);
 
     // Format:
     // Add format to functions
@@ -171,7 +169,7 @@ export class Program {
             latex: format.format.value,
           };
         }
-        
+
         this.formats[tmp_format.id] = tmp_format;
       });
 
