@@ -264,19 +264,19 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   formatElement(ctx: FormatElementCST): FormatItem {
-    const functionCall = this.visit(ctx.function);
+    const id = this.visit(ctx.type);
     const string = ctx.StringLiteral;
     if (string && string.length > 0) {
       return {
         type: "formatItem",
-        function: functionCall,
+        id: id,
         format: { type: "string", value: string[0].image.slice(1, -1) },
       };
     }
     const latex = this.visit(ctx.latex);
     return {
       type: "formatItem",
-      function: functionCall,
+      id: id,
       format: latex,
     };
   }

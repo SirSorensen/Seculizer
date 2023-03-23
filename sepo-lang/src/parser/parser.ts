@@ -202,7 +202,7 @@ export class SepoParser extends CstParser {
   });
 
   private formatElement = this.RULE("formatElement", () => {
-    this.SUBRULE(this.function);
+    this.SUBRULE(this.type);
     this.CONSUME(Equal);
     this.OR([{ ALT: () => this.CONSUME(StringLiteral) }, { ALT: () => this.SUBRULE(this.latex) }]);
   });
