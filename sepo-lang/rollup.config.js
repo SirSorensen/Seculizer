@@ -9,7 +9,7 @@ export default [
       file: "dist/index.js",
       format: "es",
       sourcemap: true,
-      exports: "default",
+      exports: "named",
     },
     plugins: [
       typescript(),

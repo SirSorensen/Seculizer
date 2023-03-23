@@ -3,7 +3,8 @@ import { SepoToAstVisitor } from "./parser/SepoVisitor.js";
 import { SepoLexer } from "./parser/lexer.js";
 import { SepoParser } from "./parser/parser.js";
 
-export default function parse(input: string, includeCST: boolean) {
+export * from "./parser/lexer.js";
+export function parse(input: string, includeCST: boolean) {
   //return {ast: null, cst: null};
   const lexResult = SepoLexer.tokenize(input.toString() + "eof");
   const parser = new SepoParser();

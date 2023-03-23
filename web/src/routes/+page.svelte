@@ -1,5 +1,5 @@
 <script lang="ts">
-  import parse from "$lang";
+  import {parse} from "$lang";
   import Editor from "$lib/components/Editor.svelte";
   import FileUpload from "$lib/components/FileUpload.svelte";
   import Frame from "$lib/components/Frame.svelte";
