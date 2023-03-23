@@ -1,6 +1,6 @@
 Participants: Alice, Parent, TPM;
 Knowledge: {
-    tpm: tpm_sk;
+    TPM: tpm_sk;
     Shared: tpm_pk;
 };
 KeyRelations: (sk:tmp_sk, pk:tpm_pk);
@@ -8,9 +8,11 @@ Functions: hash/2;
 Format: hash(x,y) = $H(x||y)$;
 Icons: {
     "woman": Alice;
-    "👩‍👦": Parent;
-    "🔑": tpm_pk, tpm_sk;
-    "📝": n, esk;
+    "family": Parent;
+    "🔑": tpm_pk, tpm_sk, k, esk;
+    "📝": pcr, v;
+    "input-numbers": sid, n;
+    "save": TPM;
 };
 
 Protocol: {

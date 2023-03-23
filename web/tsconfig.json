@@ -18,7 +18,9 @@
       "$lib": ["./src/lib"],
       "$lib/*": ["./src/lib/*"],
       "$lang": ["../sepo-lang/dist"],
-      "$lang/*": ["../sepo-lang/dist/*"]
+      "$lang/*": ["../sepo-lang/dist/*"],
+      "$specification": ["../specification"],
+      "$specification/*": ["../specification/*"]
     }
   },
   "exclude": ["./dist/**/*"]

@@ -1,0 +1,2450 @@
+// Vitest Snapshot v1
+
+exports[`should parse DF.sepo 1`] = `
+{
+  "equations": {
+    "equations": [
+      {
+        "left": {
+          "id": "exp",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "g",
+                },
+                {
+                  "type": "id",
+                  "value": "Y",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "X",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "exp",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "g",
+                },
+                {
+                  "type": "id",
+                  "value": "X",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "Y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+    ],
+    "type": "equations",
+  },
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "latex",
+          "value": "$x^y$",
+        },
+        "function": {
+          "id": "exp",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "latex",
+          "value": "$x^{y*z}$",
+        },
+        "function": {
+          "id": "exp",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "x",
+                },
+                {
+                  "type": "id",
+                  "value": "y",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "z",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": {
+    "functions": [
+      {
+        "id": {
+          "type": "id",
+          "value": "exp",
+        },
+        "params": 2,
+        "type": "functionDef",
+      },
+    ],
+    "type": "functionsDef",
+  },
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Bob" => "man",
+      "X" => "🔑",
+      "Y" => "🔑",
+      "g" => "gear",
+      "msgA" => "📝",
+      "msgB" => "📝",
+    },
+    "type": "icons",
+  },
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "X",
+          },
+          {
+            "type": "id",
+            "value": "msgA",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "Y",
+          },
+          {
+            "type": "id",
+            "value": "msgB",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "g",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Shared",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "id": "exp",
+                  "params": [
+                    {
+                      "type": "id",
+                      "value": "g",
+                    },
+                    {
+                      "type": "id",
+                      "value": "X",
+                    },
+                  ],
+                  "type": "function",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "id": "exp",
+                  "params": [
+                    {
+                      "type": "id",
+                      "value": "g",
+                    },
+                    {
+                      "type": "id",
+                      "value": "Y",
+                    },
+                  ],
+                  "type": "function",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msgA",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "id": "exp",
+                    "params": [
+                      {
+                        "id": "exp",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "g",
+                          },
+                          {
+                            "type": "id",
+                            "value": "X",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      {
+                        "type": "id",
+                        "value": "Y",
+                      },
+                    ],
+                    "type": "function",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msgB",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "id": "exp",
+                    "params": [
+                      {
+                        "id": "exp",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "g",
+                          },
+                          {
+                            "type": "id",
+                            "value": "X",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      {
+                        "type": "id",
+                        "value": "Y",
+                      },
+                    ],
+                    "type": "function",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse TPM.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "latex",
+          "value": "$H(x||y)$",
+        },
+        "function": {
+          "id": "hash",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": {
+    "functions": [
+      {
+        "id": {
+          "type": "id",
+          "value": "hash",
+        },
+        "params": 2,
+        "type": "functionDef",
+      },
+    ],
+    "type": "functionsDef",
+  },
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Parent" => "family",
+      "tpm_pk" => "🔑",
+      "tpm_sk" => "🔑",
+      "k" => "🔑",
+      "esk" => "🔑",
+      "pcr" => "📝",
+      "v" => "📝",
+      "sid" => "input-numbers",
+      "n" => "input-numbers",
+      "TPM" => "save",
+    },
+    "type": "icons",
+  },
+  "keyRelations": {
+    "keyRelations": [
+      {
+        "pk": {
+          "type": "id",
+          "value": "tpm_pk",
+        },
+        "sk": {
+          "type": "id",
+          "value": "tmp_sk",
+        },
+        "type": "keyRelation",
+      },
+    ],
+    "type": "keyRelations",
+  },
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "tpm_sk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "TPM",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "tpm_pk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Shared",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Parent",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "TPM",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "Boot",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "pcr",
+            },
+            "type": "setStatement",
+            "value": {
+              "type": "number",
+              "value": 1,
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "Booted",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "n",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "esk",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "Session",
+                },
+                "type": "expression",
+              },
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "esk",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "tpm_pk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "sid",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "sid",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "string",
+                        "value": "Extend",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "n",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "sid",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "esk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "pcr",
+            },
+            "type": "setStatement",
+            "value": {
+              "id": "hash",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "n",
+                },
+                {
+                  "type": "id",
+                  "value": "pcr",
+                },
+              ],
+              "type": "function",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "Extended",
+                },
+                "type": "expression",
+              },
+              {
+                "child": {
+                  "type": "id",
+                  "value": "pcr",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "Create",
+                },
+                "type": "expression",
+              },
+              {
+                "child": {
+                  "id": "hash",
+                  "params": [
+                    {
+                      "type": "id",
+                      "value": "obt",
+                    },
+                    {
+                      "type": "id",
+                      "value": "pcr",
+                    },
+                  ],
+                  "type": "function",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "k",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "string",
+                        "value": "Created",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "k",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "id": "hash",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "obt",
+                          },
+                          {
+                            "type": "id",
+                            "value": "pcr",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "tpm_sk",
+                  },
+                  "type": "signExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "id": {
+            "type": "id",
+            "value": "sid",
+          },
+          "type": "clearStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "v",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "Envelope",
+                },
+                "type": "expression",
+              },
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "v",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "k",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Parent",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "esk",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Parent",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "Session",
+                },
+                "type": "expression",
+              },
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "esk",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "tpm_pk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Parent",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "sid",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "sid",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Parent",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "cases": [
+              {
+                "case": undefined,
+                "children": [
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "inner": [
+                                {
+                                  "child": {
+                                    "type": "string",
+                                    "value": "Extend",
+                                  },
+                                  "type": "expression",
+                                },
+                                {
+                                  "child": {
+                                    "type": "string",
+                                    "value": "ref",
+                                  },
+                                  "type": "expression",
+                                },
+                                {
+                                  "child": {
+                                    "type": "id",
+                                    "value": "sid",
+                                  },
+                                  "type": "expression",
+                                },
+                              ],
+                              "outer": {
+                                "type": "id",
+                                "value": "esk",
+                              },
+                              "type": "encryptExpression",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "id": {
+                          "type": "id",
+                          "value": "pcr",
+                        },
+                        "type": "setStatement",
+                        "value": {
+                          "id": "hash",
+                          "params": [
+                            {
+                              "type": "string",
+                              "value": "ref",
+                            },
+                            {
+                              "type": "id",
+                              "value": "pcr",
+                            },
+                          ],
+                          "type": "function",
+                        },
+                      },
+                      "id": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "type": "participantStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "type": "string",
+                              "value": "Extended",
+                            },
+                            "type": "expression",
+                          },
+                          {
+                            "child": {
+                              "type": "id",
+                              "value": "pcr",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "type": "string",
+                              "value": "Quote",
+                            },
+                            "type": "expression",
+                          },
+                          {
+                            "child": {
+                              "inner": [
+                                {
+                                  "child": {
+                                    "type": "id",
+                                    "value": "v",
+                                  },
+                                  "type": "expression",
+                                },
+                              ],
+                              "outer": {
+                                "type": "id",
+                                "value": "k",
+                              },
+                              "type": "encryptExpression",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "inner": [
+                                {
+                                  "child": {
+                                    "type": "string",
+                                    "value": "Quoted",
+                                  },
+                                  "type": "expression",
+                                },
+                                {
+                                  "child": {
+                                    "type": "id",
+                                    "value": "pcr",
+                                  },
+                                  "type": "expression",
+                                },
+                                {
+                                  "child": {
+                                    "inner": [
+                                      {
+                                        "child": {
+                                          "type": "id",
+                                          "value": "v",
+                                        },
+                                        "type": "expression",
+                                      },
+                                    ],
+                                    "outer": {
+                                      "type": "id",
+                                      "value": "k",
+                                    },
+                                    "type": "encryptExpression",
+                                  },
+                                  "type": "expression",
+                                },
+                              ],
+                              "outer": {
+                                "type": "id",
+                                "value": "tpm_sk",
+                              },
+                              "type": "signExpression",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                ],
+                "type": "matchCase",
+              },
+              {
+                "case": undefined,
+                "children": [
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "inner": [
+                                {
+                                  "child": {
+                                    "type": "string",
+                                    "value": "Extend",
+                                  },
+                                  "type": "expression",
+                                },
+                                {
+                                  "child": {
+                                    "type": "string",
+                                    "value": "obt",
+                                  },
+                                  "type": "expression",
+                                },
+                                {
+                                  "child": {
+                                    "type": "id",
+                                    "value": "sid",
+                                  },
+                                  "type": "expression",
+                                },
+                              ],
+                              "outer": {
+                                "type": "id",
+                                "value": "esk",
+                              },
+                              "type": "encryptExpression",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "id": {
+                          "type": "id",
+                          "value": "pcr",
+                        },
+                        "type": "setStatement",
+                        "value": {
+                          "id": "hash",
+                          "params": [
+                            {
+                              "type": "string",
+                              "value": "obt",
+                            },
+                            {
+                              "type": "id",
+                              "value": "pcr",
+                            },
+                          ],
+                          "type": "function",
+                        },
+                      },
+                      "id": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "type": "participantStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "type": "string",
+                              "value": "Extended",
+                            },
+                            "type": "expression",
+                          },
+                          {
+                            "child": {
+                              "type": "id",
+                              "value": "pcr",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "type": "string",
+                              "value": "Decrypt",
+                            },
+                            "type": "expression",
+                          },
+                          {
+                            "child": {
+                              "inner": [
+                                {
+                                  "child": {
+                                    "type": "id",
+                                    "value": "v",
+                                  },
+                                  "type": "expression",
+                                },
+                              ],
+                              "outer": {
+                                "type": "id",
+                                "value": "k",
+                              },
+                              "type": "encryptExpression",
+                            },
+                            "type": "expression",
+                          },
+                          {
+                            "child": {
+                              "type": "id",
+                              "value": "pcr",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                  {
+                    "child": {
+                      "child": {
+                        "expressions": [
+                          {
+                            "child": {
+                              "type": "id",
+                              "value": "v",
+                            },
+                            "type": "expression",
+                          },
+                        ],
+                        "type": "messageSendStatement",
+                      },
+                      "leftId": {
+                        "type": "id",
+                        "value": "TPM",
+                      },
+                      "rightId": {
+                        "type": "id",
+                        "value": "Parent",
+                      },
+                      "type": "sendStatement",
+                    },
+                    "type": "statement",
+                  },
+                ],
+                "type": "matchCase",
+              },
+            ],
+            "type": "matchStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Parent",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse icon-test.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Bob" => "man",
+      "B_sk" => "🔑",
+      "B_pk" => "🔑",
+      "msg_A" => "📝",
+    },
+    "type": "icons",
+  },
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "B_sk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "B_pk",
+          },
+          {
+            "type": "id",
+            "value": "msg_A",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_A",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "B_pk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse key-relation.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": undefined,
+  "keyRelations": {
+    "keyRelations": [
+      {
+        "pk": {
+          "type": "id",
+          "value": "B_pk",
+        },
+        "sk": {
+          "type": "id",
+          "value": "B_sk",
+        },
+        "type": "keyRelation",
+      },
+    ],
+    "type": "keyRelations",
+  },
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "B_sk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "B_pk",
+          },
+          {
+            "type": "id",
+            "value": "msg_A",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_A",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "B_pk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse send.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": undefined,
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "msg_B",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "msg_A",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "msg_A",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "msg_B",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse send-and-clear.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": undefined,
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "msg_B",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "msg_A",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "msg_A",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "msg_B",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "id": {
+            "type": "id",
+            "value": "msg_A",
+          },
+          "type": "clearStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "id": {
+            "type": "id",
+            "value": "msg_B",
+          },
+          "type": "clearStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse send-with-enc.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": undefined,
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "key",
+          },
+          {
+            "type": "id",
+            "value": "msg_B",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "key",
+          },
+          {
+            "type": "id",
+            "value": "msg_A",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_A",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "key",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_B",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "key",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse simple.sepo 1`] = `
+{
+  "equations": {
+    "equations": [
+      {
+        "left": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "a",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+    ],
+    "type": "equations",
+  },
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "latex",
+          "value": "$H(x||y)$",
+        },
+        "function": {
+          "id": "hash",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": {
+    "functions": [
+      {
+        "id": {
+          "type": "id",
+          "value": "hash",
+        },
+        "params": 2,
+        "type": "functionDef",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "add",
+        },
+        "params": 2,
+        "type": "functionDef",
+      },
+    ],
+    "type": "functionsDef",
+  },
+  "icons": undefined,
+  "keyRelations": {
+    "keyRelations": [
+      {
+        "pk": {
+          "type": "id",
+          "value": "tpm_pk",
+        },
+        "sk": {
+          "type": "id",
+          "value": "tmp_sk",
+        },
+        "type": "keyRelation",
+      },
+    ],
+    "type": "keyRelations",
+  },
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "tpm_sk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "TPM",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "tpm_pk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Shared",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Parent",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "TPM",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "tpm_sk",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "TPM",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;

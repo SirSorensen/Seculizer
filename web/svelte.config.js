@@ -15,6 +15,8 @@ const config = {
     alias: {
       $lang: "../sepo-lang/dist",
       "$lang/*": "../sepo-lang/dist/*",
+      $specification: "../specificationt",
+      "$specification/*": "../specification/*",
     },
   },
 };
