@@ -101,20 +101,17 @@ test("web/Program with clear.sepo", () => {
   expect(first).toBeTruthy();
   const firstParticipants = first?.getParticipantMap().getParticipants();
   expect(Object.keys(firstParticipants || {}).length).toBe(3);
-  console.log("firstParticipants", firstParticipants,);
   
   for (const key of Object.keys(firstParticipants || {})) {
     if(key === "Shared") continue;
     if(!firstParticipants) throw new Error("firstParticipants is undefined");
     const participant = firstParticipants[key];
-    console.log(participant);
     
     expect(participant).toBeTruthy();
     expect(participant?.getKnowledgeList().length).toBe(1);
   }
   const last = first?.getLast();
   expect(last).toBeTruthy();
-  console.log(last);
   const participants = last?.getParticipantMap().getParticipants();
   expect(participants).toBeTruthy();
   expect(Object.keys(participants || {}).length).toBe(3);
