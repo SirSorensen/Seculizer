@@ -41,8 +41,7 @@ test("web/program with simple.sepo", () => {
 
   expect(Object.keys(program.equations).length).toBeGreaterThan(0);
   
-  //expect(Object.keys(program.icons).length).toBeGreaterThan(0);
-  
+  expect(Object.keys(program.icons).length).toBe(0);
 });
 
 
