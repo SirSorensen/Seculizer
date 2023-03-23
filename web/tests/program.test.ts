@@ -2,16 +2,18 @@ import { Program } from "$lib/models/program.js";
 import { afterEach, assert, expect, test } from "vitest";
 import { readFileSync } from "fs";
 import parse from "$lang/index.js";
-import type { Id } from "$lang/types/parser/interfaces";
+import type { Id, Type } from "$lang/types/parser/interfaces"
+import type { Participant } from "$lib/models/Participant";
 import type { Frame } from "$lib/models/Frame";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Participant } from '../src/lib/models/Participant';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const examplesFolder = path.resolve(__dirname, "../../specification/Examples");
 let program: Program;
+import { beforeEach } from "vitest";
+import { Latex } from '../src/lib/models/Latex';
 
 function startFunction(str: string) {
   if (typeof str == "string" && str == "") throw new Error('No test file given! (str == ""');
@@ -119,3 +121,14 @@ test("web/Program with clear.sepo", () => {
     expect(participant.getKnowledgeList().length).toBe(0);
   }
 });
+
+
+test("test Latex class", () => {
+  let param1 : Type = { type: "id", value: "x" };
+  let param2: Type = { type: "id", value: "y" };
+
+  let latex = new Latex("$Hash(x||y)$", [param1, param2]);
+
+  //"$Hash(x||y)$"
+  //["$","Hash","(","x","||","y",")$"]
+})
