@@ -21,7 +21,7 @@
   let to = { left: 0, top: 0, width: 0, height: 0 };
   let sendLine: HTMLElement;
   let message: HTMLElement;
-  function update(){
+  function update() {
     const fromParticipant = participantElements.elements[fromId.value];
     const toParticipant = participantElements.elements[toId.value];
 
@@ -41,7 +41,7 @@
       height: toParticipant.offsetHeight,
     };
     updateLine();
-    updateMessage();
+    //updateMessage();
   }
 
   function updateLine() {
@@ -56,33 +56,13 @@
     let middle = from.top + from.height / 2 + (Math.sin(rad) * from.height) / 2;
     height = height - Math.sin(rad) * from.height;
     let c = Math.sqrt(Math.pow(length, 2) + Math.pow(height, 2));
+    let shouldFlip = rad > Math.PI / 2 || rad < -Math.PI / 2;
 
     sendLine.style.setProperty("top", middle + "px");
     sendLine.style.setProperty("left", left + "px");
     sendLine.style.setProperty("width", c + "px");
-    sendLine.style.setProperty("transform", "rotate(" + rad + "rad) ");
-  }
-
-  function updateMessage() {
-    let top = 0;
-    if (from.top > to.top) {
-      top = from.top + from.height / 2;
-    } else {
-      top = to.top + to.height / 2;
-    }
-
-    top = top - Math.abs((from.top - to.top) / 2) + 50;
-
-    let left = from.left+ from.width / 2;
-    let right = to.left + to.width / 2;
-    let width = Math.abs(right - left);
-
-    message.style.setProperty("top", top + "px");
-    if (left < right) {
-      message.style.setProperty("left", left + width / 2 - message.offsetWidth / 2 + "px");
-    } else {
-      message.style.setProperty("left", right + width / 2 - message.offsetWidth / 2 + "px");
-    }
+    sendLine.style.setProperty("transform", `rotate(${rad}rad) ${shouldFlip ? "scaleY(-1)" : ""}`);
+    message.style.setProperty("transform", `rotate(${shouldFlip ? rad : -rad}rad) ${shouldFlip ? "scaleY(-1)" : ""}`);
   }
 
   function checkWithin(element1: HTMLElement, element2: HTMLElement): boolean {
@@ -113,17 +93,20 @@
     };
   });
 </script>
+
 {#if !child}
   <p>Invalid statement</p>
 {:else if child.type === "messageSendStatement"}
   {@const messageSendStatement = castToMessageStatement(child)}
   {@const messageSendElements = messageSendStatement.expressions}
-  <div class="line" bind:this={sendLine} />
-  <div class="message" bind:this={message} class:multiMessage={messageSendElements.length > 1}>
-    {#each messageSendElements as messageSendElement}
-      {@const expression = messageSendElement}
-      <MessageBox {program} messageExpressions={[expression]} />
-    {/each}
+
+  <div class="line" bind:this={sendLine}>
+    <div class="message" bind:this={message} class:multiMessage={messageSendElements.length > 1}>
+      {#each messageSendElements as messageSendElement}
+        {@const expression = messageSendElement}
+        <MessageBox {program} messageExpressions={[expression]} />
+      {/each}
+    </div>
   </div>
 {:else if child.type === "matchStatement"}
   {@const matchStatement = castToMatchStatement(child)}
@@ -141,6 +124,8 @@
     background: black;
     position: absolute;
     transform-origin: left;
+    display: flex;
+    justify-content: center;
   }
 
   .line::after,
@@ -160,12 +145,17 @@
     transform: rotate(-45deg) translate(3px, 50%);
   }
   .message {
-    margin: auto;
-    padding: 1rem 1rem;
     position: absolute;
+    margin: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .message.multiMessage {
+    padding: 1rem;
     border: 2px dashed gray;
     border-radius: 15px;
     background-color: rgba(255, 255, 255, 0.699);

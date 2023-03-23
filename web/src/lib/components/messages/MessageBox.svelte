@@ -18,16 +18,17 @@
     position: relative;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     background: #fff3d3;
     width: fit-content;
     padding: 0rem 2rem;
-    margin: 0.5rem auto;
     font-size: 1.2rem;
     border-radius: 15px;
-    margin-bottom: 2rem;
     min-height: 2rem;
+    max-width: 15rem;
+
   }
 
   .message :global(.message){
