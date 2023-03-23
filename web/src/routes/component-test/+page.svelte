@@ -5,6 +5,7 @@
   import Participants from "$lib/components/Participants.svelte";
   import Item from "$lib/components/Item.svelte";
   import Emoji from "../../lib/components/Emoji.svelte";
+    import Latex from "$lib/components/Latex.svelte";
 </script>
 
 <CommonKnowledge />
@@ -12,6 +13,9 @@
   <Item id="test" emoji="key" />
 </ActionBox>
 
+<Latex input="x^2" />
+<Latex input="x^3" />
+$$x^3$$
 <Emoji content="👨‍👨‍👧‍👧" />
 <Emoji content="👨" />
 <Emoji content="heart-with-arrow" />
