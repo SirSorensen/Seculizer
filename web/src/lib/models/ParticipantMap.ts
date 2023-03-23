@@ -15,6 +15,14 @@ export class ParticipantMap {
     return this.participants;
   }
 
+  getParticipantsNames(): string[] {
+    return Object.keys(this.participants);
+  }
+
+  getParticipantAmount(): number {
+    return Object.keys(this.participants).length;
+  }
+
   getParticipant(name: string): Participant {
     return this.participants[name];
   }

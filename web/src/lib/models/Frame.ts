@@ -30,6 +30,16 @@ export class Frame {
     return this.next;
   }
 
+  // Get last frame
+  getLast(): Frame {
+    if (this.next === null) return this;
+    if (this.next instanceof Frame) return this.next.getLast();
+    else {
+      let tmp_frame = this.next[Object.keys(this.next)[0]];
+      return tmp_frame.getLast();
+    }
+  }
+
   //TODO: Make it a clone?
   getNextFrame(caseIndex: string = ""): Frame {
     if (this.next === null) throw new Error("Next is null");
