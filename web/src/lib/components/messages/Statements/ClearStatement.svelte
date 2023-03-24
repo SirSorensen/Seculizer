@@ -12,7 +12,7 @@
 </script>
 
 <div class="statement">
-  <ActionBox title="clear"><Item emoji={icon} value={id.value} /></ActionBox>
+  <ActionBox title="clear"><Item {program} emoji={icon} value={id} /></ActionBox>
 </div>
 
 <style>

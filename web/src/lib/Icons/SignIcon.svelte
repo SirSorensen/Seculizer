@@ -1,9 +1,12 @@
 <script lang="ts">
   import type { Type } from "$lang/types/parser/interfaces";
   import Emoji from "$lib/components/Emoji.svelte";
+    import Latex from "$lib/components/Latex.svelte";
+    import type { Program } from "$lib/models/program";
   import { getStringFromType } from "$lib/utils/stringUtil";
   export let signType: Type;
   export let signieIcon: string;
+  export let program: Program;
 </script>
 
 <div class="sign-icon">
@@ -13,7 +16,14 @@
       <Emoji content={signieIcon} />
     </span>
   </div>
-  <p class="signie">{getStringFromType(signType)}</p>
+  <p class="signie">
+    {#if program.getFormats().contains(signType)}
+      {@const format = program.getFormats().getConstructedLatex(signType)}
+      <Latex input={format} />
+    {:else}
+      {getStringFromType(signType)}
+    {/if}
+  </p>
 </div>
 
 <style>
@@ -32,7 +42,7 @@
     right: 0;
     font-size: 1.3rem;
   }
-  .signie{
+  .signie {
     text-align: center;
     font-size: 0.9rem;
     margin: 0;

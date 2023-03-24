@@ -12,6 +12,7 @@
   import Item from "$lib/components/Item.svelte";
   import EncryptIcon from "$lib/Icons/EncryptIcon.svelte";
   import SignIcon from "$lib/Icons/SignIcon.svelte";
+    import Latex from "../Latex.svelte";
 
   export let program: Program;
   export let expression: ExpressionAST;
@@ -32,7 +33,7 @@
     <svelte:self {program} expression={innerExpression} />
   {/each}
   {@const outer = encryptExpression.outer}
-  <EncryptIcon encryptType={outer} />
+  <EncryptIcon {program} encryptType={outer} />
 {:else if child.type === "signExpression"}
   {@const signExpression = castToSignExpression(child)}
   {@const inner = signExpression.inner}
@@ -40,18 +41,26 @@
     <svelte:self {program} expression={innerExpression} />
   {/each}
   {@const outer = signExpression.outer}
-  <SignIcon signType={outer} signieIcon={getIconFromType(outer, program)} />
+  <SignIcon {program} signType={outer} signieIcon={getIconFromType(outer, program)} />
 {:else if child.type === "string" || child.type === "number" || child.type === "function"}
   {@const type = castToType(child)}
-  <p>{getStringFromType(type)}</p>
+  <p>
+  {#if program.getFormats().contains(type)}
+      {@const format = program.getFormats().getConstructedLatex(type)}
+      <Latex input={format} />
+    {:else}
+      {getStringFromType(type)}
+    {/if}
+  </p>
 {:else if child.type === "id"}
   {@const id = castToId(child)}
-  <Item value={id.value} emoji={program.getIcon(id.value)} />
+  <Item {program} value={id} emoji={program.getIcon(id.value)} />
 {/if}
 
 <style>
   p {
     margin: 0;
+    padding: .5rem;
     text-align: center;
     font-size: 1rem;
   }

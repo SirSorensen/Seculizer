@@ -1,10 +1,11 @@
 <script lang="ts">
     import type { Id, Type } from "$lang/types/parser/interfaces";
     import type { Program } from "$lib/models/program";
+    import type { KnowledgeList } from "src/types/participant";
   import Item from "./Item.svelte";
   export let name: Id;
   export let emoji: string;
-  export let knowledge: { id: Type; emoji: string }[] = [];
+  export let knowledge:KnowledgeList= [];
   export let program: Program;
   let container: HTMLDivElement;
   let showKnowledge = false;
@@ -72,6 +73,9 @@
         {:else}
           {#each knowledge as knowledge}
             <Item {program} value={knowledge.id} emoji={knowledge.emoji} />
+            {#if knowledge.value.trim() !== ""}
+              <small>{knowledge.value.trim()}</small><!--Should this value be available if encrypted?-->
+            {/if}
           {/each}
         {/if}
       </div>

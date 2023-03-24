@@ -1,14 +1,24 @@
 <script lang="ts">
   import type { Type } from "$lang/types/parser/interfaces";
-    import Emoji from "$lib/components/Emoji.svelte";
+  import Emoji from "$lib/components/Emoji.svelte";
+  import Latex from "$lib/components/Latex.svelte";
+  import type { Program } from "$lib/models/program";
   import { getStringFromType } from "$lib/utils/stringUtil";
   export let encryptType: Type;
+  export let program: Program;
 </script>
 
 <div class="encrypt-icon">
   <Emoji content="locked" />
   <div class="id-container">
-    <p>{getStringFromType(encryptType)}</p>
+    <p>
+      {#if program.getFormats().contains(encryptType)}
+        {@const format = program.getFormats().getConstructedLatex(encryptType)}
+        <Latex input={format} />
+      {:else}
+        {getStringFromType(encryptType)}
+      {/if}
+    </p>
   </div>
 </div>
 

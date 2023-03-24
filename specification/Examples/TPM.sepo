@@ -3,7 +3,7 @@ Knowledge: {
     TPM: tpm_sk;
     Shared: tpm_pk;
 };
-KeyRelations: (sk:tmp_sk, pk:tpm_pk);
+KeyRelations: (sk:tpm_sk, pk:tpm_pk);
 Functions: hash/2;
 Format: hash(x,y) = $H(x||y)$, tpm_sk = $tpm_{sk}$, tpm_pk = $tpm_{pk}$;
 Icons: {

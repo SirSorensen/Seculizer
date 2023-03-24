@@ -4,4 +4,4 @@ interface ParticipantElements {
   elements: { [key: string]: HTMLElement };
 }
 
-type KnowledgeList = { id: Type; emoji: string }[];
+type KnowledgeList = { id: Type; value: string; emoji: string }[];

@@ -12,4 +12,4 @@
   }
 </script>
 
-<div>{@html latexOutput}</div>
+{@html latexOutput}

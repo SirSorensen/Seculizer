@@ -245,7 +245,7 @@ export class Program {
       this.newStmnt(stmnt.id.value, newStmnt.id, last);
     } else if (stmnt.child.type == "setStatement") {
       const sendStmnt = stmnt.child as SetStatement;
-      this.setStmnt(stmnt.id.value, sendStmnt.id, String(sendStmnt.value), last);
+      this.setStmnt(stmnt.id.value, sendStmnt.id, getStringFromType(sendStmnt.value), last);
     } else {
       throw new Error("Invalid json: stmnt child type not implemented");
     }
