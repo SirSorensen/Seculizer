@@ -33,16 +33,8 @@ import { getStringFromType } from "$lib/utils/stringUtil";
 import { EquationMap } from "./EquationMap";
 
 import { Frame } from "./Frame";
+import { LatexMap } from "./LatexMap";
 import { ParticipantMap } from "./ParticipantMap";
-
-type _format = {
-  //Function
-  id: string;
-  params: Type[];
-
-  //Latex
-  latex: string;
-};
 
 export class Program {
   init_participants: ParticipantMap = new ParticipantMap();
@@ -51,7 +43,7 @@ export class Program {
 
   keyRelations: { [id: string]: string } = {};
   functions: { [id: string]: Number } = {};
-  formats: { [id: string]: _format } = {};
+  formats: LatexMap = new LatexMap();
   equations: EquationMap = new EquationMap();
   icons: Map<string, string> = new Map();
   log: boolean = false;
@@ -152,26 +144,7 @@ export class Program {
   constructFormat(format: Format) {
     if (format) {
       format.formats.forEach((format: FormatItem) => {
-        let tmp_format: _format;
-        if (format.id.type == "function") {
-          tmp_format = {
-            id: format.id.id,
-            params: [],
-            latex: format.format.value,
-          };
-
-          format.id.params.forEach((param: Type) => {
-            tmp_format.params.push(param);
-          });
-        } else {
-          tmp_format = {
-            id: format.id.value as string,
-            params: [],
-            latex: format.format.value,
-          };
-        }
-
-        this.formats[tmp_format.id] = tmp_format;
+        this.formats.addLatex(format.id, format.format.value);
       });
 
       if (this.log) console.log("Formats created", this.formats);

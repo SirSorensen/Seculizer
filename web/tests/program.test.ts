@@ -128,7 +128,7 @@ test("Construct Latex class & constructLatex method test", () => {
   let init_param2: Type = { type: "id", value: "y" };
   let init_func: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
 
-  let latex = new Latex("$Hash(x||y||x)$", init_func);
+  let latex = new Latex(init_func, "$Hash(x||y||x)$");
 
   let param1: Type = { type: "id", value: "z" };
   let param2: Type = { type: "number", value: 5 };
@@ -147,8 +147,8 @@ test("Make LatexMap and call a function with embedded function", () => {
     let init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] };
 
     let latexMap = new LatexMap();
-    latexMap.addLatex("$Hash(x||y||x)$", init_func1);
-    latexMap.addLatex("$Based_{XXX}(y&&x)$", init_func2);
+    latexMap.addLatex(init_func1, "$Hash(x||y||x)$");
+    latexMap.addLatex(init_func2, "$Based_{XXX}(y&&x)$");
 
     let param1: Type = { type: "id", value: "z" };
     let param2: Type = { type: "number", value: 5 };

@@ -4,9 +4,9 @@ import type { LatexMap } from "./LatexMap";
 export class Latex {
   paramIndex: number[] = [];
   stringArray: string[] = [""];
-  paramAmount: number
+  paramAmount: number;
 
-  constructor(latex: string, call: Type) {
+  constructor(call: Type, latex: string) {
     let params: Type[];
     if (call.type == "function") {
       params = call.params;
@@ -66,17 +66,17 @@ export class Latex {
     });
   }
 
-  constructLatex(call: Type, map : LatexMap | undefined = undefined) : string{
+  constructLatex(call: Type, map: LatexMap | undefined = undefined): string {
     let params: Type[];
     if (call.type == "function") {
       params = call.params;
     } else {
       params = [call];
     }
-    if (params.length != this.paramAmount) throw new Error("The amount of parameters given does not match the amount of parameters expected!");
+    if (params.length != this.paramAmount)
+      throw new Error("The amount of parameters given does not match the amount of parameters expected!");
 
     let tmp_latex = this.stringArray[0];
-
 
     for (let i = 1; i < this.stringArray.length; i++) {
       let param = params[this.paramIndex[i - 1]];
