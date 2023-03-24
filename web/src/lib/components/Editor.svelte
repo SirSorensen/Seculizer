@@ -22,7 +22,7 @@
     tokenType: TokenType;
   };
   let tokens: Token[] = [];
-  
+
   $: {
     tokens = SepoLexer.tokenize(content + "eof").tokens;
     let offset = 0;
@@ -48,9 +48,11 @@
     preElement.scrollTop = scrollTop;
     preElement.scrollLeft = scrollLeft;
   }
+  let dark = true;
 </script>
 
-<div class="editor-container">
+<input type="checkbox" name="dark-mode" id="darkinput" bind:checked={dark} />
+<div class="editor-container" class:dark>
   <textarea
     name="editor"
     class="editor"
@@ -70,12 +72,38 @@
 
 <style>
   .editor-container {
+    /*Colors from https://github.com/ayu-theme/ayu-colors*/
+    --ecolor-highlight: #55b4d4;
+    --ecolor-keyword: #f2ae49;
+    --ecolor-string: #86b300;
+    --ecolor-number: #a37acc;
+    --ecolor-regex: #4cbf99;
+    --ecolor-error: #f07171;
+    --ecolor-special: #fa8d3e;
+    --ecolor-text: #5c6166;
+    --ecolor-bg: #f8f9fa;
+  }
+
+  .editor-container.dark {
+    --ecolor-highlight: #5ccfe6;
+    --ecolor-keyword: #ffd173;
+    --ecolor-string: #d5ff80;
+    --ecolor-number: #dfbfff;
+    --ecolor-regex: #95e6cb;
+    --ecolor-error: #f28779;
+    --ecolor-special: #ffad66;
+    --ecolor-text: #cccac2;
+    --ecolor-bg: #1f2430;
+  }
+  .editor-container {
     position: relative;
     width: 100%;
     height: 400px;
     max-height: 80vh;
     margin: 0 auto;
+    background-color: var(--ecolor-bg);
   }
+
   .editor,
   .highlighter {
     width: 100%;
@@ -110,78 +138,83 @@
   }
   .highlighter {
     z-index: 0;
+    background-color: var(--ecolor-bg);
   }
 
   .highlighter code {
     white-space: pre;
-
+    background-color: var(--ecolor-bg);
     word-spacing: normal;
     word-break: normal;
     word-wrap: normal;
   }
 
-  :global(.token.token-Participants),  :global(.token.token-Knowledge), :global(.token.token-KeyRelations), :global(.token.token-Icons), :global(.token.token-Protocol), :global(.token.token-Format), :global(.token.token-Functions){
-    color: rgb(0, 47, 255);
+  .editor-container :global(.token) {
+    background-color: var(--ecolor-bg);
+    color: var(--ecolor-text);
   }
-  :global(.token.token-Id) {
-    color: rgb(183, 0, 255);
+
+  .editor-container :global(.token.token-Participants),
+  .editor-container :global(.token.token-Knowledge),
+  .editor-container :global(.token.token-KeyRelations),
+  .editor-container :global(.token.token-Icons),
+  .editor-container :global(.token.token-Protocol),
+  .editor-container :global(.token.token-Format),
+  .editor-container :global(.token.token-Functions) {
+    color: var(--ecolor-special);
   }
-  :global(.token.token-Comma), :global(.token.token-Semicolon), :global(.token.token-Colon) {
-    color: rgb(31, 31, 31);
+  .editor-container :global(.token.token-Id),
+  .editor-container :global(.token.token-secretKey),
+  .editor-container :global(.token.token-publicKey) {
+    color: var(--ecolor-keyword);
   }
-  :global(.token.token-LeftBrace), :global(.token.token-RightBrace) {
-    color: red;
+  .editor-container :global(.token.token-Comma),
+  .editor-container :global(.token.token-Semicolon),
+  .editor-container :global(.token.token-Colon) {
+    color: var(--ecolor-text);
   }
-  :global(.token.token-LeftParen) {
-    color: red;
+  .editor-container :global(.token.token-LeftBrace),
+  .editor-container :global(.token.token-RightBrace) {
+    color: var(--ecolor-text);
   }
-  :global(.token.token-secretKey) {
-    color: red;
+  .editor-container :global(.token.token-LeftBrace + .token.token-Pipe),
+  .editor-container :global(.token.token-Pipe + .token.token-RightBrace),
+  .editor-container :global(.token.token-LeftBrace:has(+ .token.token-Pipe)),
+  .editor-container :global(.token.token-Pipe:has(+ .token.token-RightBrace)) {
+    color: var(--ecolor-text);
+    font-variant: none;
+    
   }
-  :global(.token.token-publicKey) {
-    color: red;
+
+  .editor-container :global(.token.token-LeftParen),
+  .editor-container :global(.token.token-RightParen) {
+    color: var(--ecolor-text);
   }
-  :global(.token.token-RightParen) {
-    color: red;
+  .editor-container :global(.token.token-Slash) {
+    color: var(--ecolor-text);
   }
-  :global(.token.token-Slash) {
-    color: red;
-  }
-  :global(.token.token-NumberLiteral) {
-    color: red;
+  .editor-container :global(.token.token-NumberLiteral) {
+    color: var(--ecolor-number);
     font-style: italic;
   }
-  :global(.token.token-Equal) {
-    color: red;
+  .editor-container :global(.token.token-Equal),
+  .editor-container :global(.token.token-Arrow) {
+    color: var(--ecolor-text);
   }
-  :global(.token.token-latexLiteral) {
-    color: rgb(111, 0, 255);
+  .editor-container :global(.token.token-latexLiteral) {
+    color: var(--ecolor-regex);
     font-style: italic;
   }
-  
-  :global(.token.token-Arrow) {
-    color: red;
-  }
-  :global(.token.token-StringLiteral) {
-    color: rgb(46, 46, 46);
+  .editor-container :global(.token.token-StringLiteral) {
+    color: var(--ecolor-string);
     font-style: italic;
   }
-  :global(.token.token-Set) {
-    color: red;
-  }
-  :global(.token.token-New) {
-    color: red;
-  }
-  :global(.token.token-Pipe) {
-    color: red;
-  }
-  :global(.token.token-Clear) {
-    color: red;
-  }
-  :global(.token.token-Match) {
-    color: red;
-  }
-  :global(.token.token-End) {
-    color: red;
+  .editor-container :global(.token.token-Set),
+  .editor-container :global(.token.token-New),
+  .editor-container :global(.token.token-Pipe),
+  .editor-container :global(.token.token-Clear),
+  .editor-container :global(.token.token-Match),
+  .editor-container :global(.token.token-End) {
+    color: var(--ecolor-special);
   }
 </style>
