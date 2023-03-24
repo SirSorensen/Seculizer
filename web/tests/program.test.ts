@@ -8,6 +8,7 @@ import path from "path";
 import { Latex } from "../src/lib/models/Latex";
 import { fileURLToPath } from "url";
 import { LatexMap } from "$lib/models/LatexMap";
+import { Equal } from "$lib/models/Equal";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -162,3 +163,59 @@ test("Make LatexMap and call a function with embedded function", () => {
     expect(result).toBe("$Based_{XXX}(Hash(z||5||z)&&Jesus)$");
 
 })
+
+
+test("Construct an Equal and call generateEqual", () => {
+  let init_param1: Type = { type: "id", value: "x" };
+  let init_param2: Type = { type: "id", value: "y" };
+  let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
+  let init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] };
+
+  let equality = new Equal(init_func1, init_func2);
+
+  let param1: Type = { type: "id", value: "z" };
+  let param2: Type = { type: "id", value: "v" };
+  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+
+
+  let result = equality.generateEqual(func);
+  let expected: FunctionCall = { type: "function", id: "Base", params: [param2, param1] };
+  
+  expect(result.id).toBe(expected.id);
+  expect(result.type).toBe(expected.type);
+  expect(result.params[0]).toBe(expected.params[0]);
+  expect(result.params[1]).toBe(expected.params[1]);
+})
+
+test("Construct an Equal and call generateEqual with embedded functions", () => {
+  let init_param1: Type = { type: "id", value: "x" };
+  let init_param2: Type = { type: "id", value: "y" };
+  let init_param3: Type = { type: "id", value: "z" };
+
+  let init_func1: FunctionCall = { type: "function", id: "exp", params: [init_param2, init_param3] };
+  let init_func2: FunctionCall = { type: "function", id: "exp", params: [init_param1, init_func1] };
+
+  let init_func3: FunctionCall = { type: "function", id: "exp", params: [init_param3, init_param2] };
+  let init_func4: FunctionCall = { type: "function", id: "exp", params: [init_param1, init_func3] };
+
+  let equality = new Equal(init_func2, init_func4);
+
+  let param1: Type = { type: "id", value: "a" };
+  let param2: Type = { type: "id", value: "b" };
+  let param3: Type = { type: "id", value: "c" };
+  let func1: FunctionCall = { type: "function", id: "exp", params: [param2, param3] };
+  let func2: FunctionCall = { type: "function", id: "exp", params: [param1, func1] };
+
+  let result = equality.generateEqual(func2);
+  let tmp_expected: FunctionCall = { type: "function", id: "exp", params: [param3, param2] };
+  let expected: FunctionCall = { type: "function", id: "exp", params: [param1, tmp_expected] };
+
+
+  expect(result.id).toBe(expected.id);
+  expect(result.type).toBe(expected.type);
+  expect(result.params[0]).toBe(expected.params[0]);
+  if (result.params[1].type == "function" && expected.params[1].type == "function") {
+    expect(result.params[1].params[0]).toBe(expected.params[1].params[0]);
+    expect(result.params[1].params[1]).toBe(expected.params[1].params[1]);
+  }
+});
