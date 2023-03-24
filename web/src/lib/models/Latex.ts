@@ -1,4 +1,5 @@
 import type { Type } from "$lang/types/parser/interfaces";
+import type { LatexMap } from "./LatexMap";
 
 export class Latex {
   paramIndex: number[] = [];
@@ -14,7 +15,7 @@ export class Latex {
     }
     this.paramAmount = params.length;
 
-    const latex_array: string[] = latex.match(/([.,+*?^$()\[\]{}|\/| ]+)|([a-z,A-Z]+)/g) as string[];
+    const latex_array: string[] = latex.match(/([.,+*?^$&§()\[\]{}|\/|_ ]+)|([a-z,A-Z]+)/g) as string[];
 
     if (latex_array == null) throw new Error("No matches were found!");
 
@@ -65,7 +66,7 @@ export class Latex {
     });
   }
 
-  constructLatex(call: Type) : string{
+  constructLatex(call: Type, map : LatexMap | undefined = undefined) : string{
     let params: Type[];
     if (call.type == "function") {
       params = call.params;
@@ -80,7 +81,8 @@ export class Latex {
     for (let i = 1; i < this.stringArray.length; i++) {
       let param = params[this.paramIndex[i - 1]];
       if (param.type == "function") {
-        //TODO: implement function call inside function call
+        if (map == undefined) throw new Error("No LatexMap was given! For Function");
+        tmp_latex += map.getConstructedLatex(param).slice(1, -1);
       } else {
         tmp_latex += param.value;
       }
