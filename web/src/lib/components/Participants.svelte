@@ -1,12 +1,16 @@
 <script lang="ts">
+  import type { Id } from "$lang/types/parser/interfaces";
+  import type { Program } from "$lib/models/program";
   import { calcPositions } from "$lib/utils/PositionUtil";
+  import type { KnowledgeList } from "src/types/participant";
   import { onMount, tick } from "svelte";
   import Participant from "./Participant.svelte";
   export let participants: {
-    Name: string;
+    Name: Id;
     Emoji: string;
-    Knowledge: { id: string; emoji: string }[];
+    Knowledge: KnowledgeList;
   }[] = [];
+  export let program: Program;
 
   let container: HTMLElement;
   let containerWidth: number;
@@ -41,8 +45,13 @@
 <div class="container" bind:this={container} bind:offsetWidth={containerWidth} bind:offsetHeight={containerHeight}>
   {#if positions.length > 0}
     {#each participants as parti, index}
-      <div class="participantContainer" style:left={positions[index].x + "px"} style:top={positions[index].y + "px"} bind:this={participantElements[parti.Name]} >
-        <Participant name={parti.Name} emoji={parti.Emoji} knowledge={parti.Knowledge}/>
+      <div
+        class="participantContainer"
+        style:left={positions[index].x + "px"}
+        style:top={positions[index].y + "px"}
+        bind:this={participantElements[parti.Name.value]}
+      >
+        <Participant {program} name={parti.Name} emoji={parti.Emoji} knowledge={parti.Knowledge} />
       </div>
     {/each}
   {/if}

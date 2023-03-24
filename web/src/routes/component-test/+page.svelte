@@ -7,14 +7,15 @@
   import Emoji from "../../lib/components/Emoji.svelte";
     import Latex from "$lib/components/Latex.svelte";
 </script>
-
+<!--
 <CommonKnowledge />
 <ActionBox title="test">
-  <Item id="test" emoji="key" />
+  <Item value="test" emoji="key" />
 </ActionBox>
+-->
 
-<Latex input="x^2" />
-<Latex input="x^3" />
+<Latex input="$x^2$" />
+<Latex input="$x^3$" />
 $$x^3$$
 <Emoji content="👨‍👨‍👧‍👧" />
 <Emoji content="👨" />
@@ -42,10 +43,11 @@ $$x^3$$
     <Item id="test" emoji="oma-key" />
   </MessageBox>-->
 <Emoji />
+<!--
 <Participants
   participants={[
     {
-      Name: "Alice",
+      Name: {type: "id", value: "Alice"},
       Emoji: "woman",
       Knowledge: [
         { id: "a_sk", emoji: "key" },
@@ -66,4 +68,4 @@ $$x^3$$
       ],
     },
   ]}
-/>
+/>-->

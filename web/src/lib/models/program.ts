@@ -316,4 +316,8 @@ export class Program {
   getIcon(id: string) {
     return this.icons.get(id) || "red-question-mark";
   }
+
+  getFormats() {
+    return this.formats;
+  }
 }

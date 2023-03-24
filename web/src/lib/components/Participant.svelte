@@ -1,9 +1,11 @@
 <script lang="ts">
+    import type { Id, Type } from "$lang/types/parser/interfaces";
+    import type { Program } from "$lib/models/program";
   import Item from "./Item.svelte";
-  export let name: string;
+  export let name: Id;
   export let emoji: string;
-  export let knowledge: { id: string; emoji: string }[] = [];
-
+  export let knowledge: { id: Type; emoji: string }[] = [];
+  export let program: Program;
   let container: HTMLDivElement;
   let showKnowledge = false;
   export function accordion(node: HTMLDivElement, showKnowledge: boolean) {
@@ -61,7 +63,7 @@
 >
   <div class="container">
     <div class="participant-item">
-      <Item id={name} {emoji} />
+      <Item {program} value={name} {emoji} />
     </div>
     {#key knowledge.length}
       <div class="knowledges" use:accordion={showKnowledge}>
@@ -69,7 +71,7 @@
           <p class="emptyText">Empty</p>
         {:else}
           {#each knowledge as knowledge}
-            <Item id={knowledge.id} emoji={knowledge.emoji} />
+            <Item {program} value={knowledge.id} emoji={knowledge.emoji} />
           {/each}
         {/if}
       </div>

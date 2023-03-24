@@ -5,6 +5,7 @@
   import { getStringFromType } from "$lib/utils/stringUtil";
   import { onMount } from "svelte";
   import type { NextFrameNavigation } from "src/types/app";
+  import type { ParticipantElements } from "src/types/participant";
 
   export let program: Program;
   export let stmnt: SendStatement;

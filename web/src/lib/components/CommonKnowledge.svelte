@@ -1,7 +1,10 @@
 <script lang="ts">
+    import type { Program } from "$lib/models/program";
+    import type { KnowledgeList } from "src/types/participant";
   import Item from "./Item.svelte";
 
-  export let knowledges: { id: string; emoji: string }[] = [];
+  export let knowledges:KnowledgeList = [];
+  export let program: Program;
 </script>
 
 <div class="container">
@@ -11,7 +14,7 @@
       <p class="emptyText">Empty</p>
     {:else}
       {#each knowledges as knowledge}
-        <Item id={knowledge.id} emoji={knowledge.emoji} />
+        <Item {program} value={knowledge.id} emoji={knowledge.emoji} />
       {/each}
     {/if}
   </div>

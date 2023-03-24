@@ -11,9 +11,10 @@
   import ClearStatement from "./ClearStatement.svelte";
   import SendStatement from "./SendStatement.svelte";
   import ParticipantStatement from "./ParticipantStatement.svelte";
+  import type { ParticipantElements } from "src/types/participant";
   export let statement: StatementAST;
   export let program: Program;
-  export let participantElements:ParticipantElements = {container: undefined, elements: {}};
+  export let participantElements: ParticipantElements = { container: undefined, elements: {} };
   export let nextFrame: NextFrameNavigation = () => {};
 
   const castToSendStatement = (x: StatementNode) => x as SendStatementAST;

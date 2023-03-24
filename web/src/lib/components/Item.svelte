@@ -1,13 +1,23 @@
 <script lang="ts">
+  import type { Type } from "$lang/types/parser/interfaces";
+  import type { Program } from "$lib/models/program";
+  import { getStringFromType } from "$lib/utils/stringUtil";
   import { fade } from "svelte/transition";
   import Emoji from "./Emoji.svelte";
+  import Latex from "./Latex.svelte";
   export let emoji: string;
-  export let id: string;
+  export let value: Type;
+  export let program: Program;
 </script>
 
 <div transition:fade={{ delay: 250, duration: 300 }} class="item">
-  <Emoji content={emoji}/>
-  <p>{id}</p>
+  <Emoji content={emoji} />
+  {#if program.getFormats().contains(value)}
+    {@const format = program.getFormats().getConstructedLatex(value)}
+    <Latex input={format} />
+  {:else}
+    <p>{getStringFromType(value)}</p>
+  {/if}
 </div>
 
 <style>
@@ -23,5 +33,4 @@
   p {
     margin: 0;
   }
-
 </style>

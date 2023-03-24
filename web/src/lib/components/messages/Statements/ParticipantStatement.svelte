@@ -52,13 +52,13 @@
     {@const newStmnt = castToNewStatement(child)}
     {@const id = newStmnt.id}
     {@const icon = program.getIcon(id.value)}
-    <ActionBox title="new"><Item emoji={icon} id={id.value} /></ActionBox>
+    <ActionBox title="new"><Item emoji={icon} value={id.value} /></ActionBox>
   {:else if child.type === "setStatement"}
     {@const setStmnt = castToSetStatement(child)}
     {@const id = setStmnt.id}
     {@const icon = program.getIcon(id.value)}
     {@const value = setStmnt.value}
-    <ActionBox title="new"><div><Item emoji={icon} id={id.value + " = " + getStringFromType(value)} /></div></ActionBox>
+    <ActionBox title="new"><div><Item emoji={icon} value={id.value + " = " + getStringFromType(value)} /></div></ActionBox>
   {/if}
 </div>
 

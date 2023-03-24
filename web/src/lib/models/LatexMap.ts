@@ -11,6 +11,10 @@ export class LatexMap {
     if (call.type == "function") this.latexMap[call.id] = new Latex(call, latex);
     else this.latexMap[call.value] = new Latex(call, latex);
   }
+  contains(call: Type) {
+    if (call.type == "function") return this.latexMap[call.id] != undefined;
+    else return this.latexMap[call.value] != undefined;
+  }
 
   getConstructedLatex(call: Type): string {
     if (call.type == "function") {

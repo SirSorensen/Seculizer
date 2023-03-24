@@ -28,7 +28,9 @@
     border-radius: 15px;
     min-height: 2rem;
     max-width: 15rem;
-
+  }
+  .message:has(.sign-icon), .message:has(.encrypt-icon){
+    margin-bottom: 2rem;
   }
 
   .message :global(.message){
