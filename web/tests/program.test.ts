@@ -7,6 +7,7 @@ import type { Frame } from "$lib/models/Frame";
 import path from "path";
 import { Latex } from "../src/lib/models/Latex";
 import { fileURLToPath } from "url";
+import { LatexMap } from "$lib/models/LatexMap";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -137,3 +138,27 @@ test("Construct Latex class & constructLatex method test", () => {
 
   expect(result).toBe("$Hash(z||5||z)$");
 });
+
+
+test("Make LatexMap and call a function with embedded function", () => {
+    let init_param1: Type = { type: "id", value: "x" };
+    let init_param2: Type = { type: "id", value: "y" };
+    let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
+    let init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] };
+
+    let latexMap = new LatexMap();
+    latexMap.addLatex("$Hash(x||y||x)$", init_func1);
+    latexMap.addLatex("$Based_{XXX}(y&&x)$", init_func2);
+
+    let param1: Type = { type: "id", value: "z" };
+    let param2: Type = { type: "number", value: 5 };
+    let param3: Type = { type: "string", value: "Jesus" };
+    let func1: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+    let func2: FunctionCall = { type: "function", id: "Base", params: [param3, func1] };
+
+
+    let result = latexMap.getConstructedLatex(func2);
+
+    expect(result).toBe("$Based_{XXX}(Hash(z||5||z)&&Jesus)$");
+
+})
