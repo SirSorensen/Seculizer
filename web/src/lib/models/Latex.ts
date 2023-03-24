@@ -6,12 +6,12 @@ export class Latex {
   stringArray: string[] = [""];
   paramAmount: number
 
-  constructor(latex: string, left: Type) {
+  constructor(latex: string, call: Type) {
     let params: Type[];
-    if (left.type == "function") {
-      params = left.params;
+    if (call.type == "function") {
+      params = call.params;
     } else {
-      params = [left];
+      params = [call];
     }
     this.paramAmount = params.length;
 
@@ -42,7 +42,7 @@ export class Latex {
     });
 
     // params_index_arr_flat          = params_index_arr flattened from [][] to []
-    // params_index_arr_flat_indexed  = has each given left param index in relation to the params_index_arr_flat
+    // params_index_arr_flat_indexed  = has each given call param index in relation to the params_index_arr_flat
     const params_index_arr_flat = params_index_arr.flat();
     const params_index_arr_flat_indexed = params_index_arr
       .map((val, index) => {
@@ -52,7 +52,7 @@ export class Latex {
       })
       .flat();
 
-    // stringArray = array of strings, each string is a part of the latex string, where the seperations is to be filled by the parameters of left
+    // stringArray = array of strings, each string is a part of the latex string, where the seperations is to be filled by the parameters of call
     latex_array?.forEach((val: string, index) => {
       if (val != undefined) {
         let indexOf = params_index_arr_flat.indexOf(index);
