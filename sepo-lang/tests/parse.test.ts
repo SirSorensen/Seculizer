@@ -1,4 +1,4 @@
-import parse from "../dist/index.js";
+import {parse} from "../dist/index.js";
 import fs from "fs";
 import { expect, it } from "vitest";
 import path from "path";

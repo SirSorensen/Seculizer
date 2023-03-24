@@ -1,7 +1,7 @@
 import { Program } from "$lib/models/program.js";
 import { afterEach, assert, expect, test } from "vitest";
 import { readFileSync } from "fs";
-import parse from "$lang/index.js";
+import {parse} from "$lang/index.js";
 import type { Id, Type, FunctionCall } from "$lang/types/parser/interfaces";
 import type { Frame } from "$lib/models/Frame";
 import path from "path";
