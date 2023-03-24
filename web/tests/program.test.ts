@@ -5,13 +5,13 @@ import parse from "$lang/index.js";
 import type { Id, Type, FunctionCall } from "$lang/types/parser/interfaces";
 import type { Frame } from "$lib/models/Frame";
 import path from "path";
+import { Latex } from "../src/lib/models/Latex";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const examplesFolder = path.resolve(__dirname, "../../specification/Examples");
 let program: Program;
-import { Latex } from "../src/lib/models/Latex";
 
 function startFunction(str: string) {
   if (typeof str == "string" && str == "") throw new Error('No test file given! (str == ""');
@@ -122,13 +122,18 @@ test("web/Program with clear.sepo", () => {
   }
 });
 
-test("test Latex class", () => {
-  let param1: Type = { type: "id", value: "x" };
-  let param2: Type = { type: "id", value: "y" };
+test("Construct Latex class & constructLatex method test", () => {
+  let init_param1: Type = { type: "id", value: "x" };
+  let init_param2: Type = { type: "id", value: "y" };
+  let init_func: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
+
+  let latex = new Latex("$Hash(x||y||x)$", init_func);
+
+  let param1: Type = { type: "id", value: "z" };
+  let param2: Type = { type: "number", value: 5 };
   let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
 
-  let latex = new Latex("$Hash(x||y)$", func);
+  let result = latex.constructLatex(func);
 
-  //"$Hash(x||y)$"
-  //["$","Hash","(","x","||","y",")$"]
+  expect(result).toBe("$Hash(z||5||z)$");
 });
