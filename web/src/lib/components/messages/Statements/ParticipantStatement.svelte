@@ -59,7 +59,7 @@
     {@const id = setStmnt.id}
     {@const icon = program.getIcon(id.value)}
     {@const value = setStmnt.value}
-    <ActionBox title="new"><div><SetItem {program} emoji={icon} value={id} newValue={value} /></div></ActionBox>
+    <ActionBox title="Update"><div><SetItem {program} emoji={icon} value={id} newValue={value} /></div></ActionBox>
   {/if}
 </div>
 
