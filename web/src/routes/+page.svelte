@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {parse} from "$lang";
+  import { parse } from "$lang";
   import Editor from "$lib/components/Editor.svelte";
   import FileUpload from "$lib/components/FileUpload.svelte";
   import Frame from "$lib/components/Frame.svelte";
@@ -37,16 +37,14 @@
     let ast;
     try {
       ast = parse(content, false);
+      program = new Program(ast, false);
     } catch (errorMsg: any) {
       console.error(errorMsg);
       error = errorMsg.message;
       return;
     }
-
     $page.url.searchParams.set("proto", LZString.compressToEncodedURIComponent(content));
     goto(`?${$page.url.searchParams.toString()}`);
-
-    program = new Program(ast, false);
     current = program.first;
     updateNavigation();
   }
@@ -58,11 +56,10 @@
         next: null,
       };
     } else {
-      
       navigation.prev = current.getPrev();
       const next = z.instanceof(FrameType).safeParse(current.getNext());
       navigation.next = null;
-      if (next !== null) { 
+      if (next !== null) {
         navigation.next = next.success ? next.data : null;
       }
     }
@@ -94,7 +91,7 @@
         <div class="button-area">
           <PrevButton {navigation} {prevFrame} />
         </div>
-        <Frame {program} frame={current} {nextFrame}/>
+        <Frame {program} frame={current} {nextFrame} />
         <div class="button-area">
           <NextButton {navigation} {nextFrame} />
         </div>
