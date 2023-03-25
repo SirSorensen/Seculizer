@@ -61,7 +61,6 @@ export class ParticipantMap {
 
     let tmp_knowledge = this.participants[sender].getKnowledge(knowledge);
 
-    if (encrypted == null) this.participants[receiver].setKnowledge(tmp_knowledge.id, tmp_knowledge.encrypted, tmp_knowledge.value);
-    else this.participants[receiver].setKnowledge(tmp_knowledge.id, encrypted, tmp_knowledge.value);
+    this.participants[receiver].setKnowledge(tmp_knowledge.id, encrypted == null ? tmp_knowledge.encrypted : encrypted, tmp_knowledge.value);
   }
 }
