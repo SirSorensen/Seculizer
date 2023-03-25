@@ -18,4 +18,5 @@ Protocol: {
         };
 
     };
+    Bob -> Alice: bkey;
 };

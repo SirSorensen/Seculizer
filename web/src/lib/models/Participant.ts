@@ -47,8 +47,6 @@ export class Participant {
     let result = this.knowledge.find((item) => JSON.stringify(item.id) == JSON.stringify(knowledge));
 
     if (result === undefined) {
-      console.error("Knowledge not found!");
-
       return {
         id: knowledge,
         value: "",

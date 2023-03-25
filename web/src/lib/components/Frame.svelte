@@ -8,7 +8,7 @@
   import type { Program } from "$lib/models/program";
   import type { NextFrameNavigation } from "src/types/app";
   import type { KnowledgeList, ParticipantElements } from "src/types/participant";
-    import type { knowledge } from "$lib/models/Participant";
+  import type { knowledge } from "$lib/models/Participant";
   export let frame: Frame;
   export let program: Program;
   export let nextFrame: NextFrameNavigation = () => {};
@@ -33,7 +33,7 @@
         } = {
           Name: { type: "id", value: participant.getName() },
           Emoji: program.getIcon(participant.getName()), //participant.emoji
-          Knowledge: participant.getKnowledgeList().map((k:knowledge) => {
+          Knowledge: participant.getKnowledgeList().map((k: knowledge) => {
             return { id: k.id, value: k.value, emoji: k.encrypted ? "locked" : getIconFromType(k.id, program) };
           }),
         };
@@ -47,6 +47,7 @@
   }
 
   let participantElements: ParticipantElements = { container: undefined, elements: {} };
+
 </script>
 
 <div class="frame">

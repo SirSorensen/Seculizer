@@ -35,6 +35,7 @@ import { EquationMap } from "./EquationMap";
 import { Frame } from "./Frame";
 import { LatexMap } from "./LatexMap";
 import { ParticipantMap } from "./ParticipantMap";
+import { z } from "zod";
 
 export class Program {
   init_participants: ParticipantMap = new ParticipantMap();
@@ -83,14 +84,14 @@ export class Program {
     // Protocol & Frames:
     this.constructProtocol(json.protocol);
 
-    console.log("Program created");
+    if(this.log) console.log("Program created");
   }
 
   // Construct Participants
   constructParticipants(participants: Participants) {
     // Add given participants
     if (participants) {
-      console.log(participants.participants);
+      if(this.log) console.log(participants.participants);
 
       participants.participants.forEach((participant: ParticipantAST) => {
         this.init_participants.addParticipant(participant.id.value);
@@ -165,45 +166,44 @@ export class Program {
     if (this.first == null) throw new Error("Invalid json: no first frame created! First frame not properly initialized");
 
     if (protocol.statements) {
-      this.parseProtocol(protocol.statements, this.first);
+      this.parseStatements(protocol.statements, this.first);
       if (this.log) console.log("Protocol created", this.first);
     } else if (this.log) console.log("No protocol found");
   }
 
-  parseProtocol(statements: Statement[] | Statement, last: Frame) {
-    if (statements instanceof Array && statements.length > 0) {
-      this.parseStmntList(statements, last);
-    } else if (!(statements instanceof Array)) {
-      this.parseStmnt(statements, last);
-    }
-  }
-
-  parseStmntList(stmntList: Statement[], last: Frame) {
+  parseStatements(stmntList: Statement[], last: Frame) {
+    //Get next statement
     const stmnt = stmntList.shift();
     if (stmnt == undefined) throw new Error("Invalid json: stmnt is undefined! Check if statements array is empty (parseProtocol)");
 
-    this.parseProtocol(stmnt, last);
-    if (last.isNextNull()) throw new Error("Invalid json: next frame not properly initialized! (parseProtocol)");
-    if (stmntList.length > 0) this.parseProtocol(stmntList, last.getNext() as Frame);
-  }
-
-  parseStmnt(stmnt: Statement, last: Frame) {
+    //Check if statement is a match statement
     if (this.isMatchStatement(stmnt)) {
       last.setNext({});
       const sendStatement: SendStatement = stmnt.child as SendStatement;
       const matchStatement: MatchStatement = sendStatement.child as MatchStatement;
       let matchFrame = Frame.newFrame(stmnt, last.getParticipantMap(), last);
+
+      last.setNext(matchFrame);
       for (const caseIndex in matchStatement.cases) {
         const matchCase: MatchCase = matchStatement.cases[caseIndex];
         let identifier = getStringFromType(matchCase.case);
         matchFrame.createNewMatchCase(identifier);
-
-        this.parseProtocol(matchCase.children, matchFrame.getNextFrame(identifier));
+        //Branch out for each case and concat the remaining statements on the case children
+        this.parseStatements(matchCase.children.concat(stmntList), matchFrame.getNextFrame(identifier));
       }
-      last.setNext(matchFrame);
     } else {
       last.setNext(Frame.newFrame(stmnt, last.getParticipantMap(), last));
       this.pipeStmnt(stmnt, last.getNext() as Frame);
+
+      if (last.isNextNull()) throw new Error("Invalid json: next frame not properly initialized! (parseProtocol)");
+      if (stmntList.length > 0) {
+        const next = z.instanceof(Frame).safeParse(last.getNext());
+        if (next.success) {
+          this.parseStatements(stmntList, next.data);
+        } else {
+          throw new Error("Invalid json: next frame not properly initialized! (parseProtocol)");
+        }
+      }
     }
   }
 

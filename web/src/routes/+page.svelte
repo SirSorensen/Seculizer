@@ -46,7 +46,7 @@
     $page.url.searchParams.set("proto", LZString.compressToEncodedURIComponent(content));
     goto(`?${$page.url.searchParams.toString()}`);
 
-    program = new Program(ast, true);
+    program = new Program(ast, false);
     current = program.first;
     updateNavigation();
   }
@@ -58,7 +58,6 @@
         next: null,
       };
     } else {
-      console.log(current, current.getPrev);
       
       navigation.prev = current.getPrev();
       const next = z.instanceof(FrameType).safeParse(current.getNext());
