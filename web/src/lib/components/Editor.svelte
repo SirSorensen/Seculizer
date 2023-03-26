@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { SepoLexer } from "$lang";
+  import { parse, ParseError, SepoLexer } from "$lang";
+  import MagicString from "magic-string";
   export let content: string = "";
   let hightlighted = content;
   type TokenType = {
@@ -22,24 +23,35 @@
     tokenType: TokenType;
   };
   let tokens: Token[] = [];
-
+  let ids: string[] = [];
   $: {
     tokens = SepoLexer.tokenize(content + "eof").tokens;
-    let offset = 0;
-    let tmp = content;
+    let tmp = new MagicString(content);
     tokens.forEach((token) => {
       let type = token.tokenType.name;
-      if (type === "End") return;
-      let area = tmp.substring(token.startOffset + offset, token.endOffset + offset + 1);
-      let start = tmp.substring(0, token.startOffset + offset);
-      let end = tmp.substring(token.endOffset + offset + 1);
+      //if (type === "End") ;
+      if (type === "Id") {
+        if (!ids.includes(token.image)) ids.push(token.image);
+      }
       const addBefore = `<span class="token token-${type}">`;
       const addAfter = `</span>`;
-      tmp = start + addBefore + area + addAfter + end;
-      offset += addBefore.length + addAfter.length;
+      tmp.prependLeft(token.startOffset, addBefore);
+      tmp.appendRight(token.endOffset+1, addAfter);
     });
+    try {
+      parse(content, false);
+    } catch (e: any) {
+      if (e instanceof Error && e instanceof ParseError) {
+        let error = e as ParseError;
+        let location = error.location;
+        const addBefore = `<span class="token token-Error"><i class="tokenErrMsg">${error.msg}</i>`;
+        const addAfter = `</span>`;
+        tmp.prependLeft(location.start, addBefore);
+        tmp.appendRight(location.end, addAfter);
+      }
+    }
 
-    hightlighted = tmp;
+    hightlighted = content.endsWith("\n") ? tmp.toString() + "\n" : tmp.toString();
   }
   let preElement: HTMLPreElement;
 
@@ -48,11 +60,25 @@
     preElement.scrollTop = scrollTop;
     preElement.scrollLeft = scrollLeft;
   }
+  function mouseMove(e: { clientX: number; clientY: number; }){
+    const errors = document.getElementsByClassName("token-Error");
+    
+    for (const errorBox of errors) {
+      if(e.clientX > errorBox.getBoundingClientRect().left && e.clientX < errorBox.getBoundingClientRect().right && e.clientY > errorBox.getBoundingClientRect().top && e.clientY < errorBox.getBoundingClientRect().bottom){
+        errorBox.classList.add("hover");
+      }else{
+        errorBox.classList.remove("hover");
+      }
+      
+    }
+    
+  }
+
   let dark = true;
 </script>
 
 <input type="checkbox" name="dark-mode" id="darkinput" bind:checked={dark} />
-<div class="editor-container" class:dark>
+<div class="editor-container" on:mousemove={mouseMove} class:dark>
   <textarea
     name="editor"
     class="editor"
@@ -69,6 +95,7 @@
   />
   <pre class="highlighter" aria-hidden="true" bind:this={preElement}><code>{@html hightlighted}</code></pre>
 </div>
+{ids}
 
 <style>
   .editor-container {
@@ -82,6 +109,7 @@
     --ecolor-special: #fa8d3e;
     --ecolor-text: #5c6166;
     --ecolor-bg: #f8f9fa;
+    --ecolor-caret: black;
   }
 
   .editor-container.dark {
@@ -94,6 +122,7 @@
     --ecolor-special: #ffad66;
     --ecolor-text: #cccac2;
     --ecolor-bg: #1f2430;
+    --ecolor-caret: white;
   }
   .editor-container {
     position: relative;
@@ -133,7 +162,7 @@
     z-index: 1;
     color: transparent;
     background-color: transparent;
-    caret-color: black;
+    caret-color: var(--ecolor-caret);
     resize: none;
   }
   .highlighter {
@@ -183,7 +212,6 @@
   .editor-container :global(.token.token-Pipe:has(+ .token.token-RightBrace)) {
     color: var(--ecolor-text);
     font-variant: none;
-    
   }
 
   .editor-container :global(.token.token-LeftParen),
@@ -216,5 +244,30 @@
   .editor-container :global(.token.token-Match),
   .editor-container :global(.token.token-End) {
     color: var(--ecolor-special);
+  }
+  .editor-container :global(.token.token-Error), .editor-container :global(.token.token-Error .token) {
+    color: black;
+    background-color: var(--ecolor-error);
+    position: relative;
+  }
+
+  .editor-container :global(.tokenErrMsg) {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    font-size: .8rem;
+    background-color: var(--ecolor-error);
+    min-width: 200px;
+    max-width: 600px;
+    white-space: normal;
+    box-shadow: 0 0 5px;
+    margin-top: 0.5rem;
+    padding: 0.2rem;
+  }
+
+  .editor-container :global(.token.token-Error.hover .tokenErrMsg) {
+    display: block;
   }
 </style>
