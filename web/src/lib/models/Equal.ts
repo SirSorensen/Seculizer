@@ -14,7 +14,7 @@ export class Equal {
     let rightParams = this.constructParamArray(right);
 
     //[0, 2, 1]
-    this.paramIndex = rightParams.map((rightParam, rightIndex) => {
+    this.paramIndex = rightParams.map((rightParam) => {
       return leftParams.findIndex((leftParam) => {
         return leftParam.value == rightParam.value;
       }) 
