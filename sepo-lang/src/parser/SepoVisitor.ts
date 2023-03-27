@@ -124,7 +124,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     if (stringChild && stringChild.length > 0) {
       return {
         type: "string",
-        value: stringChild[0].image.slice(1, -1),
+        value: stringChild[0].image,
       };
     }
 
