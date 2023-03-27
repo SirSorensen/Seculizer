@@ -280,9 +280,6 @@ export class Program {
     if (stmnt.child.type == "messageSendStatement") {
       const messageSendStmnt = stmnt.child as MessageSendStatement;
       this.messageSendStmnt(stmnt.leftId.value, stmnt.rightId.value, messageSendStmnt.expressions, last);
-    } else if (stmnt.child.type == "matchStatement") {
-      const matchStmnt = stmnt.child as MatchStatement;
-      return this.matchStmnt(matchStmnt, last);
     } else {
       throw new Error("Invalid json: stmnt child type not implemented");
     }
@@ -303,9 +300,6 @@ export class Program {
       }
     });
   }
-
-  // TODO : implement matchStmnt
-  matchStmnt(stmnt: MatchStatement, last: Frame) {}
 
   // Acoomodate encryption of knowledge in messages
   encryptExpr(senderId: string, receiverId: string, inner: Expression[], outer: Type, last: Frame, encrypted: boolean) {
