@@ -13,15 +13,15 @@ export class Latex {
     } else {
       params = [call];
     }
+    //Params amount = 1 if the call was not a function, and the amount of params of the call if it was a function
     this.paramAmount = params.length;
 
-    const latex_array: string[] = latex.match(/([.,+*?^$&§()\[\]{}|\/|_ ]+)|([a-z,A-Z]+)/g) as string[];
+    const latex_array: string[] = latex.match(/([.,+*?^$&§()\[\]{}|\/\\|_ ]+)|([a-z,A-Z]+)/g) as string[];
 
     if (latex_array == null) throw new Error("No matches were found!");
 
     // char_index_arr = array of indexes of characters in latex_array
-    const char_index_arr = latex_array
-      ?.map((element, index) => {
+    const char_index_arr = latex_array.map((element, index) => {
         if (element.match(/([a-z,A-Z]+)/g)) return index;
       })
       .filter(Boolean);
@@ -29,7 +29,7 @@ export class Latex {
     // params_index_arr = array of arrays of indexes of parameters in latex_array
     const params_index_arr: number[][] = [];
 
-    char_index_arr?.forEach((val: number | undefined) => {
+    char_index_arr.forEach((val: number | undefined) => {
       if (val != undefined) {
         params.forEach((param, index) => {
           if (param.type == "function") throw new Error("Function type not supported for latex initialization!");
@@ -53,7 +53,7 @@ export class Latex {
       .flat();
 
     // stringArray = array of strings, each string is a part of the latex string, where the seperations is to be filled by the parameters of call
-    latex_array?.forEach((val: string, index) => {
+    latex_array.forEach((val: string, index) => {
       if (val != undefined) {
         let indexOf = params_index_arr_flat.indexOf(index);
         if (indexOf >= 0) {
@@ -83,6 +83,8 @@ export class Latex {
       if (param.type == "function") {
         if (map == undefined) throw new Error("No LatexMap was given! For Function");
         tmp_latex += map.getConstructedLatex(param).slice(1, -1);
+      } else if (param.type != "number") {
+        tmp_latex += "\\text{" + param.value + "}";
       } else {
         tmp_latex += param.value;
       }
