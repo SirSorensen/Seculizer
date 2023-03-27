@@ -171,6 +171,7 @@ export class Program {
     } else if (this.log) console.log("No protocol found");
   }
 
+  // Check whether a statement is a match statement or not, and call the correct parse function (parseMatchStmnt/parseStmnt)
   parseStatements(stmntList: Statement[], last: Frame) {
     //Get next statement
     const stmnt = stmntList.shift();
@@ -184,7 +185,8 @@ export class Program {
     }
   }
 
-  parseMatchStmnt(stmnt : Statement, stmntList: Statement[], last: Frame) {
+  // Parse a match statement and add it to the last frame, then call parseStatements on the remaining statements in stmntList
+  parseMatchStmnt(stmnt: Statement, stmntList: Statement[], last: Frame) {
     last.setNext({});
     const sendStatement: SendStatement = stmnt.child as SendStatement;
     const matchStatement: MatchStatement = sendStatement.child as MatchStatement;
@@ -200,7 +202,8 @@ export class Program {
     }
   }
 
-  parseStmnt(stmnt : Statement, stmntList: Statement[], last: Frame) {
+  // Parse a statement and add it to the last frame, then call parseStatements on the remaining statements in stmntList
+  parseStmnt(stmnt: Statement, stmntList: Statement[], last: Frame) {
     last.setNext(Frame.newFrame(stmnt, last.getParticipantMap(), last));
     this.pipeStmnt(stmnt, last.getNext() as Frame);
 
@@ -215,12 +218,14 @@ export class Program {
     }
   }
 
+  // Return true if the statement is a match statement, false otherwise
   isMatchStatement(stmnt: Statement): boolean {
     if (stmnt.child.type !== "sendStatement") return false;
     const send = stmnt.child as SendStatement;
     return send.child.type == "matchStatement";
   }
 
+  // Check what the type of the given statement is and calls the correct function to add it to the last frame
   pipeStmnt(stmnt: Statement, last: Frame) {
     if (this.log) console.log("Piping statement", stmnt);
 
@@ -246,6 +251,7 @@ export class Program {
     last.getParticipantMap().clearKnowledgeElement(knowledge);
   }
 
+  // Check what the type of the given participant statement is and calls the correct function
   participantStmnt(stmnt: ParticipantStatement, last: Frame) {
     // Pipe ParticipantStatement
     if (stmnt.child.type == "newStatement") {
