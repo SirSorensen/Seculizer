@@ -46,7 +46,7 @@ test("web/program with simple.sepo", () => {
 
   expect(Object.keys(program.equations).length).toBeGreaterThan(0);
 
-  expect(Object.keys(program.icons).length).toBe(0);
+  expect((program.icons.size)).toBe(0);
 });
 
 test("web/program with TPM.sepo", () => {
@@ -57,6 +57,26 @@ test("web/program with TPM.sepo", () => {
 test("web/program with key-relation.sepo", () => {
   startFunction("key-relation");
   expect(program).toBeTruthy();
+});
+
+test("web/program with DF.sepo", () => {
+  startFunction("DF");
+  expect(program).toBeDefined();
+
+  expect(program.keyRelations).toBeDefined();
+  expect(Object.keys(program.keyRelations).length).toBe(0);
+
+  expect(program.functions).toBeDefined();
+  expect(Object.keys(program.functions).length).toBeGreaterThan(0);
+
+  expect(program.formats).toBeDefined();
+  expect(Object.keys(program.formats).length).toBeGreaterThan(0);
+
+  expect(program.equations).toBeDefined();
+  expect(Object.keys(program.equations).length).toBe(1);
+
+  expect(program.icons).toBeDefined();
+  expect((program.icons.size)).toBe(7);
 });
 
 test("web/program with send.sepo", () => {
