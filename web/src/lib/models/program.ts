@@ -200,7 +200,6 @@ export class Program {
       const firstStmnt = matchCase.children.shift();
       if(firstStmnt){
         matchFrame.createNewMatchCase(firstStmnt, identifier);
-        console.log("Match case created", matchFrame, firstStmnt)
         this.pipeStmnt(firstStmnt, matchFrame as Frame);
       }else{
         matchFrame.createNewMatchCase(null, identifier);
