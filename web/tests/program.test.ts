@@ -137,7 +137,7 @@ test("Construct Latex class & constructLatex method test", () => {
 
   let result = latex.constructLatex(func);
 
-  expect(result).toBe("$Hash(z||5||z)$");
+  expect(result).toBe("$Hash(\\text{z}||5||\\text{z})$");
 });
 
 
@@ -160,7 +160,7 @@ test("Make LatexMap and call a function with embedded function", () => {
 
     let result = latexMap.getConstructedLatex(func2);
 
-    expect(result).toBe("$Based_{XXX}(Hash(z||5||z)&&Jesus)$");
+    expect(result).toBe("$Based_{XXX}(Hash(\\text{z}||5||\\text{z})&&\\text{Jesus})$");
 
 })
 
