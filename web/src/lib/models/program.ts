@@ -137,7 +137,7 @@ export class Program {
 
   constructEquations(equations: Equations) {
     if (equations) {
-      equations.equations.forEach((eq: Equation) => this.equations.addEquation(eq));
+      equations.equations.forEach((eq: Equation) => this.equations.addEquation(eq.left, eq.right));
       if (this.log) console.log("Equations created", this.functions);
     } else if (this.log) console.log("No Equations found");
   }

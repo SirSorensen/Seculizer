@@ -9,6 +9,7 @@ import { Latex } from "../src/lib/models/Latex";
 import { fileURLToPath } from "url";
 import { LatexMap } from "$lib/models/LatexMap";
 import { Equal } from "$lib/models/Equal";
+import { EquationMap } from "$lib/models/EquationMap";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -218,4 +219,77 @@ test("Construct an Equal and call generateEqual with embedded functions", () => 
     expect(result.params[1].params[0]).toBe(expected.params[1].params[0]);
     expect(result.params[1].params[1]).toBe(expected.params[1].params[1]);
   }
+});
+
+test("Construct an EquationMap and call generateEquals", () => {
+  let init_param1: Type = { type: "id", value: "x" };
+  let init_param2: Type = { type: "id", value: "y" };
+  let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x,y)
+  let init_func2: FunctionCall = { type: "function", id: "Hash", params: [init_param2, init_param1] }; // Hash(y,x)
+
+  let init_func3: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] }; // Base(x,y)
+  let init_func4: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] }; // Base(y,x)
+
+  let equalityMap = new EquationMap();
+  equalityMap.addEquation(init_func1, init_func2);
+  equalityMap.addEquation(init_func3, init_func4);
+
+  let param1: Type = { type: "id", value: "z" };
+  let param2: Type = { type: "id", value: "v" };
+  
+  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] }; // Hash(z,v)
+
+  let result = equalityMap.generateEquals(func);
+  let expected: FunctionCall[] = [
+  { type: "function", id: "Hash", params: [param2, param1] }, // Base(v,z)
+  func
+  ]
+
+  expect(result.length).toBe(2);
+  expect(result[0].id).toBe(expected[0].id);
+  expect(result[0].type).toBe(expected[0].type);
+  expect(result[0].params[0]).toBe(expected[0].params[0]);
+  expect(result[0].params[1]).toBe(expected[0].params[1]);
+  expect(result[1].id).toBe(expected[1].id);
+  expect(result[1].type).toBe(expected[1].type);
+  expect(result[1].params[0]).toBe(expected[1].params[0]);
+  expect(result[1].params[1]).toBe(expected[1].params[1]);
+});
+
+test("Construct an EquationMap with multiple of the same fiunction and call generateEquals", () => {
+  let init_param1: Type = { type: "id", value: "x" };
+  let init_param2: Type = { type: "id", value: "y" };
+  let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x, y)
+  let init_func2: FunctionCall = { type: "function", id: "Hash", params: [init_param2, init_param1] }; // Hash(y, x)
+  let init_func3: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param1] }; // Hash(x, x)
+
+  let equalityMap = new EquationMap();
+  equalityMap.addEquation(init_func1, init_func2); // Hash(x, y) => Hash(y, x)
+  equalityMap.addEquation(init_func1, init_func3); // Hash(x, y) => Hash(x, x)
+
+  let param1: Type = { type: "id", value: "z" };
+  let param2: Type = { type: "id", value: "v" };
+
+  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+
+  let result = equalityMap.generateEquals(func);
+  let expected: FunctionCall[] = [
+    { type: "function", id: "Hash", params: [param2, param1] },
+    { type: "function", id: "Hash", params: [param1, param1] },
+    func,
+  ];
+
+  expect(result.length).toBe(expected.length);
+  expect(result[0].id).toBe(expected[0].id);
+  expect(result[0].type).toBe(expected[0].type);
+  expect(result[0].params[0]).toBe(expected[0].params[0]);
+  expect(result[0].params[1]).toBe(expected[0].params[1]);
+  expect(result[1].id).toBe(expected[1].id);
+  expect(result[1].type).toBe(expected[1].type);
+  expect(result[1].params[0]).toBe(expected[1].params[0]);
+  expect(result[1].params[1]).toBe(expected[1].params[1]);
+  expect(result[2].id).toBe(expected[2].id);
+  expect(result[2].type).toBe(expected[2].type);
+  expect(result[2].params[0]).toBe(expected[2].params[0]);
+  expect(result[2].params[1]).toBe(expected[2].params[1]);
 });
