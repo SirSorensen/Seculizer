@@ -5,6 +5,7 @@ import {
   Colon,
   Comma,
   End,
+  ArrowEqual,
   Equal,
   Equations,
   Format,
@@ -189,7 +190,7 @@ export class SepoParser extends CstParser {
 
   private equationElement = this.RULE("equationElement", () => {
     this.SUBRULE(this.function);
-    this.CONSUME(Equal);
+    this.CONSUME(ArrowEqual);
     this.SUBRULE1(this.function);
   });
 

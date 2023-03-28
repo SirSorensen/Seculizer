@@ -39,6 +39,7 @@ export const RightParen = createToken({ name: "RightParen", pattern: /\)/ });
 export const Comma = createToken({ name: "Comma", pattern: /,/ });
 export const Colon = createToken({ name: "Colon", pattern: /:/ });
 export const Arrow = createToken({ name: "Arrow", pattern: /->/ });
+export const ArrowEqual = createToken({ name: "ArrowEqual", pattern: /=>/ });
 export const Equal = createToken({ name: "Equal", pattern: /=/ });
 export const Set = createToken({ name: "Set", pattern: /:=/ });
 export const Slash = createToken({ name: "Slash", pattern: /\// });
@@ -83,6 +84,7 @@ export const allTokens = [
   Semicolon,
   End,
   Slash,
+  ArrowEqual,
   Equal,
   Pipe,
   Dollar,
