@@ -6,7 +6,7 @@
   import type { Id, Statement as StatementAST } from "$lang/types/parser/interfaces";
   import Participants from "./Participants.svelte";
   import type { NextFrameNavigation } from "src/types/app";
-  import type {ParticipantElements, ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
+  import type { ParticipantElements, ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import { program } from "$lib/stores/programStore.js";
   export let frame: Frame;
   export let nextFrame: NextFrameNavigation = () => {};
@@ -35,8 +35,8 @@
             const emoji = k.type === "encryptedKnowledge" ? "🔒" : getIconFromType(k.knowledge, $program);
             return {
               knowledge: k,
-              emoji: emoji
-            }
+              emoji: emoji,
+            };
           }),
         };
         if (obj.Name.value === "Shared") commonKnowledge = obj.Knowledge;
@@ -49,11 +49,12 @@
   }
 
   let participantElements: ParticipantElements = { container: undefined, elements: {} };
-
 </script>
 
 <div class="frame">
-  <CommonKnowledge knowledges={commonKnowledge} />
+  {#if commonKnowledge.length > 0}
+    <CommonKnowledge knowledges={commonKnowledge} />
+  {/if}
   <div class="participants" bind:this={participantElements.container}>
     <Participants bind:participantElements={participantElements.elements} {participants} />
   </div>
