@@ -75,12 +75,12 @@ export class Frame {
     }
   }
 
-  createNewMatchCase(caseIndex: string) {
+  createNewMatchCase(stmnt:Statement | null, caseIndex: string) {
     if (this.next === null || this.next instanceof Frame) {
       this.next = {};
     }
 
-    let tmp_frame = new Frame(null, this, this.participantMap);
+    let tmp_frame = new Frame(stmnt, this, this.participantMap);
 
     this.next[caseIndex] = tmp_frame;
   }

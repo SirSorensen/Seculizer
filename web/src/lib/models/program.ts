@@ -197,7 +197,14 @@ export class Program {
     for (const caseIndex in matchStatement.cases) {
       const matchCase: MatchCase = matchStatement.cases[caseIndex];
       let identifier = getStringFromType(matchCase.case);
-      matchFrame.createNewMatchCase(identifier);
+      const firstStmnt = matchCase.children.shift();
+      if(firstStmnt){
+        matchFrame.createNewMatchCase(firstStmnt, identifier);
+        console.log("Match case created", matchFrame, firstStmnt)
+        this.pipeStmnt(firstStmnt, matchFrame as Frame);
+      }else{
+        matchFrame.createNewMatchCase(null, identifier);
+      }
       //Branch out for each case and concat the remaining statements on the case children
       this.parseStatements(matchCase.children.concat(stmntList), matchFrame.getNextFrame(identifier));
     }
