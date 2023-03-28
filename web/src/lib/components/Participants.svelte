@@ -10,7 +10,6 @@
     Emoji: string;
     Knowledge: VisualKnowledge[];
   }[] = [];
-  export let program: Program;
 
   let container: HTMLElement;
   let containerWidth: number;
@@ -51,7 +50,7 @@
         style:top={positions[index].y + "px"}
         bind:this={participantElements[parti.Name.value]}
       >
-        <Participant {program} name={parti.Name} emoji={parti.Emoji} knowledge={parti.Knowledge} />
+        <Participant name={parti.Name} emoji={parti.Emoji} knowledge={parti.Knowledge} />
       </div>
     {/each}
   {/if}

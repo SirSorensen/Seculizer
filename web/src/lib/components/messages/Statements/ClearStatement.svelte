@@ -1,18 +1,18 @@
 <script lang="ts">
   import type { ClearStatement } from "$lang/types/parser/interfaces";
   import Item from "$lib/components/Item.svelte";
-  import type { Program } from "$lib/models/program";
+
   import ActionBox from "../ActionBox.svelte";
 
-  export let program: Program;
+  import { program } from "$lib/stores/programStore.js";
   export let stmnt: ClearStatement;
 
   const id = stmnt.id;
-  const icon = program.getIcon(id.value);
+  const icon = $program.getIcon(id.value);
 </script>
 
 <div class="statement">
-  <ActionBox title="clear"><Item {program} emoji={icon} value={id} /></ActionBox>
+  <ActionBox title="clear"><Item emoji={icon} value={id} /></ActionBox>
 </div>
 
 <style>

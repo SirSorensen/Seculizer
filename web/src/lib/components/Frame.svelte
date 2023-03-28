@@ -1,15 +1,14 @@
 <script lang="ts">
   import type { Frame } from "$lib/models/Frame";
-  import { getIconFromType, getStringFromType } from "$lib/utils/stringUtil";
+  import { getIconFromType } from "$lib/utils/stringUtil";
   import CommonKnowledge from "./CommonKnowledge.svelte";
   import Statement from "./messages/Statements/Statement.svelte";
   import type { Id, Statement as StatementAST } from "$lang/types/parser/interfaces";
   import Participants from "./Participants.svelte";
-  import type { Program } from "$lib/models/program";
   import type { NextFrameNavigation } from "src/types/app";
   import type {ParticipantElements, ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
+  import { program } from "$lib/stores/programStore.js";
   export let frame: Frame;
-  export let program: Program;
   export let nextFrame: NextFrameNavigation = () => {};
   $: console.log("Current frame:", frame);
   let participants: {
@@ -31,14 +30,13 @@
           Knowledge: VisualKnowledge[];
         } = {
           Name: { type: "id", value: participant.getName() },
-          Emoji: program.getIcon(participant.getName()), //participant.emoji
+          Emoji: $program.getIcon(participant.getName()), //participant.emoji
           Knowledge: participant.getKnowledgeList().map((k: ParticipantKnowledge) => {
-            const emoji = k.type === "encryptedKnowledge" ? "🔒" : getIconFromType(k.knowledge, program);
+            const emoji = k.type === "encryptedKnowledge" ? "🔒" : getIconFromType(k.knowledge, $program);
             return {
               knowledge: k,
               emoji: emoji
             }
-            //return { id: k.id, value: k.value, emoji: k.encrypted ? "locked" : getIconFromType(k.id, program) };
           }),
         };
         if (obj.Name.value === "Shared") commonKnowledge = obj.Knowledge;
@@ -55,13 +53,13 @@
 </script>
 
 <div class="frame">
-  <CommonKnowledge {program} knowledges={commonKnowledge} />
+  <CommonKnowledge knowledges={commonKnowledge} />
   <div class="participants" bind:this={participantElements.container}>
-    <Participants {program} bind:participantElements={participantElements.elements} {participants} />
+    <Participants bind:participantElements={participantElements.elements} {participants} />
   </div>
   {#if presentation !== null}
     {#key JSON.stringify(presentation)}
-      <Statement {participantElements} {program} {nextFrame} statement={presentation} />
+      <Statement {participantElements} {nextFrame} statement={presentation} />
     {/key}
   {/if}
 </div>

@@ -6,14 +6,12 @@
     ParticipantStatement as ParticipantStatementAST,
     StatementNode,
   } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/models/program";
   import type { NextFrameNavigation } from "src/types/app";
   import ClearStatement from "./ClearStatement.svelte";
   import SendStatement from "./SendStatement.svelte";
   import ParticipantStatement from "./ParticipantStatement.svelte";
   import type { ParticipantElements } from "src/types/participant";
   export let statement: StatementAST;
-  export let program: Program;
   export let participantElements: ParticipantElements = { container: undefined, elements: {} };
   export let nextFrame: NextFrameNavigation = () => {};
 
@@ -25,9 +23,9 @@
 {#if !statement.child}
   <p>Invalid statement</p>
 {:else if statement.child.type === "clearStatement"}
-  <ClearStatement {program} stmnt={castToClearStatement(statement.child)} />
+  <ClearStatement stmnt={castToClearStatement(statement.child)} />
 {:else if statement.child.type === "sendStatement"}
-  <SendStatement {program} {participantElements} {nextFrame} stmnt={castToSendStatement(statement.child)} />
+  <SendStatement {participantElements} {nextFrame} stmnt={castToSendStatement(statement.child)} />
 {:else if statement.child.type === "participantStatement"}
-  <ParticipantStatement {program} {participantElements} stmnt={castToParticipantsStatement(statement.child)} />
+  <ParticipantStatement {participantElements} stmnt={castToParticipantsStatement(statement.child)} />
 {/if}

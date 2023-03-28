@@ -1,13 +1,11 @@
 <script lang="ts">
   import type { SendStatement, MessageSendStatement, SendStatementNode, MatchStatement } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/models/program";
   import MessageBox from "../MessageBox.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
   import { onMount } from "svelte";
   import type { NextFrameNavigation } from "src/types/app";
   import type { ParticipantElements } from "src/types/participant";
-
-  export let program: Program;
+  
   export let stmnt: SendStatement;
   export let participantElements: ParticipantElements = {
     container: undefined,
@@ -96,7 +94,7 @@
     <div class="message" bind:this={message} class:multiMessage={messageSendElements.length > 1}>
       {#each messageSendElements as messageSendElement}
         {@const expression = messageSendElement}
-        <MessageBox {program} messageExpressions={[expression]} />
+        <MessageBox messageExpressions={[expression]} />
       {/each}
     </div>
   {:else if child.type === "matchStatement"}

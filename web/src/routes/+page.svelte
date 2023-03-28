@@ -15,8 +15,8 @@
   import { test } from "$lib/utils/test.js";
   import { onMount } from "svelte";
   import { z } from "zod";
+  import { program } from "$lib/stores/programStore.js";
   let content = test.replaceAll(";", ";\n").replaceAll("{ ", "{\n ").replaceAll("} ", "}\n ");
-  let program: Program | undefined = undefined;
   let error: string | undefined = undefined;
   let current: FrameType | null = null;
   let navigation: Navigation = {
@@ -37,7 +37,7 @@
     let ast;
     try {
       ast = parse(content, false);
-      program = new Program(ast, false);
+      $program = new Program(ast, false);
     } catch (errorMsg: any) {
       console.error(errorMsg);
       error = errorMsg.message;
@@ -45,7 +45,7 @@
     }
     $page.url.searchParams.set("proto", LZString.compressToEncodedURIComponent(content));
     goto(`?${$page.url.searchParams.toString()}`);
-    current = program.first;
+    current = $program.first;
     updateNavigation();
   }
 
@@ -85,13 +85,13 @@
 
 <div id="main">
   <Header />
-  {#if program}
+  {#if $program}
     {#if current !== null}
       <div class="program-container">
         <div class="button-area">
           <PrevButton {navigation} {prevFrame} />
         </div>
-        <Frame {program} frame={current} {nextFrame} />
+        <Frame frame={current} {nextFrame} />
         <div class="button-area">
           <NextButton {navigation} {nextFrame} />
         </div>

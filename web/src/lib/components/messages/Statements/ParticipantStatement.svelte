@@ -1,13 +1,12 @@
 <script lang="ts">
   import type { ParticipantStatement, ParticipantStatementNode, NewStatement, SetStatement } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/models/program";
   import ActionBox from "../ActionBox.svelte";
   import Item from "$lib/components/Item.svelte";
   import { onMount } from "svelte";
   import SetItem from "$lib/components/SetItem.svelte";
   import type { ParticipantElements } from "src/types/participant";
 
-  export let program: Program;
+  import { program } from "$lib/stores/programStore.js";
 
   export let stmnt: ParticipantStatement;
   export let participantElements: ParticipantElements = {
@@ -52,14 +51,14 @@
   {:else if child.type === "newStatement"}
     {@const newStmnt = castToNewStatement(child)}
     {@const id = newStmnt.id}
-    {@const icon = program.getIcon(id.value)}
-    <ActionBox title="new"><Item {program} emoji={icon} value={id} /></ActionBox>
+    {@const icon = $program.getIcon(id.value)}
+    <ActionBox title="new"><Item emoji={icon} value={id} /></ActionBox>
   {:else if child.type === "setStatement"}
     {@const setStmnt = castToSetStatement(child)}
     {@const id = setStmnt.id}
-    {@const icon = program.getIcon(id.value)}
+    {@const icon = $program.getIcon(id.value)}
     {@const value = setStmnt.value}
-    <ActionBox title="Update"><div><SetItem {program} emoji={icon} value={id} newValue={value} /></div></ActionBox>
+    <ActionBox title="Update"><div><SetItem emoji={icon} value={id} newValue={value} /></div></ActionBox>
   {/if}
 </div>
 

@@ -7,14 +7,13 @@
     SignExpression,
     Type,
   } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/models/program";
   import { getIconFromType, getStringFromType } from "$lib/utils/stringUtil.js";
   import Item from "$lib/components/Item.svelte";
   import EncryptIcon from "$lib/Icons/EncryptIcon.svelte";
   import SignIcon from "$lib/Icons/SignIcon.svelte";
     import Latex from "../Latex.svelte";
 
-  export let program: Program;
+    import { program } from "$lib/stores/programStore.js";
   export let expression: ExpressionAST;
   let child = expression.child;
 
@@ -30,10 +29,10 @@
   {@const encryptExpression = castToEncryptExpression(child)}
   {@const inner = encryptExpression.inner}
   {#each inner as innerExpression}
-    <svelte:self {program} expression={innerExpression} />
+    <svelte:self expression={innerExpression} />
   {/each}
   {@const outer = encryptExpression.outer}
-  <EncryptIcon {program} encryptType={outer} />
+  <EncryptIcon encryptType={outer} />
 {:else if child.type === "signExpression"}
   {@const signExpression = castToSignExpression(child)}
   {@const inner = signExpression.inner}
@@ -41,12 +40,12 @@
     <svelte:self {program} expression={innerExpression} />
   {/each}
   {@const outer = signExpression.outer}
-  <SignIcon {program} signType={outer} signieIcon={getIconFromType(outer, program)} />
+  <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} />
 {:else if child.type === "string" || child.type === "number" || child.type === "function"}
   {@const type = castToType(child)}
   <p>
-  {#if program.getFormats().contains(type)}
-      {@const format = program.getFormats().getConstructedLatex(type)}
+  {#if $program.getFormats().contains(type)}
+      {@const format = $program.getFormats().getConstructedLatex(type)}
       <Latex input={format} />
     {:else}
       {getStringFromType(type)}
@@ -54,7 +53,7 @@
   </p>
 {:else if child.type === "id"}
   {@const id = castToId(child)}
-  <Item {program} value={id} emoji={program.getIcon(id.value)} />
+  <Item value={id} emoji={$program.getIcon(id.value)} />
 {/if}
 
 <style>

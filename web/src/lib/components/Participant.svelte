@@ -1,12 +1,11 @@
 <script lang="ts">
   import type { Id, Type } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/models/program";
   import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import Item from "./Item.svelte";
   export let name: Id;
   export let emoji: string;
   export let knowledge: VisualKnowledge[] = [];
-  export let program: Program;
+  
   let container: HTMLDivElement;
   let showKnowledge = false;
   export function accordion(node: HTMLDivElement, showKnowledge: boolean) {
@@ -75,7 +74,7 @@
 >
   <div class="container">
     <div class="participant-item">
-      <Item {program} value={name} {emoji} />
+      <Item value={name} {emoji} />
     </div>
     {#key knowledge.length}
       <div class="knowledges" use:accordion={showKnowledge}>
@@ -85,13 +84,13 @@
           {#each knowledge as visualKnowledge}
             {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
               {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as {type, value}}
-                <Item {program} value={type} emoji={visualKnowledge.emoji} />
+                <Item value={type} emoji={visualKnowledge.emoji} />
                 {#if value.trim() !== ""}
                   <small>{value.trim()}</small><!--Should this value be available if encrypted?-->
                 {/if}
               {/each}
             {:else}
-              <Item {program} value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
+              <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
               {#if visualKnowledge.knowledge.value.trim() !== ""}
                 <small>{visualKnowledge.knowledge.value.trim()}</small><!--Should this value be available if encrypted?-->
               {/if}
