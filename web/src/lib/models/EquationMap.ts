@@ -4,7 +4,7 @@ import { Equal } from './Equal';
 
 
 export class EquationMap {
-  equations: { [id: string]: Equal[] } = {};
+  private equations: { [id: string]: Equal[] } = {};
 
   addEquation(left: FunctionCall, right: FunctionCall) {
     if (this.equations[left.id] === undefined) {
