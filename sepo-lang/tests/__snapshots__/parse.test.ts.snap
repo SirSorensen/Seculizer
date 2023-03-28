@@ -511,6 +511,39 @@ exports[`should parse TPM.sepo 1`] = `
         },
         "type": "formatItem",
       },
+      {
+        "format": {
+          "type": "latex",
+          "value": "$tpm_{sk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "tpm_sk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "latex",
+          "value": "$tpm_{pk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "tpm_pk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "latex",
+          "value": "$\\\\textbf{pcr}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "pcr",
+        },
+        "type": "formatItem",
+      },
     ],
     "type": "format",
   },
@@ -552,7 +585,7 @@ exports[`should parse TPM.sepo 1`] = `
         },
         "sk": {
           "type": "id",
-          "value": "tmp_sk",
+          "value": "tpm_sk",
         },
         "type": "keyRelation",
       },
@@ -625,7 +658,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "child": {
                   "type": "string",
-                  "value": "Boot",
+                  "value": "\\"Boot\\"",
                 },
                 "type": "expression",
               },
@@ -672,7 +705,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "child": {
                   "type": "string",
-                  "value": "Booted",
+                  "value": "\\"Booted\\"",
                 },
                 "type": "expression",
               },
@@ -732,7 +765,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "child": {
                   "type": "string",
-                  "value": "Session",
+                  "value": "\\"Session\\"",
                 },
                 "type": "expression",
               },
@@ -823,7 +856,7 @@ exports[`should parse TPM.sepo 1`] = `
                     {
                       "child": {
                         "type": "string",
-                        "value": "Extend",
+                        "value": "\\"Extend\\"",
                       },
                       "type": "expression",
                     },
@@ -903,7 +936,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "child": {
                   "type": "string",
-                  "value": "Extended",
+                  "value": "\\"Extended\\"",
                 },
                 "type": "expression",
               },
@@ -936,7 +969,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "child": {
                   "type": "string",
-                  "value": "Create",
+                  "value": "\\"Create\\"",
                 },
                 "type": "expression",
               },
@@ -999,7 +1032,7 @@ exports[`should parse TPM.sepo 1`] = `
                     {
                       "child": {
                         "type": "string",
-                        "value": "Created",
+                        "value": "\\"Created\\"",
                       },
                       "type": "expression",
                     },
@@ -1085,7 +1118,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "child": {
                   "type": "string",
-                  "value": "Envelope",
+                  "value": "\\"Envelope\\"",
                 },
                 "type": "expression",
               },
@@ -1147,7 +1180,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "child": {
                   "type": "string",
-                  "value": "Session",
+                  "value": "\\"Session\\"",
                 },
                 "type": "expression",
               },
@@ -1235,7 +1268,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "case": {
                   "type": "string",
-                  "value": "Refuse",
+                  "value": "\\"Refuse\\"",
                 },
                 "children": [
                   {
@@ -1248,14 +1281,14 @@ exports[`should parse TPM.sepo 1`] = `
                                 {
                                   "child": {
                                     "type": "string",
-                                    "value": "Extend",
+                                    "value": "\\"Extend\\"",
                                   },
                                   "type": "expression",
                                 },
                                 {
                                   "child": {
                                     "type": "string",
-                                    "value": "ref",
+                                    "value": "\\"ref\\"",
                                   },
                                   "type": "expression",
                                 },
@@ -1303,7 +1336,7 @@ exports[`should parse TPM.sepo 1`] = `
                           "params": [
                             {
                               "type": "string",
-                              "value": "ref",
+                              "value": "\\"ref\\"",
                             },
                             {
                               "type": "id",
@@ -1328,7 +1361,7 @@ exports[`should parse TPM.sepo 1`] = `
                           {
                             "child": {
                               "type": "string",
-                              "value": "Extended",
+                              "value": "\\"Extended\\"",
                             },
                             "type": "expression",
                           },
@@ -1361,7 +1394,7 @@ exports[`should parse TPM.sepo 1`] = `
                           {
                             "child": {
                               "type": "string",
-                              "value": "Quote",
+                              "value": "\\"Quote\\"",
                             },
                             "type": "expression",
                           },
@@ -1409,7 +1442,7 @@ exports[`should parse TPM.sepo 1`] = `
                                 {
                                   "child": {
                                     "type": "string",
-                                    "value": "Quoted",
+                                    "value": "\\"Quoted\\"",
                                   },
                                   "type": "expression",
                                 },
@@ -1469,7 +1502,7 @@ exports[`should parse TPM.sepo 1`] = `
               {
                 "case": {
                   "type": "string",
-                  "value": "Obtain",
+                  "value": "\\"Obtain\\"",
                 },
                 "children": [
                   {
@@ -1482,14 +1515,14 @@ exports[`should parse TPM.sepo 1`] = `
                                 {
                                   "child": {
                                     "type": "string",
-                                    "value": "Extend",
+                                    "value": "\\"Extend\\"",
                                   },
                                   "type": "expression",
                                 },
                                 {
                                   "child": {
                                     "type": "string",
-                                    "value": "obt",
+                                    "value": "\\"obt\\"",
                                   },
                                   "type": "expression",
                                 },
@@ -1537,7 +1570,7 @@ exports[`should parse TPM.sepo 1`] = `
                           "params": [
                             {
                               "type": "string",
-                              "value": "obt",
+                              "value": "\\"obt\\"",
                             },
                             {
                               "type": "id",
@@ -1562,7 +1595,7 @@ exports[`should parse TPM.sepo 1`] = `
                           {
                             "child": {
                               "type": "string",
-                              "value": "Extended",
+                              "value": "\\"Extended\\"",
                             },
                             "type": "expression",
                           },
@@ -1595,7 +1628,7 @@ exports[`should parse TPM.sepo 1`] = `
                           {
                             "child": {
                               "type": "string",
-                              "value": "Decrypt",
+                              "value": "\\"Decrypt\\"",
                             },
                             "type": "expression",
                           },
@@ -2187,6 +2220,156 @@ exports[`should parse send-and-clear.sepo 1`] = `
 }
 `;
 
+exports[`should parse send-encryption-no-decrypt.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": undefined,
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "bkey",
+          },
+          {
+            "type": "id",
+            "value": "msg_B",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "akey",
+          },
+          {
+            "type": "id",
+            "value": "msg_A",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_A",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "aKey",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_B",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "bKey",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
 exports[`should parse send-with-enc.sepo 1`] = `
 {
   "equations": undefined,
@@ -2717,7 +2900,7 @@ exports[`should parse simple_match.sepo 1`] = `
               {
                 "case": {
                   "type": "string",
-                  "value": "Refuse",
+                  "value": "\\"Refuse\\"",
                 },
                 "children": [
                   {
@@ -2727,7 +2910,7 @@ exports[`should parse simple_match.sepo 1`] = `
                           {
                             "child": {
                               "type": "string",
-                              "value": "Refused",
+                              "value": "\\"Refused\\"",
                             },
                             "type": "expression",
                           },
@@ -2752,7 +2935,7 @@ exports[`should parse simple_match.sepo 1`] = `
               {
                 "case": {
                   "type": "string",
-                  "value": "Obtain",
+                  "value": "\\"Obtain\\"",
                 },
                 "children": [
                   {
@@ -2762,7 +2945,7 @@ exports[`should parse simple_match.sepo 1`] = `
                           {
                             "child": {
                               "type": "string",
-                              "value": "Obtained",
+                              "value": "\\"Obtained\\"",
                             },
                             "type": "expression",
                           },
@@ -2786,6 +2969,32 @@ exports[`should parse simple_match.sepo 1`] = `
               },
             ],
             "type": "matchStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "bkey",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
           },
           "leftId": {
             "type": "id",
