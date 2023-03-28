@@ -1,10 +1,23 @@
 <script lang="ts">
+    import type { Type } from "$lang/types/parser/interfaces";
     import type { Program } from "$lib/models/program";
-    import type { KnowledgeList } from "src/types/participant";
+    import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import Item from "./Item.svelte";
 
-  export let knowledges:KnowledgeList = [];
+  export let knowledges:VisualKnowledge[] = [];
   export let program: Program;
+
+  function flatKnowledgeTypes(knowledges:ParticipantKnowledge[]):Type[]{
+    let flat:Type[] = [];
+    for (const knowledge of knowledges) {
+      if(knowledge.type === "encryptedKnowledge"){
+        flat.concat(flatKnowledgeTypes(knowledge.knowledge));
+      }else{
+        flat.push(knowledge.knowledge);
+      }
+    }
+    return flat;
+  }
 </script>
 
 <div class="container">
@@ -13,8 +26,14 @@
     {#if knowledges.length === 0}
       <p class="emptyText">Empty</p>
     {:else}
-      {#each knowledges as knowledge}
-        <Item {program} value={knowledge.id} emoji={knowledge.emoji} />
+      {#each knowledges as visualKnowledge}
+        {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
+          {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as encryptedKnowledgeType}
+            <Item {program} value={encryptedKnowledgeType} emoji={visualKnowledge.emoji} />
+          {/each}
+        {:else}
+          <Item {program} value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
+        {/if}
       {/each}
     {/if}
   </div>

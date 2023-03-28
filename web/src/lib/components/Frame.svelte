@@ -7,8 +7,7 @@
   import Participants from "./Participants.svelte";
   import type { Program } from "$lib/models/program";
   import type { NextFrameNavigation } from "src/types/app";
-  import type { KnowledgeList, ParticipantElements } from "src/types/participant";
-  import type { knowledge } from "$lib/models/Participant";
+  import type {ParticipantElements, ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   export let frame: Frame;
   export let program: Program;
   export let nextFrame: NextFrameNavigation = () => {};
@@ -16,9 +15,9 @@
   let participants: {
     Name: Id;
     Emoji: string;
-    Knowledge: KnowledgeList;
+    Knowledge: VisualKnowledge[];
   }[] = [];
-  let commonKnowledge: KnowledgeList = [];
+  let commonKnowledge: VisualKnowledge[] = [];
   let presentation: StatementAST | null = null;
   $: {
     participants = [];
@@ -29,12 +28,17 @@
         const obj: {
           Name: Id;
           Emoji: string;
-          Knowledge: KnowledgeList;
+          Knowledge: VisualKnowledge[];
         } = {
           Name: { type: "id", value: participant.getName() },
           Emoji: program.getIcon(participant.getName()), //participant.emoji
-          Knowledge: participant.getKnowledgeList().map((k: knowledge) => {
-            return { id: k.id, value: k.value, emoji: k.encrypted ? "locked" : getIconFromType(k.id, program) };
+          Knowledge: participant.getKnowledgeList().map((k: ParticipantKnowledge) => {
+            const emoji = k.type === "encryptedKnowledge" ? "🔒" : getIconFromType(k.knowledge, program);
+            return {
+              knowledge: k,
+              emoji: emoji
+            }
+            //return { id: k.id, value: k.value, emoji: k.encrypted ? "locked" : getIconFromType(k.id, program) };
           }),
         };
         if (obj.Name.value === "Shared") commonKnowledge = obj.Knowledge;

@@ -1,0 +1,10 @@
+Participants: Alice, Bob;
+Knowledge: {
+    Bob: bkey, msg_B;
+    Alice: akey, msg_A;
+};
+
+Protocol: {
+    Alice -> Bob: {msg_A}aKey;
+    Bob -> Alice: {msg_B}bKey;
+};

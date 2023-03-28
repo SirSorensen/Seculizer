@@ -13,7 +13,6 @@ import type {
   KeyRelation,
   ClearStatement,
   Program as ProgramAST,
-  Id,
   NewStatement,
   SetStatement,
   MessageSendStatement,
@@ -30,12 +29,14 @@ import type {
   Equation,
 } from "$lang/types/parser/interfaces";
 import { getStringFromType } from "$lib/utils/stringUtil";
+import type { EncryptedParticipantKnowledge } from "src/types/participant";
 import { EquationMap } from "./EquationMap";
 
 import { Frame } from "./Frame";
 import { LatexMap } from "./LatexMap";
 import { ParticipantMap } from "./ParticipantMap";
 import { z } from "zod";
+import type { ParticipantKnowledge } from "src/types/participant";
 
 export class Program {
   init_participants: ParticipantMap = new ParticipantMap();
@@ -109,7 +110,7 @@ export class Program {
     if (knowledge) {
       knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
         knowledge.children.forEach((child: Type) => {
-          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, child, false);
+          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, { type: "rawKnowledge", knowledge: child, value: "" });
         });
       });
       if (this.log) console.log("Knowledge added to participants", this.init_participants);
@@ -248,7 +249,7 @@ export class Program {
   }
 
   clearStmnt(knowledge: Type, last: Frame) {
-    last.getParticipantMap().clearKnowledgeElement(knowledge);
+    last.getParticipantMap().clearKnowledgeElement({ type: "rawKnowledge", knowledge: knowledge, value: "" });
   }
 
   // Check what the type of the given participant statement is and calls the correct function
@@ -267,56 +268,90 @@ export class Program {
 
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, newKnowledge, false);
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, value: "" });
   }
 
   // Set Statement
   setStmnt(participant: string, knowledge: Type, value: string, last: Frame) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, knowledge, false, value);
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: knowledge, value: value });
   }
 
   // Pipe SendStatement to messageSendStatement, or matchStatement
   sendStmnt(stmnt: SendStatement, last: Frame) {
     if (stmnt.child.type == "messageSendStatement") {
       const messageSendStmnt = stmnt.child as MessageSendStatement;
-      this.messageSendStmnt(stmnt.leftId.value, stmnt.rightId.value, messageSendStmnt.expressions, last);
+      this.messageSendStmnt(stmnt.leftId.value, stmnt.rightId.value, messageSendStmnt.expressions, last, true);
     } else {
       throw new Error("Invalid json: stmnt child type not implemented");
     }
   }
 
   // Pipe MessageSendStatement to encryptExpression, signExpression, or setStatement
-  messageSendStmnt(senderId: string, receiverId: string, knowledge: Expression[], last: Frame, encrypted: boolean = false) {
+  messageSendStmnt(senderId: string, receiverId: string, knowledge: Expression[], last: Frame, canDescrypt: boolean) {
     knowledge.forEach((expression) => {
-      if (expression.child.type == "encryptExpression") {
-        const encryptedExpression = expression.child as EncryptExpression;
-        this.encryptExpr(senderId, receiverId, encryptedExpression.inner, encryptedExpression.outer, last, encrypted);
-      } else if (expression.child.type == "signExpression") {
-        const signExpression = expression.child as SignExpression;
-        this.messageSendStmnt(senderId, receiverId, signExpression.inner, last, encrypted);
-      } else {
-        const type = expression.child as Type;
-        last.getParticipantMap().transferKnowledge(senderId, receiverId, type, encrypted);
-      }
+      this.generateKnowledgeElement(expression, receiverId, last, canDescrypt).forEach((knowledge) => {
+        last.getParticipantMap().transferKnowledge(senderId, receiverId, knowledge);
+      });
     });
   }
 
-  // Acoomodate encryption of knowledge in messages
-  encryptExpr(senderId: string, receiverId: string, inner: Expression[], outer: Type, last: Frame, encrypted: boolean) {
-    // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
-    if (!encrypted) {
-      // decryptable = true if receiver knows the key, it is therefore not encrypted
-      let decryptable = last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
-      encrypted = !decryptable;
+  generateKnowledgeElement(expression: Expression, receiverId: string, last: Frame, canDescrypt: boolean = true): ParticipantKnowledge[] {
+    if (expression.child.type == "encryptExpression") {
+      const encryptedExpression = expression.child as EncryptExpression;
+      return this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt);
+    } else if (expression.child.type == "signExpression") {
+      const signExpression = expression.child as SignExpression;
+      let subKnowledge: ParticipantKnowledge[] = [];
+      signExpression.inner.forEach((expression) => {
+        subKnowledge.concat(this.generateKnowledgeElement(expression, receiverId, last, canDescrypt));
+      });
+      return subKnowledge;
+    } else {
+      const type = expression.child as Type;
+      return [{ type: "rawKnowledge", knowledge: type, value: "" }];
     }
+  }
 
-    this.messageSendStmnt(senderId, receiverId, inner, last, encrypted);
+  // Acoomodate encryption of knowledge in messages
+  generateEncryptedKnowledge(
+    receiverId: string,
+    inner: Expression[],
+    outer: Type,
+    last: Frame,
+    canDecrypt: boolean = true
+  ): ParticipantKnowledge[] {
+    // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
+    // decryptable = true if receiver knows the key, it is therefore not encrypted
+    canDecrypt = canDecrypt && last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
+
+    
+    let knowledges:ParticipantKnowledge[] = []
+    inner.forEach((expression) => {
+      if (expression.child.type == "encryptExpression") {
+        const encryptedExpression = expression.child as EncryptExpression;
+        knowledges.concat(
+          this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDecrypt)
+        );
+      } else if (expression.child.type == "signExpression") {
+        const signExpression = expression.child as SignExpression;
+        signExpression.inner.forEach((expression) => {
+          knowledges.concat(this.generateKnowledgeElement(expression, receiverId, last, canDecrypt));
+        });
+      } else {
+        const type = expression.child as Type;
+        knowledges.push({ type: "rawKnowledge", knowledge: type, value: "" });
+      }
+    });
+    if(canDecrypt) return knowledges;
+    else {
+      return [{type: "encryptedKnowledge", knowledge: knowledges, encryption: outer}]
+    }
   }
 
   checkKeyRelation(key: Type): Type {
     if (key.type == "id") {
       let tmp_key = this.keyRelations[key.value];
-      if (tmp_key) key.value = tmp_key;
+      if (tmp_key) return {type: "id", value: tmp_key};
     }
     return key;
   }
