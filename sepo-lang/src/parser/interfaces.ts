@@ -179,7 +179,7 @@ export interface ExpressionNode extends ASTNode {}
 
 export interface Expression extends ExpressionNode {
   type: "expression";
-  child: ExpressionNode;
+  child: ExpressionNode | Type;
 }
 
 export interface EncryptExpression extends ExpressionNode {
