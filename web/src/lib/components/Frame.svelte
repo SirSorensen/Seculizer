@@ -49,9 +49,42 @@
   }
 
   let participantElements: ParticipantElements = { container: undefined, elements: {} };
+  let scale = 1
+  let relativePos = {x:0, y:0}
+  function handleWheel(event: WheelEvent) {
+    if (event.deltaY > 0) {
+      console.log("Scrolling down");
+      scale += 0.1
+    }else{
+      console.log("Scrolling up");
+      scale -= 0.1
+    }
+  }
+  let mouse:({x:number, y:number} | null) = null
+  function handleMouseDown(event: MouseEvent) {
+    mouse = {x:event.clientX, y:event.clientY}
+  }
+  function handleMouseMove(event: MouseEvent) {
+    if(mouse){
+      const dx = event.clientX - mouse.x
+      const dy = event.clientY - mouse.y
+      relativePos.x += dx
+      relativePos.y += dy
+      mouse = {x:event.clientX, y:event.clientY}
+    }
+  }
+  function handleMouseUp(event: MouseEvent) {
+    if(mouse){
+      const dx = event.clientX - mouse.x
+      const dy = event.clientY - mouse.y
+      relativePos.x += dx
+      relativePos.y += dy
+      mouse = null
+    }
+  }
 </script>
 
-<div class="frame">
+<div class="frame" on:wheel={handleWheel} on:mousemove={handleMouseMove} on:mousedown={handleMouseDown} on:mouseup={handleMouseUp} style:transform={`scale(${scale}) translate(${relativePos.x}px,${relativePos.y}px)`}>
   {#if commonKnowledge.length > 0}
     <CommonKnowledge knowledges={commonKnowledge} />
   {/if}
