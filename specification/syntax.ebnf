@@ -10,7 +10,7 @@ program ::= ("Participants:" participants ";")
             ("Functions:" functions_def ";")?
             ("Equations:" equations ";")?
             ("Format:" formats ";")?
-            ("Icons:" "{" icons "}" ";")?
+            ("Icons:" "{" iconSet* "}" ";")?
             ("Protocol:" "{" stmt* "}" ";")
             end
 
@@ -24,15 +24,11 @@ stmt ::=
     | call_stmt
     | participant_stmt
 
-message_send_stmt ::= id "->" id ":" message_expr ("," message_expr)* ";"   /* Example: alice -> bob: key, key2*/
-
-message_expr ::=        /* Could have id "=" id as well, but it creates confusion in what it is saved as what */
-	expression "as" id
-	| expression
+message_send_stmt ::= id "->" id ":" expression ("," expression)* ";"   /* Example: alice -> bob: key, key2*/
 
 expression ::= type | encrypt_expr | sign_expr
-encrypt_expr ::= "{" expression ("," expression)* "}" expression  /* Example: {exp(g,X)}inv(pk(A)); */
-sign_expr ::= "{|" expression ("," expression)* "|}" expression   /* Example: {|msgA|}aKey; */
+encrypt_expr ::= "{" expression ("," expression)* "}" type  /* Example: {exp(g,X)}inv(pk(A)); */
+sign_expr ::= "{|" expression ("," expression)* "|}" type   /* Example: {|msgA|}aKey; */
 
 match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: alice -> bob: match { "refuse": { ... }; }; */
 match_case ::= type ":" "{" stmt* "}" ";"                           /* Example: "refuse": { ... }; */
@@ -64,15 +60,13 @@ function_def ::= id "/" number                      /* Example: f/1 */
 
 /* ---- Equations ---- */
 equations ::= equations_element ("," equations_element)*    /* Example: f(x) = x + 1, g(x, y) = x + y */
-equations_element ::= equation "=" equation                 /* Example: exp(exp(g,X),Y) = exp(exp(g,Y),X) */
-equation ::= id "(" (id|equation) ("," (id|equation))* ")"  /* Example: exp(exp(g,X),Y) */
+equations_element ::= function "=>" function                /* Example: exp(exp(g,X),Y) => exp(exp(g,Y),X) */
 
 /* ---- Format ---- */
 formats ::= format ("," format)*                        /* Example: exp(x,y) = $x^y$ */
-format ::= id "(" id ("," id)* ")" "=" string | latex   /* Example: exp(x,y) = $x^y$ */
+format ::= type "=" string | latex   /* Example: exp(x,y) = $x^y$ */
 
 /* ---- Icons ---- */
-icons ::= iconSet*
 iconSet ::= string ":" id ("," id)* ";" /* Example: "👩‍👦": "Alice", "Bob"; */
 
 /* --- Latex ---  */
