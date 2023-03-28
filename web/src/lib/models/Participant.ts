@@ -1,7 +1,6 @@
 import type { EncryptExpression, Type } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge } from "src/types/participant";
 
-
 export class Participant {
   private name: string;
   private knowledge: ParticipantKnowledge[];
@@ -20,6 +19,7 @@ export class Participant {
       this.knowledge.push(knowledge);
     }
   }
+
 
   findKnowledgeIndex(element: ParticipantKnowledge): number {
     return this.knowledge.findIndex((item) => this.isKnowledgeEqual(item, element));
@@ -54,22 +54,21 @@ export class Participant {
     return this.name;
   }
 
-  isKnowledgeEqual(knowledgeA:ParticipantKnowledge, knowledgeB: ParticipantKnowledge): boolean {
-    if(knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
+  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge): boolean {
+    if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
       return JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge);
-    }else if(knowledgeA.type === "encryptedKnowledge" && knowledgeB.type === "encryptedKnowledge") {
-      if(JSON.stringify(knowledgeA.encryption) !== JSON.stringify(knowledgeB.encryption)) return false;
-      if(knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
-      const tmp = structuredClone(knowledgeB.knowledge)
-      for(let i = 0; i < knowledgeA.knowledge.length; i++) {
+    } else if (knowledgeA.type === "encryptedKnowledge" && knowledgeB.type === "encryptedKnowledge") {
+      if (JSON.stringify(knowledgeA.encryption) !== JSON.stringify(knowledgeB.encryption)) return false;
+      if (knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
+      const tmp = structuredClone(knowledgeB.knowledge);
+      for (let i = 0; i < knowledgeA.knowledge.length; i++) {
         let knowledge = knowledgeA.knowledge[i];
         let index = tmp.findIndex((item) => this.isKnowledgeEqual(item, knowledge));
-        if(index < 0) return false;
+        if (index < 0) return false;
         tmp.splice(index, 1);
       }
       return tmp.length === 0;
     }
     return false;
   }
-
 }

@@ -6,5 +6,5 @@ Knowledge: {
 
 Protocol: {
     Alice -> Bob: {msg_A}aKey;
-    Bob -> Alice: {msg_A}bKey;
+    Bob -> Alice: {msg_B}bKey;
 };

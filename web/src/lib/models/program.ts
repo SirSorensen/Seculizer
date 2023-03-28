@@ -298,7 +298,7 @@ export class Program {
   generateKnowledgeElement(expression: Expression, receiverId: string, last: Frame, canDescrypt: boolean = true): ParticipantKnowledge[] {
     if (expression.child.type == "encryptExpression") {
       const encryptedExpression = expression.child as EncryptExpression;
-      return [this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt)];
+      return this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt);
     } else if (expression.child.type == "signExpression") {
       const signExpression = expression.child as SignExpression;
       let subKnowledge: ParticipantKnowledge[] = [];
@@ -318,40 +318,40 @@ export class Program {
     inner: Expression[],
     outer: Type,
     last: Frame,
-    canDescrypt: boolean = true
-  ): EncryptedParticipantKnowledge {
+    canDecrypt: boolean = true
+  ): ParticipantKnowledge[] {
     // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
     // decryptable = true if receiver knows the key, it is therefore not encrypted
-    canDescrypt = canDescrypt && last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
+    canDecrypt = canDecrypt && last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
 
-    const encryptedKnowledge: EncryptedParticipantKnowledge = {
-      type: "encryptedKnowledge",
-      encryption: outer,
-      knowledge: [],
-    };
+    
+    let knowledges:ParticipantKnowledge[] = []
     inner.forEach((expression) => {
       if (expression.child.type == "encryptExpression") {
         const encryptedExpression = expression.child as EncryptExpression;
-        encryptedKnowledge.knowledge.concat(
-          this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt)
+        knowledges.concat(
+          this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDecrypt)
         );
       } else if (expression.child.type == "signExpression") {
         const signExpression = expression.child as SignExpression;
         signExpression.inner.forEach((expression) => {
-          encryptedKnowledge.knowledge.concat(this.generateKnowledgeElement(expression, receiverId, last, canDescrypt));
+          knowledges.concat(this.generateKnowledgeElement(expression, receiverId, last, canDecrypt));
         });
       } else {
         const type = expression.child as Type;
-        encryptedKnowledge.knowledge.push({ type: "rawKnowledge", knowledge: type, value: "" });
+        knowledges.push({ type: "rawKnowledge", knowledge: type, value: "" });
       }
     });
-    return encryptedKnowledge;
+    if(canDecrypt) return knowledges;
+    else {
+      return [{type: "encryptedKnowledge", knowledge: knowledges, encryption: outer}]
+    }
   }
 
   checkKeyRelation(key: Type): Type {
     if (key.type == "id") {
       let tmp_key = this.keyRelations[key.value];
-      if (tmp_key) key.value = tmp_key;
+      if (tmp_key) return {type: "id", value: tmp_key};
     }
     return key;
   }

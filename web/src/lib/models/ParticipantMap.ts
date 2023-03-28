@@ -56,17 +56,21 @@ export class ParticipantMap {
     Object.keys(this.participants).forEach((participant: string) => this.participants[participant].clearKnowledgeElement(knowledge));
   }
 
-  transferKnowledge(sender: string, receiver: string, knowledge: ParticipantKnowledge) {
+  transferKnowledge(senderId: string, receiverId: string, knowledge: ParticipantKnowledge) {
     // Error handling
-    if (sender == receiver) throw new Error("Sender and receiver cannot be the same! You cannot send something to yourself!");
-    if (!this.participants[sender]) throw new Error("Sender not found!");
-    if (!this.participants[receiver]) throw new Error("Receiver not found!");
+    if (senderId == receiverId) throw new Error("Sender and receiver cannot be the same! You cannot send something to yourself!");
+    const sender = this.participants[senderId];
+    const receiver = this.participants[receiverId];
+    if (!sender) throw new Error("Sender not found!");
+    if (!receiver) throw new Error("Receiver not found!");
 
     if (this.isSimpleKnowledge(knowledge)) return;
-
-    let tmp_knowledge = this.participants[sender].getKnowledge(knowledge);
-
-    this.participants[receiver].setKnowledge(tmp_knowledge);
+    if(!sender.doesKnowledgeExist(knowledge)) {
+      console.error("Knowledge not found!", this.participants[senderId].getName(), knowledge);
+      //return;
+    };
+    let tmp_knowledge = sender.getKnowledge(knowledge);
+    receiver.setKnowledge(tmp_knowledge);
   }
 
   isSimpleKnowledge(knowledge: ParticipantKnowledge): boolean {
