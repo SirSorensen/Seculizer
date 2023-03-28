@@ -1,5 +1,6 @@
 import type { Type } from "$lang/types/parser/interfaces";
 import type { Program } from "$lib/models/program";
+import type { ParticipantKnowledge } from "src/types/participant";
 export function getStringFromType(type: Type): string {
   if (!type) return "null";
   switch (type.type) {
@@ -40,4 +41,7 @@ export function getIconFromType(type: Type, program: Program): string {
       return "red-question-mark";
       break;
   }
+}
+export function getNameFromKnowledge(knowledge:ParticipantKnowledge){
+  
 }

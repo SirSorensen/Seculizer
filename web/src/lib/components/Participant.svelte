@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { Id, Type } from "$lang/types/parser/interfaces";
-    import type { Program } from "$lib/models/program";
-    import type { KnowledgeList } from "src/types/participant";
+  import type { Id, Type } from "$lang/types/parser/interfaces";
+  import type { Program } from "$lib/models/program";
+  import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import Item from "./Item.svelte";
   export let name: Id;
   export let emoji: string;
-  export let knowledge:KnowledgeList= [];
+  export let knowledge: VisualKnowledge[] = [];
   export let program: Program;
   let container: HTMLDivElement;
   let showKnowledge = false;
@@ -42,6 +42,17 @@
     let node = event.relatedTarget as Node;
     return container.contains(node);
   }
+  function flatKnowledgeTypes(knowledges: ParticipantKnowledge[]): {type: Type, value: string}[] {
+    let flat: {type: Type, value: string}[] = [];
+    for (const knowledge of knowledges) {
+      if (knowledge.type === "encryptedKnowledge") {
+        flat.concat(flatKnowledgeTypes(knowledge.knowledge));
+      } else {
+        flat.push({type: knowledge.knowledge, value: knowledge.value});
+      }
+    }
+    return flat;
+  }
 </script>
 
 <div
@@ -71,11 +82,22 @@
         {#if knowledge.length === 0}
           <p class="emptyText">Empty</p>
         {:else}
-          {#each knowledge as knowledge}
-            <Item {program} value={knowledge.id} emoji={knowledge.emoji} />
-            {#if knowledge.value.trim() !== ""}
-              <small>{knowledge.value.trim()}</small><!--Should this value be available if encrypted?-->
+          {#each knowledge as visualKnowledge}
+            {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
+              {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as {type, value}}
+                <Item {program} value={type} emoji={visualKnowledge.emoji} />
+                {#if value.trim() !== ""}
+                  <small>{value.trim()}</small><!--Should this value be available if encrypted?-->
+                {/if}
+              {/each}
+            {:else}
+              <Item {program} value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
+              {#if visualKnowledge.knowledge.value.trim() !== ""}
+                <small>{visualKnowledge.knowledge.value.trim()}</small><!--Should this value be available if encrypted?-->
+              {/if}
             {/if}
+
+            
           {/each}
         {/if}
       </div>
