@@ -197,11 +197,13 @@ export class Program {
       const matchCase: MatchCase = matchStatement.cases[caseIndex];
       let identifier = getStringFromType(matchCase.case);
       const firstStmnt = matchCase.children.shift();
-      if(firstStmnt){
+      if (firstStmnt) {
         matchFrame.createNewMatchCase(firstStmnt, identifier);
-        this.pipeStmnt(firstStmnt, matchFrame as Frame);
-      }else{
+        matchFrame.getNextFrame(identifier).addToHistory(HistoryTemplates.matchCase(identifier)); //We need duplicate since the pipeStmnt will add the first statement to the history
+        this.pipeStmnt(firstStmnt, matchFrame.getNextFrame(identifier) as Frame);
+      } else {
         matchFrame.createNewMatchCase(null, identifier);
+        matchFrame.getNextFrame(identifier).addToHistory(HistoryTemplates.matchCase(identifier));
       }
       //Branch out for each case and concat the remaining statements on the case children
       this.parseStatements(matchCase.children.concat(stmntList), matchFrame.getNextFrame(identifier));
@@ -255,7 +257,7 @@ export class Program {
 
   clearStmnt(knowledge: Type, last: Frame) {
     last.getParticipantMap().clearKnowledgeElement({ type: "rawKnowledge", knowledge: knowledge, value: "" });
-    last.addToHistory(HistoryTemplates.clear(knowledge));
+    last.addToHistory(HistoryTemplates.clear(knowledge, this));
   }
 
   // Check what the type of the given participant statement is and calls the correct function
@@ -275,13 +277,13 @@ export class Program {
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame) {
     last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, value: "" });
-    last.addToHistory(HistoryTemplates.new(participant, newKnowledge));
+    last.addToHistory(HistoryTemplates.new(participant, newKnowledge, this));
   }
 
   // Set Statement
   setStmnt(participant: string, knowledge: Type, value: string, last: Frame) {
     last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: knowledge, value: value });
-    last.addToHistory(HistoryTemplates.set(participant, knowledge, value));
+    last.addToHistory(HistoryTemplates.set(participant, knowledge, value, this));
   }
 
   // Pipe SendStatement to messageSendStatement, or matchStatement
@@ -297,11 +299,11 @@ export class Program {
   // Pipe MessageSendStatement to encryptExpression, signExpression, or setStatement
   messageSendStmnt(senderId: string, receiverId: string, knowledge: Expression[], last: Frame, canDescrypt: boolean) {
     knowledge.forEach((expression) => {
+      last.addToHistory(HistoryTemplates.send(senderId, receiverId, expression, this));
       let sentKnowledge = this.generateKnowledgeElement(expression, receiverId, last, canDescrypt);
       sentKnowledge.forEach((knowledge) => {
         last.getParticipantMap().transferKnowledge(senderId, receiverId, knowledge);
       });
-      last.addToHistory(HistoryTemplates.send(senderId, receiverId, sentKnowledge));
     });
   }
 
@@ -334,8 +336,7 @@ export class Program {
     // decryptable = true if receiver knows the key, it is therefore not encrypted
     canDecrypt = canDecrypt && last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
 
-    
-    let knowledges:ParticipantKnowledge[] = []
+    let knowledges: ParticipantKnowledge[] = [];
     inner.forEach((expression) => {
       if (expression.child.type == "encryptExpression") {
         const encryptedExpression = expression.child as EncryptExpression;
@@ -352,18 +353,22 @@ export class Program {
         knowledges.push({ type: "rawKnowledge", knowledge: type, value: "" });
       }
     });
-    if(canDecrypt) return knowledges;
+    if (canDecrypt) return knowledges;
     else {
-      return [{type: "encryptedKnowledge", knowledge: knowledges, encryption: outer}]
+      return [{ type: "encryptedKnowledge", knowledge: knowledges, encryption: outer }];
     }
   }
 
   checkKeyRelation(key: Type): Type {
     if (key.type == "id") {
       let tmp_key = this.keyRelations[key.value];
-      if (tmp_key) return {type: "id", value: tmp_key};
+      if (tmp_key) return { type: "id", value: tmp_key };
     }
     return key;
+  }
+
+  getIcons() {
+    return this.icons;
   }
 
   getIcon(id: string) {

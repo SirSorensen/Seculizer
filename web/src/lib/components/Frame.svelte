@@ -8,6 +8,7 @@
   import type { NextFrameNavigation } from "src/types/app";
   import type { ParticipantElements, ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import { program } from "$lib/stores/programStore.js";
+    import History from "./History.svelte";
   export let frame: Frame;
   export let nextFrame: NextFrameNavigation = () => {};
   $: console.log("Current frame:", frame);
@@ -64,12 +65,9 @@
       <Statement {participantElements} {nextFrame} statement={presentation} />
     {/key}
   {/if}
+  <History {frame} />
 </div>
-<ol class="history">
-  {#each frame.getHistory() as history}
-    <li class="history-item" >{history}</li>
-  {/each}
-</ol>
+
 
 <style>
   .frame {
@@ -80,14 +78,5 @@
   }
   .participants {
     flex: 1;
-  }
-  .history{
-    position: fixed;
-    bottom: 0;
-    max-height: 35vh;
-    overflow-y: auto;
-    margin: 0;
-    display: flex;
-    flex-direction: column-reverse;
   }
 </style>
