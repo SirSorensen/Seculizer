@@ -29,8 +29,8 @@ export class ParticipantMap {
   }
 
   // Add participant to map
-  addParticipant(name: string, knowledge: ParticipantKnowledge[] = []) {
-    this.participants[name] = new Participant(name, knowledge);
+  addParticipant(name: string) {
+    this.participants[name] = new Participant(name, []);
   }
 
   // Insert given knowledge into given participant or update existing knowledge

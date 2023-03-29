@@ -31,14 +31,15 @@
         } = {
           Name: { type: "id", value: participant.getName() },
           Emoji: $program.getIcon(participant.getName()), //participant.emoji
-          Knowledge: participant.getKnowledgeList().map((k: ParticipantKnowledge) => {
-            const emoji = k.type === "encryptedKnowledge" ? "🔒" : getIconFromType(k.knowledge, $program);
+          Knowledge: participant.getKnowledgeList().sort((a, b) => b.id - a.id).map(({item,id}) => {            
+            const emoji = item.type === "encryptedKnowledge" ? "🔒" : getIconFromType(item.knowledge, $program);
             return {
-              knowledge: k,
+              knowledge: item,
               emoji: emoji,
             };
           }),
         };
+        
         if (obj.Name.value === "Shared") commonKnowledge = obj.Knowledge;
         else participants.push(obj);
 

@@ -3,26 +3,29 @@ import type { ParticipantKnowledge } from "src/types/participant";
 
 export class Participant {
   private name: string;
-  private knowledge: ParticipantKnowledge[];
-
-  constructor(name: string, knowledge: ParticipantKnowledge[] = []) {
+  private knowledge: { item: ParticipantKnowledge, id:number }[];
+  private currentKnowledgeId = 0;
+  constructor(name: string, knowledge: { item: ParticipantKnowledge, id:number }[] = []) {
     this.name = name;
     this.knowledge = knowledge;
+    this.knowledge.forEach(({ id }) => {
+      if(id > this.currentKnowledgeId) this.currentKnowledgeId = id;
+      else if(id === this.currentKnowledgeId) this.currentKnowledgeId++;
+    });
   }
 
   setKnowledge(knowledge: ParticipantKnowledge) {
     let index = this.findKnowledgeIndex(knowledge);
 
     if (index >= 0) {
-      this.knowledge[index] = knowledge;
+      this.knowledge[index] = { item: knowledge, id: this.currentKnowledgeId++ };
     } else {
-      this.knowledge.push(knowledge);
+      this.knowledge.push({ item: knowledge, id: this.currentKnowledgeId++ });
     }
   }
 
-
   findKnowledgeIndex(element: ParticipantKnowledge): number {
-    return this.knowledge.findIndex((item) => this.isKnowledgeEqual(item, element));
+    return this.knowledge.findIndex(({ item }) => this.isKnowledgeEqual(item, element));
   }
 
   doesKnowledgeExist(element: ParticipantKnowledge): boolean {
@@ -30,23 +33,23 @@ export class Participant {
   }
 
   clearKnowledgeElement(elem: ParticipantKnowledge) {
-    this.knowledge = this.knowledge.filter((item: ParticipantKnowledge) => !this.isKnowledgeEqual(item, elem));
+    this.knowledge = this.knowledge.filter(({ item }) => !this.isKnowledgeEqual(item, elem));
   }
 
   getKnowledge(knowledge: ParticipantKnowledge): ParticipantKnowledge {
-    let result = this.knowledge.find((item) => this.isKnowledgeEqual(item, knowledge));
+    let result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge));
 
     if (result === undefined) {
       return knowledge;
     }
-    return result;
+    return result.item;
   }
 
-  cloneKnowledgeList(): ParticipantKnowledge[] {
+  cloneKnowledgeList(): { item: ParticipantKnowledge, id:number }[] {
     return structuredClone(this.knowledge);
   }
 
-  getKnowledgeList(): ParticipantKnowledge[] {
+  getKnowledgeList(): { item: ParticipantKnowledge, id:number }[] {
     return this.knowledge;
   }
 
