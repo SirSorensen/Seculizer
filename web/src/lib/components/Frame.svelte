@@ -64,6 +64,11 @@
     {/key}
   {/if}
 </div>
+<ol class="history">
+  {#each frame.getHistory() as history}
+    <li class="history-item" >{history}</li>
+  {/each}
+</ol>
 
 <style>
   .frame {
@@ -74,5 +79,14 @@
   }
   .participants {
     flex: 1;
+  }
+  .history{
+    position: fixed;
+    bottom: 0;
+    max-height: 35vh;
+    overflow-y: auto;
+    margin: 0;
+    display: flex;
+    flex-direction: column-reverse;
   }
 </style>

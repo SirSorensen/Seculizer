@@ -7,8 +7,9 @@ export class Frame {
   private prev: Frame | null;
   private participantMap: ParticipantMap;
   private presentation: Statement | null;
+  private history: string[];
 
-  constructor(stmnt: Statement | null, prev: Frame | null, participantMap: ParticipantMap | { [id: string]: Participant }) {
+  constructor(stmnt: Statement | null, prev: Frame | null, participantMap: ParticipantMap | { [id: string]: Participant }, history: string[]) {
     this.next = null;
     this.prev = prev;
 
@@ -16,6 +17,7 @@ export class Frame {
     else this.participantMap = new ParticipantMap(participantMap);
 
     this.presentation = stmnt;
+    this.history = history.concat([]); //Insure that it is a copy
   }
 
   setNext(frame: Frame | { [id: string]: Frame }, caseIndex: string = "") {
@@ -80,7 +82,7 @@ export class Frame {
       this.next = {};
     }
 
-    let tmp_frame = new Frame(stmnt, this, this.participantMap);
+    let tmp_frame = new Frame(stmnt, this, this.participantMap, this.history);
 
     this.next[caseIndex] = tmp_frame;
   }
@@ -95,7 +97,7 @@ export class Frame {
 
   //TODO: Mayve do this in a better way than static
   static newFrame(stmnt: any, participants: ParticipantMap, last: Frame): Frame {
-    let tmp_last = new Frame(stmnt, last, participants);
+    let tmp_last = new Frame(stmnt, last, participants, last.history);
 
     if (last != null) last.setNext(tmp_last);
 
@@ -104,5 +106,13 @@ export class Frame {
 
   getPresentation(): Statement | null {
     return this.presentation;
+  }
+
+  getHistory(): string[] {
+    return this.history;
+  }
+
+  addToHistory(history: string) {
+    this.history.push(history);
   }
 }

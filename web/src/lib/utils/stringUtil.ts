@@ -42,6 +42,15 @@ export function getIconFromType(type: Type, program: Program): string {
       break;
   }
 }
-export function getNameFromKnowledge(knowledge:ParticipantKnowledge){
-  
+export function getStringFromKnowledges(knowledges:ParticipantKnowledge[]){
+  let result = "";
+  for (const knowledge of knowledges) {
+    if(knowledge.type === "rawKnowledge"){
+      result += getStringFromType(knowledge.knowledge) + ", ";
+    }else{
+      result += getStringFromKnowledges(knowledge.knowledge) + " encrypted with " + getStringFromType(knowledge.encryption) + ", ";
+    }
+  }
+  if(result.endsWith(", ")) result = result.slice(0, -2);
+  return result;
 }
