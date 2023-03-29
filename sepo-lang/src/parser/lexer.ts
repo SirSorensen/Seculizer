@@ -54,9 +54,16 @@ const WhiteSpace = createToken({
   group: Lexer.SKIPPED,
 });
 
+const Comment = createToken({
+  name: "Comment",
+  pattern: /\/\/.*\n/,
+  group: Lexer.SKIPPED,
+});
+
 //Sequence = Precedence
 export const allTokens = [
   WhiteSpace,
+  Comment,
   NumberLiteral,
   StringLiteral,
   latexLiteral,
