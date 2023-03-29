@@ -68,5 +68,6 @@
 
   div.participantContainer {
     position: absolute;
+    z-index: 5;
   }
 </style>
