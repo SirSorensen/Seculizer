@@ -1,23 +1,25 @@
 <script lang="ts">
-  import Logo from "$lib/assets/logo.png"
+  import Logo from "$lib/assets/logo.png";
 </script>
+
 <header>
-    <a href="/"><img src={Logo} alt=""></a>
+  <a href="/"><img src={Logo} alt="" /></a>
 </header>
+
 <style>
-    header {
-    width: 100vw;
+  header {
+    width: 100%;
     height: 75px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #eeeeee;
-}
+  }
 
-a {
+  a {
     height: 90%;
-}
-a img{
+  }
+  a img {
     height: 100%;
-}
+  }
 </style>
