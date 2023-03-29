@@ -29,9 +29,8 @@ import type {
   Equation,
 } from "$lang/types/parser/interfaces";
 import { getStringFromType } from "$lib/utils/stringUtil";
-import type { EncryptedParticipantKnowledge } from "src/types/participant";
 import { EquationMap } from "./EquationMap";
-
+import HistoryTemplates from "$lib/utils/HistoryEnum";
 import { Frame } from "./Frame";
 import { LatexMap } from "./LatexMap";
 import { ParticipantMap } from "./ParticipantMap";
@@ -162,7 +161,7 @@ export class Program {
 
   constructProtocol(protocol: Protocol) {
     //Setup first frame
-    this.first = new Frame(null, null, this.init_participants);
+    this.first = new Frame(null, null, this.init_participants, []);
     if (this.log) console.log("First frame created", this.first);
     if (this.first == null) throw new Error("Invalid json: no first frame created! First frame not properly initialized");
 
@@ -256,6 +255,7 @@ export class Program {
 
   clearStmnt(knowledge: Type, last: Frame) {
     last.getParticipantMap().clearKnowledgeElement({ type: "rawKnowledge", knowledge: knowledge, value: "" });
+    last.addToHistory(HistoryTemplates.clear(knowledge));
   }
 
   // Check what the type of the given participant statement is and calls the correct function
@@ -275,11 +275,13 @@ export class Program {
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame) {
     last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, value: "" });
+    last.addToHistory(HistoryTemplates.new(participant, newKnowledge));
   }
 
   // Set Statement
   setStmnt(participant: string, knowledge: Type, value: string, last: Frame) {
     last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: knowledge, value: value });
+    last.addToHistory(HistoryTemplates.set(participant, knowledge, value));
   }
 
   // Pipe SendStatement to messageSendStatement, or matchStatement
@@ -295,9 +297,11 @@ export class Program {
   // Pipe MessageSendStatement to encryptExpression, signExpression, or setStatement
   messageSendStmnt(senderId: string, receiverId: string, knowledge: Expression[], last: Frame, canDescrypt: boolean) {
     knowledge.forEach((expression) => {
-      this.generateKnowledgeElement(expression, receiverId, last, canDescrypt).forEach((knowledge) => {
+      let sentKnowledge = this.generateKnowledgeElement(expression, receiverId, last, canDescrypt);
+      sentKnowledge.forEach((knowledge) => {
         last.getParticipantMap().transferKnowledge(senderId, receiverId, knowledge);
       });
+      last.addToHistory(HistoryTemplates.send(senderId, receiverId, sentKnowledge));
     });
   }
 
