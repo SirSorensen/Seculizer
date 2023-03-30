@@ -7,9 +7,9 @@ export class Frame {
   private prev: Frame | null;
   private participantMap: ParticipantMap;
   private presentation: Statement | null;
-  private history: string[];
+  private history: {string: string, mermaid: string}[];
 
-  constructor(stmnt: Statement | null, prev: Frame | null, participantMap: ParticipantMap | { [id: string]: Participant }, history: string[]) {
+  constructor(stmnt: Statement | null, prev: Frame | null, participantMap: ParticipantMap | { [id: string]: Participant }, history: {string: string, mermaid: string}[]) {
     this.next = null;
     this.prev = prev;
 
@@ -108,11 +108,11 @@ export class Frame {
     return this.presentation;
   }
 
-  getHistory(): string[] {
+  getHistory(): {string: string, mermaid: string}[] {
     return this.history;
   }
 
-  addToHistory(history: string) {
-    this.history.push(history);
+  addToHistory(history: string, mermaid: string) {
+    this.history.push({string: history, mermaid: mermaid});
   }
 }

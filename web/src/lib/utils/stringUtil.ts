@@ -44,6 +44,48 @@ export function getIconFromType(type: Type, program: Program): string {
   }
 }
 
+export function getSimpleStringFromExpression(expression: Expression): string {
+  const result: string[] = [];
+  if (expression.child.type == "encryptExpression") {
+    const encryptedExpression = expression.child as EncryptExpression;
+    result.push(`encrypt(${getStringFromType(encryptedExpression.outer)},`);
+    if(encryptedExpression.inner.length > 2) result.push("[");
+    for (let i = 0; i < encryptedExpression.inner.length; i++) {
+      const innerExpression = encryptedExpression.inner[i];
+      const s = getSimpleStringFromExpression(innerExpression);
+      if (i === encryptedExpression.inner.length - 1) {
+        result.push(s);
+      } else {
+        result.push(s);
+        result.push(", ");
+      }
+    }
+    
+    if(encryptedExpression.inner.length > 2) result.push("]");
+    return result.join("") + ")";
+  } else if (expression.child.type == "signExpression") {
+    const signExpression = expression.child as SignExpression;
+    result.push(`sign(${getStringFromType(signExpression.outer)},`);
+    if(signExpression.inner.length > 2) result.push("[");
+    for (let i = 0; i < signExpression.inner.length; i++) {
+      const innerExpression = signExpression.inner[i];
+      const s = getSimpleStringFromExpression(innerExpression);
+      if (i === signExpression.inner.length - 1) {
+        result.push(s);
+      } else {
+        result.push(s);
+        result.push(", ");
+      }
+    }
+    if(signExpression.inner.length > 2) result.push("]");
+    return result.join("") + ")";
+  } else {
+    const type = expression.child as Type;
+    return getStringFromType(type);
+  }
+}
+
+
 export function getStringFromExpression(expression: Expression, program: Program): string {
   const result: string[] = [];
   if (expression.child.type == "encryptExpression") {
