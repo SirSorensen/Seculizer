@@ -309,7 +309,7 @@ export class Program {
       const signExpression = expression.child as SignExpression;
       let subKnowledge: ParticipantKnowledge[] = [];
       signExpression.inner.forEach((expression) => {
-        subKnowledge.concat(this.generateKnowledgeElement(expression, receiverId, last, canDescrypt));
+        subKnowledge = subKnowledge.concat(this.generateKnowledgeElement(expression, receiverId, last, canDescrypt));
       });
       return subKnowledge;
     } else {

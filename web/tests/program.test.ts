@@ -10,6 +10,7 @@ import { fileURLToPath } from "url";
 import { LatexMap } from "$lib/models/LatexMap";
 import { Equal } from "$lib/models/Equal";
 import { EquationMap } from "$lib/models/EquationMap";
+import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -77,6 +78,76 @@ test("web/program with DF.sepo", () => {
 
   expect(program.icons).toBeDefined();
   expect((program.icons.size)).toBe(7);
+});
+
+test("web/program with send-with-sign.sepo", () => {
+  startFunction("send-with-sign");
+  expect(program).toBeDefined();
+
+  expect(program.keyRelations).toBeDefined();
+  expect(Object.keys(program.keyRelations).length).toBe(0);
+
+  expect(program.functions).toBeDefined();
+  expect(Object.keys(program.functions).length).toBe(0);
+
+  expect(program.formats).toBeDefined();
+  expect(Object.keys(program.formats.latexMap).length).toBe(0);
+
+  expect(program.equations).toBeDefined();
+  expect(Object.keys(program.equations.getEquations()).length).toBe(0);
+
+  expect(program.icons).toBeDefined();
+  expect(program.icons.size).toBe(0);
+
+
+  expect(program.first).toBeTruthy();
+  let first = program.first as Frame;
+
+  let last = first.getLast();
+  expect(last).toBeTruthy();
+  expect(last).toBeDefined();
+  last = last as Frame;
+
+  expect(last.getParticipantMap().getParticipants()).toBeDefined();
+  expect(last.getParticipantMap().getParticipantAmount()).toBe(3);
+  expect(last.getParticipantMap().getParticipant("Alice")).toBeDefined();
+  expect(last.getParticipantMap().getParticipant("Bob")).toBeDefined();
+
+  expect(last.getParticipantMap().getParticipant("Alice").getKnowledgeList().length).toBeGreaterThan(
+    first.getParticipantMap().getParticipant("Alice").getKnowledgeList().length
+  );
+  expect(last.getParticipantMap().getParticipant("Bob").getKnowledgeList().length).toBeGreaterThan(
+    first.getParticipantMap().getParticipant("Bob").getKnowledgeList().length
+  );
+
+  const msg_A: ParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: {
+      type: "id",
+      value: "msg_A",
+    },
+    value: "",
+  };
+
+  const msg_B: ParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: {
+      type: "id",
+      value: "msg_B",
+    },
+    value: "",
+  };
+
+  expect(first.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_A)).toBeTruthy();
+  expect(first.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_B)).toBeFalsy();
+  expect(first.getParticipantMap().getParticipant("Bob").doesKnowledgeExist(msg_A)).toBeFalsy();
+  expect(first.getParticipantMap().getParticipant("Bob").doesKnowledgeExist(msg_B)).toBeTruthy();
+
+  expect(last.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_A)).toBeTruthy();
+  expect(last.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_B)).toBeTruthy();
+  expect(last.getParticipantMap().getParticipant("Bob").doesKnowledgeExist(msg_A)).toBeTruthy();
+  expect(last.getParticipantMap().getParticipant("Bob").doesKnowledgeExist(msg_B)).toBeTruthy();
+
 });
 
 test("web/program with send.sepo", () => {
@@ -181,7 +252,7 @@ test("Make LatexMap and call a function with embedded function", () => {
 
     let result = latexMap.getConstructedLatex(func2);
 
-    expect(result).toBe("$Based_{XXX}(Hash(\\text{z}||5||\\text{z})&&\\text{Jesus})$");
+    expect(result).toBe("$Based_{XXX}({Hash(\\text{z}||5||\\text{z})}&&\\text{Jesus})$");
 
 })
 
