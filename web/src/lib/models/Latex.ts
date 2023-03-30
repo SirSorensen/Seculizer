@@ -80,10 +80,10 @@ export class Latex {
 
     for (let i = 1; i < this.stringArray.length; i++) {
       let param = params[this.paramIndex[i - 1]];
-      if (param.type == "function") {
+      if (param.type == "function") { //Function gets { } around it
         if (map == undefined) throw new Error("No LatexMap was given! For Function");
-        tmp_latex += map.getConstructedLatex(param).slice(1, -1);
-      } else if (param.type != "number") {
+        tmp_latex += "{" + map.getConstructedLatex(param).slice(1, -1) + "}"; 
+      } else if (param.type != "number") { //Anything else gets \text{ } around it
         tmp_latex += "\\text{" + param.value + "}";
       } else {
         tmp_latex += param.value;
