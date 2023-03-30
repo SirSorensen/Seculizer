@@ -8,6 +8,7 @@
   import type { NextFrameNavigation } from "src/types/app";
   import type { ParticipantElements, ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import { program } from "$lib/stores/programStore.js";
+    import History from "./History.svelte";
   export let frame: Frame;
   export let nextFrame: NextFrameNavigation = () => {};
   $: console.log("Current frame:", frame);
@@ -64,7 +65,9 @@
       <Statement {participantElements} {nextFrame} statement={presentation} />
     {/key}
   {/if}
+  <History {frame} />
 </div>
+
 
 <style>
   .frame {
