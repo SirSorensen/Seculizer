@@ -25,33 +25,35 @@
   let tokens: Token[] = [];
   let ids: string[] = [];
   $: {
-    tokens = SepoLexer.tokenize(content + "eof").tokens;
-    let tmp = new MagicString(content);
-    tokens.forEach((token) => {
-      let type = token.tokenType.name;
-      //if (type === "End") ;
-      if (type === "Id") {
-        if (!ids.includes(token.image)) ids.push(token.image);
-      }
-      const addBefore = `<span class="token token-${type}">`;
-      const addAfter = `</span>`;
-      tmp.prependLeft(token.startOffset, addBefore);
-      tmp.appendRight(token.endOffset+1, addAfter);
-    });
-    try {
-      parse(content, false);
-    } catch (e: any) {
-      if (e instanceof Error && e instanceof ParseError) {
-        let error = e as ParseError;
-        let location = error.location;
-        const addBefore = `<span class="token token-Error"><i class="tokenErrMsg">${error.msg}</i>`;
+    if (content !== "" && content) {
+      tokens = SepoLexer.tokenize(content + "eof").tokens;
+      let tmp = new MagicString(content);
+      tokens.forEach((token) => {
+        let type = token.tokenType.name;
+        //if (type === "End") ;
+        if (type === "Id") {
+          if (!ids.includes(token.image)) ids.push(token.image);
+        }
+        const addBefore = `<span class="token token-${type}">`;
         const addAfter = `</span>`;
-        tmp.prependLeft(location.start, addBefore);
-        tmp.appendRight(location.end, addAfter);
+        tmp.prependLeft(token.startOffset, addBefore);
+        tmp.appendRight(token.endOffset + 1, addAfter);
+      });
+      try {
+        parse(content, false);
+      } catch (e: any) {
+        if (e instanceof Error && e instanceof ParseError) {
+          let error = e as ParseError;
+          let location = error.location;
+          const addBefore = `<span class="token token-Error"><i class="tokenErrMsg">${error.msg}</i>`;
+          const addAfter = `</span>`;
+          tmp.prependLeft(location.start, addBefore);
+          tmp.appendRight(location.end, addAfter);
+        }
       }
-    }
 
-    hightlighted = content.endsWith("\n") ? tmp.toString() + "\n" : tmp.toString();
+      hightlighted = content.endsWith("\n") ? tmp.toString() + "\n" : tmp.toString();
+    }
   }
   let preElement: HTMLPreElement;
 
@@ -60,18 +62,21 @@
     preElement.scrollTop = scrollTop;
     preElement.scrollLeft = scrollLeft;
   }
-  function mouseMove(e: { clientX: number; clientY: number; }){
+  function mouseMove(e: { clientX: number; clientY: number }) {
     const errors = document.getElementsByClassName("token-Error");
-    
+
     for (const errorBox of errors) {
-      if(e.clientX > errorBox.getBoundingClientRect().left && e.clientX < errorBox.getBoundingClientRect().right && e.clientY > errorBox.getBoundingClientRect().top && e.clientY < errorBox.getBoundingClientRect().bottom){
+      if (
+        e.clientX > errorBox.getBoundingClientRect().left &&
+        e.clientX < errorBox.getBoundingClientRect().right &&
+        e.clientY > errorBox.getBoundingClientRect().top &&
+        e.clientY < errorBox.getBoundingClientRect().bottom
+      ) {
         errorBox.classList.add("hover");
-      }else{
+      } else {
         errorBox.classList.remove("hover");
       }
-      
     }
-    
   }
 
   let dark = true;
@@ -245,7 +250,8 @@
   .editor-container :global(.token.token-End) {
     color: var(--ecolor-special);
   }
-  .editor-container :global(.token.token-Error), .editor-container :global(.token.token-Error .token) {
+  .editor-container :global(.token.token-Error),
+  .editor-container :global(.token.token-Error .token) {
     color: black;
     background-color: var(--ecolor-error);
     position: relative;
@@ -257,7 +263,7 @@
     top: 100%;
     left: 0;
     z-index: 1;
-    font-size: .8rem;
+    font-size: 0.8rem;
     background-color: var(--ecolor-error);
     min-width: 200px;
     max-width: 600px;

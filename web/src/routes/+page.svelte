@@ -7,7 +7,7 @@
   import { Program } from "$lib/models/program";
   import { program } from "$lib/stores/programStore.js";
   import {test} from "$lib/utils/test.js";
-  let content = test.replaceAll(";", ";\n").replaceAll("{ ", "{\n ").replaceAll("} ", "}\n ");
+  let content = "";
   let error: string | undefined = undefined;
 
   function parseContent() {
