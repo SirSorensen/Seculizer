@@ -4,7 +4,7 @@ export class Equal {
   // exp(exp(A,B),C) = exp(exp(A,C),B)
 
   private right: FunctionCall;
-  private left: FunctionCall
+  private left: FunctionCall;
 
   // The index of the parameters of the right function call in the left function call (i.e. exp(A,B) => exp(B,A) -> [1, 0])
   private paramIndex: number[] = [];
@@ -64,7 +64,7 @@ export class Equal {
   }
 
   // Check if the given function call is applicable to the equation, by comparing the parameters' types and amount thereof
-  checkIfAplicable(func: FunctionCall) : boolean {
+  checkIfAplicable(func: FunctionCall): boolean {
     if (func.params.length != this.left.params.length) return false;
 
     for (let i = 0; i < func.params.length; i++) {
@@ -79,6 +79,26 @@ export class Equal {
   }
 
   getRight() {
-    return this.right
+    return this.right;
+  }
+
+  checkIfInputisKnown(input: Type, participant: Participant): boolean {
+    let rawKnowledge: RawParticipantKnowledge = {
+      type: "rawKnowledge",
+      knowledge: input,
+      value: getStringFromType(input),
+    };
+
+    if (participant.doesKnowledgeExist(rawKnowledge)) return true;
+
+
+    if (input.type === "function") {
+      input.params.forEach((param) => {
+        if (this.checkIfInputisKnown(param, participant)) return true;
+      });  
+    }
+
+    return false;
   }
 }
+
