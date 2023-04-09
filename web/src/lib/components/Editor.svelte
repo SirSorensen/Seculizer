@@ -1,4 +1,10 @@
 <script lang="ts">
+  /*
+Participants: a;
+Protocol: {
+    a: k := f(x, y);
+};
+*/
   import { parse, ParseError, SepoLexer } from "$lang";
   import MagicString from "magic-string";
   export let content: string = "";
@@ -26,19 +32,26 @@
   let ids: string[] = [];
   $: {
     if (content !== "" && content) {
-      tokens = SepoLexer.tokenize(content + "eof").tokens;
+      tokens = SepoLexer.tokenize(content + " eof").tokens;
       let tmp = new MagicString(content);
       tokens.forEach((token) => {
         let type = token.tokenType.name;
-        //if (type === "End") ;
+        if (type === "End") return;
         if (type === "Id") {
           if (!ids.includes(token.image)) ids.push(token.image);
         }
         const addBefore = `<span class="token token-${type}">`;
         const addAfter = `</span>`;
-        tmp.prependLeft(token.startOffset, addBefore);
-        tmp.appendRight(token.endOffset + 1, addAfter);
+
+        tmp.update(token.startOffset, token.startOffset + token.image.length, addBefore + token.image + addAfter);
       });
+      let re = /(\r\n)|\n/g;
+      let match;
+      let line = 0;
+      tmp.prependLeft(0, `<span class="line">${line++}</span>`);
+      while ((match = re.exec(content)) != null) {
+        tmp.update(match.index, match.index + match[0].length, `</br><span class="line">${line++}</span>`);
+      }
       try {
         parse(content, false);
       } catch (e: any) {
@@ -48,11 +61,13 @@
           const addBefore = `<span class="token token-Error"><i class="tokenErrMsg">${error.msg}</i>`;
           const addAfter = `</span>`;
           tmp.prependLeft(location.start, addBefore);
-          tmp.appendRight(location.end, addAfter);
+          tmp.appendRight(location.end + 1, addAfter);
         }
       }
 
       hightlighted = content.endsWith("\n") ? tmp.toString() + "\n" : tmp.toString();
+    } else {
+      hightlighted = "";
     }
   }
   let preElement: HTMLPreElement;
@@ -106,14 +121,15 @@
   .editor-container {
     /*Colors from https://github.com/ayu-theme/ayu-colors*/
     --ecolor-highlight: #55b4d4;
-    --ecolor-keyword: #f2ae49;
-    --ecolor-string: #86b300;
+    --ecolor-keyword: #dc9f43;
+    --ecolor-string: #516b03;
+    --ecolor-comment: #607819;
     --ecolor-number: #a37acc;
     --ecolor-regex: #4cbf99;
     --ecolor-error: #f07171;
-    --ecolor-special: #fa8d3e;
+    --ecolor-special: #a0622c;
     --ecolor-text: #5c6166;
-    --ecolor-bg: #f8f9fa;
+    --ecolor-bg: #f5f6f7;
     --ecolor-caret: black;
   }
 
@@ -121,10 +137,11 @@
     --ecolor-highlight: #5ccfe6;
     --ecolor-keyword: #ffd173;
     --ecolor-string: #d5ff80;
+    --ecolor-comment: #5e7c03;
     --ecolor-number: #dfbfff;
     --ecolor-regex: #95e6cb;
     --ecolor-error: #f28779;
-    --ecolor-special: #ffad66;
+    --ecolor-special: #f69846;
     --ecolor-text: #cccac2;
     --ecolor-bg: #1f2430;
     --ecolor-caret: white;
@@ -152,6 +169,7 @@
     left: 0;
     overflow: auto;
     white-space: nowrap;
+    color: var(--ecolor-comment);
   }
   .editor,
   .highlighter,
@@ -169,10 +187,12 @@
     background-color: transparent;
     caret-color: var(--ecolor-caret);
     resize: none;
+    padding-left: 1.3rem;
   }
   .highlighter {
     z-index: 0;
     background-color: var(--ecolor-bg);
+    padding-left: 1.3rem;
   }
 
   .highlighter code {
@@ -194,7 +214,8 @@
   .editor-container :global(.token.token-Icons),
   .editor-container :global(.token.token-Protocol),
   .editor-container :global(.token.token-Format),
-  .editor-container :global(.token.token-Functions) {
+  .editor-container :global(.token.token-Functions),
+  .editor-container :global(.token.token-Equations) {
     color: var(--ecolor-special);
   }
   .editor-container :global(.token.token-Id),
@@ -275,5 +296,13 @@
 
   .editor-container :global(.token.token-Error.hover .tokenErrMsg) {
     display: block;
+  }
+  .editor-container :global(.line) {
+    position: absolute;
+    left: 0;
+    font-size: 0.6rem;
+    vertical-align: middle;
+    line-height: 1.2rem;
+    transform: translateX(25%);
   }
 </style>
