@@ -1,0 +1,35 @@
+//TLS protocol: https://www.ibm.com/docs/en/sdk-java-technology/8?topic=handshake-tls-13-protocol
+// https://cabulous.medium.com/tls-1-2-andtls-1-3-handshake-walkthrough-4cfd0a798164
+Participants: Client, Server;
+Knowledge: {
+    Client: TLSVersion, supportedCipherSuites, supportedExtensions;
+    Server: serverSk;
+    Shared: serverPk;
+};
+KeyRelations: (sk:serverSk, pk:serverPk);
+Functions: hash/2, add/2;
+Equations: add(a,b) => add(b,a);
+Format: hash(x,y) = $Hash(x||y)$, add(a,b) = ${a + b}$, clientRandomBytes = $\text{random bytes}_{client}$;
+Icons: {
+    "laptop": Client;
+    "🔑": serverSk, serverPk, pmk;
+    "📝": supportedCipherSuites, supportedExtensions, cipserSuite, clientRandomBytes, serverRandomBytes, extension;
+    "input-numbers": TLSVersion;
+    "home-button": Server;
+};
+Protocol: {
+    Client: new clientRandomBytes;
+    Client -> Server: "Client Hello";
+    Client -> Server: TLSVersion;
+    Client -> Server: clientRandomBytes;
+    Client -> Server: supportedCipherSuites;
+    Client -> Server: supportedExtensions;
+
+    Server: new cipserSuite;
+    Server: new serverRandomBytes;
+    Server: new extension;
+    Server -> Client: {|"Server Hello", cipserSuite, serverRandomBytes, extension|}serverPk;
+
+    Client: new pmk; //Burde man kunne bare sige pmk := add(...) her?
+    Client: pmk := add(clientRandomBytes, serverRandomBytes);
+};
