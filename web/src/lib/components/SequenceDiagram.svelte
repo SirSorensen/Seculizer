@@ -50,12 +50,14 @@
   $: frame && frame.getHistory() && rerender();
 </script>
 
-{#if content.trim() !== ""}
+{#if frame.getHistory().length > 0 && content.trim() !== ""}
   <pre bind:this={graph} />
+{:else}
+  <p class="no-history">No history yet</p>
 {/if}
 
 <style>
-  pre {
+  pre, .no-history {
     max-height: 100%;
     max-height: calc(100% - 75px);
     overflow-y: auto;
@@ -72,12 +74,13 @@
     font-weight: bold !important;
   }
 
-  pre :global(#graphDiv .note){
+  pre :global(#graphDiv .note) {
     stroke: #ccccff;
     fill: #ffcc30;
   }
 
-  pre :global(#graphDiv .noteText), pre :global(#graphDiv .noteText>tspan){
+  pre :global(#graphDiv .noteText),
+  pre :global(#graphDiv .noteText > tspan) {
     fill: black;
   }
 </style>

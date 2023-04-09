@@ -14,7 +14,7 @@
   }
 
   function toggleHistory() {
-    if(historyState.state === "sequenceDiagram"){
+    if (historyState.state === "sequenceDiagram") {
       historyState = {
         state: "history",
         open: true,
@@ -28,7 +28,7 @@
   }
 
   function toggleSequenceDiagram() {
-    if(historyState.state === "history"){
+    if (historyState.state === "history") {
       historyState = {
         state: "sequenceDiagram",
         open: true,
@@ -42,24 +42,26 @@
   }
 </script>
 
-{#if frame.getHistory().length > 0}
-  <div class="historyContainer" class:open={historyState.open}>
-    <div class="option" class:open={historyState.state === "history"}>
-      <ol class="history" bind:this={historyElem}>
+<div class="historyContainer" class:open={historyState.open}>
+  <div class="option" class:open={historyState.state === "history"}>
+    <ol class="history" bind:this={historyElem}>
+      {#if frame.getHistory().length > 0}
         {#each frame.getHistory() as history}
           <li class="history-item">{@html history.string}</li>
         {/each}
-      </ol>
-    </div>
-    <div class="option" class:open={historyState.state === "sequenceDiagram"}>
-      <SequenceDiagram {frame} />
-    </div>
-    <div class="buttonContainer">
-      <button class="roundButton" on:click={toggleSequenceDiagram}><i class="oma oma-people-dialogue" /></button>
-      <button class="roundButton" on:click={toggleHistory}><i class="oma oma-hourglass-not-done" /></button>
-    </div>
+      {:else}
+        <p class="history-item">No history yet</p>
+      {/if}
+    </ol>
   </div>
-{/if}
+  <div class="option" class:open={historyState.state === "sequenceDiagram"}>
+      <SequenceDiagram {frame} />
+  </div>
+  <div class="buttonContainer">
+    <button class="roundButton" on:click={toggleSequenceDiagram}><i class="oma oma-people-dialogue" /></button>
+    <button class="roundButton" on:click={toggleHistory}><i class="oma oma-hourglass-not-done" /></button>
+  </div>
+</div>
 
 <style>
   .historyContainer {
