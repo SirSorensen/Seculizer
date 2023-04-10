@@ -17,6 +17,7 @@
   {:else}
     <p>{getStringFromType(value)}</p>
   {/if}
+  <slot />
 </div>
 
 <style>
@@ -25,7 +26,7 @@
   }
 
   .item {
-    padding: 1rem;
+    padding: .1rem;
     text-align: center;
   }
 

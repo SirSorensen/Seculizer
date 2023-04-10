@@ -5,7 +5,7 @@
   export let name: Id;
   export let emoji: string;
   export let knowledge: VisualKnowledge[] = [];
-  
+
   let container: HTMLDivElement;
   let showKnowledge = false;
   export function accordion(node: HTMLDivElement, showKnowledge: boolean) {
@@ -41,13 +41,13 @@
     let node = event.relatedTarget as Node;
     return container.contains(node);
   }
-  function flatKnowledgeTypes(knowledges: ParticipantKnowledge[]): {type: Type, value: string}[] {
-    let flat: {type: Type, value: string}[] = [];
+  function flatKnowledgeTypes(knowledges: ParticipantKnowledge[]): { type: Type; value: string }[] {
+    let flat: { type: Type; value: string }[] = [];
     for (const knowledge of knowledges) {
       if (knowledge.type === "encryptedKnowledge") {
         flat.concat(flatKnowledgeTypes(knowledge.knowledge));
       } else {
-        flat.push({type: knowledge.knowledge, value: knowledge.value});
+        flat.push({ type: knowledge.knowledge, value: knowledge.value });
       }
     }
     return flat;
@@ -83,20 +83,25 @@
         {:else}
           {#each knowledge as visualKnowledge}
             {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
-              {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as {type, value}}
-                <Item value={type} emoji={visualKnowledge.emoji} />
-                {#if value.trim() !== ""}
-                  <small>{value.trim()}</small><!--Should this value be available if encrypted?-->
-                {/if}
+              {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
+                <Item value={type} emoji={visualKnowledge.emoji}>
+                  {#if value.trim() !== ""}
+                    <div class="knowledgeValue">
+                      <small>{value.trim()}</small><!--Should this value be available if encrypted?-->
+                    </div>
+                  {/if}
+                </Item>
               {/each}
             {:else}
-              <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
-              {#if visualKnowledge.knowledge.value.trim() !== ""}
-                <small>{visualKnowledge.knowledge.value.trim()}</small><!--Should this value be available if encrypted?-->
-              {/if}
+              <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+                {#if visualKnowledge.knowledge.value.trim() !== ""}
+                  <div class="knowledgeValue">
+                    <small>{visualKnowledge.knowledge.value.trim()}</small>
+                  </div>
+                  <!--Should this value be available if encrypted?-->
+                {/if}
+              </Item>
             {/if}
-
-            
           {/each}
         {/if}
       </div>
