@@ -97,7 +97,6 @@ Protocol: {
   let dark = true;
 </script>
 
-<input type="checkbox" name="dark-mode" id="darkinput" bind:checked={dark} />
 <div class="editor-container" on:mousemove={mouseMove} class:dark>
   <textarea
     name="editor"
@@ -114,6 +113,17 @@ Protocol: {
     on:scroll={updateScroll}
   />
   <pre class="highlighter" aria-hidden="true" bind:this={preElement}><code>{@html hightlighted}</code></pre>
+  <div id="darkInputContainer">
+    <label for="darkinput" class="darkmode">
+      <span class="switchOption switchOption-dark" class:active={dark}>
+        <i class="oma oma-crescent-moon" />
+      </span>
+      <span class="switchOption switchOption-light" class:active={!dark}>
+        <i class="oma oma-sun" />
+      </span>
+    </label>
+    <input type="checkbox" name="dark-mode" id="darkinput" bind:checked={dark} />
+  </div>
 </div>
 {ids}
 
@@ -304,5 +314,37 @@ Protocol: {
     vertical-align: middle;
     line-height: 1.2rem;
     transform: translateX(25%);
+  }
+  #darkInputContainer {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+  }
+  #darkInputContainer #darkinput {
+    display: none;
+  }
+  .darkmode {
+    background-color: #cccac2;
+    display: flex;
+  }
+  span.switchOption {
+    padding: 0.2rem 0.5rem;
+    display: inline-block;
+    margin: 0;
+    box-shadow: 0px 0px 3px 0px #757575;
+  }
+  span.switchOption .oma {
+    filter: grayscale(100%);
+  }
+  span.switchOption:hover {
+    cursor: pointer;
+  }
+  span.switchOption.active {
+    box-shadow: 0px 0px 3px 0px #757575, inset 0px 0px 3px 0px #757575;
+    background: #ece9db;
+  }
+  span.switchOption.active .oma {
+    filter: none;
   }
 </style>
