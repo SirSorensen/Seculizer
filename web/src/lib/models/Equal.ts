@@ -86,19 +86,17 @@ export class Equal {
     let rawKnowledge: RawParticipantKnowledge = {
       type: "rawKnowledge",
       knowledge: input,
-      value: getStringFromType(input),
+      value: getStringFromType(input), //TODO: (suggestion) This could just be empty string
     };
 
     if (participant.doesKnowledgeExist(rawKnowledge)) return true;
 
-
     if (input.type === "function") {
       input.params.forEach((param) => {
         if (this.checkIfInputisKnown(param, participant)) return true;
-      });  
+      });
     }
 
     return false;
   }
 }
-
