@@ -109,7 +109,7 @@ export class Program {
     if (knowledge) {
       knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
         knowledge.children.forEach((child: Type) => {
-          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, { type: "rawKnowledge", knowledge: child, value: "" });
+          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, { type: "rawKnowledge", knowledge: child });
         });
       });
       if (this.log) console.log("Knowledge added to participants", this.init_participants);
@@ -258,7 +258,7 @@ export class Program {
   }
 
   clearStmnt(knowledge: Type, last: Frame) {
-    last.getParticipantMap().clearKnowledgeElement({ type: "rawKnowledge", knowledge: knowledge, value: "" });
+    last.getParticipantMap().clearKnowledgeElement({ type: "rawKnowledge", knowledge: knowledge });
     const involvedParticipants = last.getParticipantMap().getParticipantsNames().filter(s => s !== "Shared")
     let mermaidMsg = "";
     const firstParticipant = involvedParticipants[0];
@@ -276,7 +276,7 @@ export class Program {
       this.newStmnt(stmnt.id.value, newStmnt.id, last);
     } else if (stmnt.child.type == "setStatement") {
       const sendStmnt = stmnt.child as SetStatement;
-      this.setStmnt(stmnt.id.value, sendStmnt.id, getStringFromType(sendStmnt.value), last);
+      this.setStmnt(stmnt.id.value, sendStmnt.id, sendStmnt.value, last);
     } else {
       throw new Error("Invalid json: stmnt child type not implemented");
     }
@@ -284,13 +284,13 @@ export class Program {
 
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, value: "" });
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge });
     last.addToHistory(HistoryTemplates.new(participant, newKnowledge, this), `Note over ${participant}: New ${getStringFromType(newKnowledge)}`);
   }
 
   // Set Statement
-  setStmnt(participant: string, knowledge: Type, value: string, last: Frame) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: knowledge, value: value });
+  setStmnt(participant: string, knowledge: Type, value: Type, last: Frame) {
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: knowledge, value: value});
     last.addToHistory(HistoryTemplates.set(participant, knowledge, value, this), `Note over ${participant}: ${getStringFromType(knowledge)} = ${value}`);
   }
 
@@ -328,7 +328,7 @@ export class Program {
       return subKnowledge;
     } else {
       const type = expression.child as Type;
-      return [{ type: "rawKnowledge", knowledge: type, value: "" }];
+      return [{ type: "rawKnowledge", knowledge: type}];
     }
   }
 
@@ -358,7 +358,7 @@ export class Program {
         });
       } else {
         const type = expression.child as Type;
-        knowledges.push({ type: "rawKnowledge", knowledge: type, value: "" });
+        knowledges.push({ type: "rawKnowledge", knowledge: type });
       }
     });
     if (canDecrypt) return knowledges;

@@ -38,18 +38,9 @@ export class ParticipantMap {
     this.participants[participant].setKnowledge(knowledge);
   }
 
-  // Find value of knowledge of participant
-  findKnowledgeValue(participant: string, knowledge: ParticipantKnowledge): string {
-    const result = this.participants[participant].getKnowledge(knowledge);
-    if(result.type === "rawKnowledge") {
-      return result.value;
-    }
-    return "";
-  }
-
   // Check if participant has knowledge of given key
   checkKeyKnowledge(participant: string, key: Type): boolean {
-    return this.participants[participant].doesKnowledgeExist({ type: "rawKnowledge", knowledge: key, value: "" });
+    return this.participants[participant].doesKnowledgeExist({ type: "rawKnowledge", knowledge: key });
   }
 
   clearKnowledgeElement(knowledge: ParticipantKnowledge) {

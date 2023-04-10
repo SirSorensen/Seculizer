@@ -1,7 +1,10 @@
 <script lang="ts">
   import type { Id, Type } from "$lang/types/parser/interfaces";
+  import { program } from "$lib/stores/programStore";
+  import { getStringFromType } from "$lib/utils/stringUtil";
   import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import Item from "./Item.svelte";
+  import Latex from "./Latex.svelte";
   export let name: Id;
   export let emoji: string;
   export let knowledge: VisualKnowledge[] = [];
@@ -41,8 +44,8 @@
     let node = event.relatedTarget as Node;
     return container.contains(node);
   }
-  function flatKnowledgeTypes(knowledges: ParticipantKnowledge[]): { type: Type; value: string }[] {
-    let flat: { type: Type; value: string }[] = [];
+  function flatKnowledgeTypes(knowledges: ParticipantKnowledge[]): { type: Type; value?: Type }[] {
+    let flat: { type: Type; value?: Type }[] = [];
     for (const knowledge of knowledges) {
       if (knowledge.type === "encryptedKnowledge") {
         flat.concat(flatKnowledgeTypes(knowledge.knowledge));
@@ -85,18 +88,30 @@
             {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
               {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
                 <Item value={type} emoji={visualKnowledge.emoji}>
-                  {#if value.trim() !== ""}
+                  {#if value}
                     <div class="knowledgeValue">
-                      <small>{value.trim()}</small><!--Should this value be available if encrypted?-->
+                      {#if $program.getFormats().contains(value)}
+                        {@const format = $program.getFormats().getConstructedLatex(value)}
+                        <Latex input={format} />
+                      {:else}
+                        <small>{getStringFromType(value)}</small>
+                      {/if}
                     </div>
+                    <!--Should this value be available if encrypted?-->
                   {/if}
                 </Item>
               {/each}
             {:else}
+              {@const value = visualKnowledge.knowledge.value}
               <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
-                {#if visualKnowledge.knowledge.value.trim() !== ""}
+                {#if value}
                   <div class="knowledgeValue">
-                    <small>{visualKnowledge.knowledge.value.trim()}</small>
+                    {#if $program.getFormats().contains(value)}
+                      {@const format = $program.getFormats().getConstructedLatex(value)}
+                      <Latex input={format} />
+                    {:else}
+                      <small>{getStringFromType(value)}</small>
+                    {/if}
                   </div>
                   <!--Should this value be available if encrypted?-->
                 {/if}

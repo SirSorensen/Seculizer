@@ -11,8 +11,8 @@ const HistoryTemplates = {
   new: (participant: string, knowledge: Type, program: Program) => {
     return `${formatId(participant,program)} created ${getFormattedTypeAsHTML(knowledge, program)}`;
   },
-  set: (participant: string, knowledge: Type, value: string, program: Program) => {
-    return `${formatId(participant,program)} set ${getFormattedTypeAsHTML(knowledge, program)} to ${formatId(value, program)}`;
+  set: (participant: string, knowledge: Type, value: Type, program: Program) => {
+    return `${formatId(participant,program)} set ${getFormattedTypeAsHTML(knowledge, program)} to ${getFormattedTypeAsHTML(value, program)}`;
   },
   send: (sender: string, reciever: string, expression: Expression, program: Program) => {
     return `${formatId(sender, program)} sent ${getStringFromExpression(expression, program)} to ${formatId(reciever, program)}`;

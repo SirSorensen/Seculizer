@@ -1,8 +1,7 @@
 <script lang="ts">
   import type { Id } from "$lang/types/parser/interfaces";
-  import type { Program } from "$lib/models/program";
   import { calcPositions } from "$lib/utils/PositionUtil";
-    import type { VisualKnowledge } from "src/types/participant";
+  import type { VisualKnowledge } from "src/types/participant";
   import { onMount, tick } from "svelte";
   import Participant from "./Participant.svelte";
   export let participants: {

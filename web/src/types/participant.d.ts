@@ -11,7 +11,7 @@ type ParticipantKnowledge = RawParticipantKnowledge | EncryptedParticipantKnowle
 type RawParticipantKnowledge = {
   type: "rawKnowledge";
   knowledge: Type;
-  value: string;
+  value?: Type;
 };
 
 type EncryptedParticipantKnowledge = {
