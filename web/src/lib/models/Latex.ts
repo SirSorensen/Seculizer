@@ -16,7 +16,7 @@ export class Latex {
     //Params amount = 1 if the call was not a function, and the amount of params of the call if it was a function
     this.paramAmount = params.length;
 
-    const latex_array: string[] = latex.match(/([.,+*?^$&§()\[\]{}|\/\\|_ ]+)|([a-z,A-Z]+)/g) as string[];
+    const latex_array: string[] = latex.match(/([.,+*?^$&§()[\]{}|/\\|_ ]+)|([a-z,A-Z]+)/g) as string[];
 
     if (latex_array == null) throw new Error("No matches were found!");
 
@@ -55,7 +55,7 @@ export class Latex {
     // stringArray = array of strings, each string is a part of the latex string, where the seperations is to be filled by the parameters of call
     latex_array.forEach((val: string, index) => {
       if (val != undefined) {
-        let indexOf = params_index_arr_flat.indexOf(index);
+        const indexOf = params_index_arr_flat.indexOf(index);
         if (indexOf >= 0) {
           this.stringArray.push("");
           this.paramIndex.push(params_index_arr_flat_indexed[indexOf]);
@@ -79,7 +79,7 @@ export class Latex {
     let tmp_latex = this.stringArray[0];
 
     for (let i = 1; i < this.stringArray.length; i++) {
-      let param = params[this.paramIndex[i - 1]];
+      const param = params[this.paramIndex[i - 1]];
       if (param.type == "function") { //Function gets { } around it
         if (map == undefined) throw new Error("No LatexMap was given! For Function");
         tmp_latex += "{" + map.getConstructedLatex(param).slice(1, -1) + "}"; 

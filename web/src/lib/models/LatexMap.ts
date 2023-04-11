@@ -5,8 +5,6 @@ import { Latex } from "./Latex";
 export class LatexMap {
   latexMap: { [id: string]: Latex } = {};
 
-  constructor() {}
-
   addLatex(call: Type, latex: string) {
     if (call.type == "function") this.latexMap[call.id] = new Latex(call, latex);
     else this.latexMap[call.value] = new Latex(call, latex);

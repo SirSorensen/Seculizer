@@ -1,4 +1,3 @@
-import type { EncryptExpression, Type } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge } from "src/types/participant";
 
 export class Participant {
@@ -15,7 +14,7 @@ export class Participant {
   }
 
   setKnowledge(knowledge: ParticipantKnowledge) {
-    let index = this.findKnowledgeIndex(knowledge);
+    const index = this.findKnowledgeIndex(knowledge);
 
     if (index >= 0) {
       this.knowledge[index] = { item: knowledge, id: this.currentKnowledgeId++ };
@@ -37,7 +36,7 @@ export class Participant {
   }
 
   getKnowledge(knowledge: ParticipantKnowledge): ParticipantKnowledge {
-    let result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge));
+    const result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge));
 
     if (result === undefined) {
       return knowledge;
@@ -65,8 +64,8 @@ export class Participant {
       if (knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
       const tmp = structuredClone(knowledgeB.knowledge);
       for (let i = 0; i < knowledgeA.knowledge.length; i++) {
-        let knowledge = knowledgeA.knowledge[i];
-        let index = tmp.findIndex((item) => this.isKnowledgeEqual(item, knowledge));
+        const knowledge = knowledgeA.knowledge[i];
+        const index = tmp.findIndex((item) => this.isKnowledgeEqual(item, knowledge));
         if (index < 0) return false;
         tmp.splice(index, 1);
       }

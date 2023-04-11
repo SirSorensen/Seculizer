@@ -28,7 +28,7 @@ import type {
   Equations,
   Equation,
 } from "$lang/types/parser/interfaces";
-import { getSimpleStringFromExpression, getStringFromExpression, getStringFromType } from "$lib/utils/stringUtil";
+import { getSimpleStringFromExpression, getStringFromType } from "$lib/utils/stringUtil";
 import { EquationMap } from "./EquationMap";
 import HistoryTemplates from "$lib/utils/HistoryEnum";
 import { Frame } from "./Frame";
@@ -43,13 +43,13 @@ export class Program {
   first: Frame | null = null;
 
   keyRelations: { [id: string]: string } = {};
-  functions: { [id: string]: Number } = {};
+  functions: { [id: string]: number } = {};
   formats: LatexMap = new LatexMap();
   equations: EquationMap = new EquationMap();
   icons: Map<string, string> = new Map();
-  log: boolean = false;
+  log = false;
 
-  constructor(json: ProgramAST, log: boolean = false) {
+  constructor(json: ProgramAST, log = false) {
     this.log = log;
     if (this.log) console.log("Program started!");
 
@@ -120,8 +120,8 @@ export class Program {
   constructKeyRelations(keyRelations: KeyRelations) {
     if (keyRelations) {
       keyRelations.keyRelations.forEach((keyRelation: KeyRelation) => {
-        let sk = keyRelation.sk.value;
-        let pk = keyRelation.pk.value;
+        const sk = keyRelation.sk.value;
+        const pk = keyRelation.pk.value;
         this.keyRelations[pk] = sk;
       });
       if (this.log) console.log("KeyRelations created", this.keyRelations);
@@ -192,12 +192,12 @@ export class Program {
     const sender = sendStatement.leftId.value;
     const receiver = sendStatement.rightId.value;
     const matchStatement: MatchStatement = sendStatement.child as MatchStatement;
-    let matchFrame = Frame.newFrame(stmnt, last.getParticipantMap(), last);
+    const matchFrame = Frame.newFrame(stmnt, last.getParticipantMap(), last);
 
     last.setNext(matchFrame);
     for (const caseIndex in matchStatement.cases) {
       const matchCase: MatchCase = matchStatement.cases[caseIndex];
-      let identifier = getStringFromType(matchCase.case);
+      const identifier = getStringFromType(matchCase.case);
       const firstStmnt = matchCase.children.shift();
       if (firstStmnt) {
         matchFrame.createNewMatchCase(firstStmnt, identifier);
@@ -240,18 +240,21 @@ export class Program {
     if (this.log) console.log("Piping statement", stmnt);
 
     switch (stmnt.child.type) {
-      case "clearStatement":
+      case "clearStatement": {
         const clearStmt = stmnt.child as ClearStatement;
         this.clearStmnt(clearStmt.id, last);
         break;
-      case "participantStatement":
+      }
+      case "participantStatement": {
         const participantStmt = stmnt.child as ParticipantStatement;
         this.participantStmnt(participantStmt, last);
         break;
-      case "sendStatement":
+      }
+      case "sendStatement": {
         const sendStmt = stmnt.child as SendStatement;
         this.sendStmnt(sendStmt, last);
         break;
+      }
       default:
         throw new Error("Invalid json: stmnt type not found!");
     }
@@ -308,14 +311,14 @@ export class Program {
   messageSendStmnt(senderId: string, receiverId: string, knowledge: Expression[], last: Frame, canDescrypt: boolean) {
     knowledge.forEach((expression) => {
       last.addToHistory(HistoryTemplates.send(senderId, receiverId, expression, this), `${senderId} ->> ${receiverId}: ${getSimpleStringFromExpression(expression)}`);
-      let sentKnowledge = this.generateKnowledgeElement(expression, receiverId, last, canDescrypt);
+      const sentKnowledge = this.generateKnowledgeElement(expression, receiverId, last, canDescrypt);
       sentKnowledge.forEach((knowledge) => {
         last.getParticipantMap().transferKnowledge(senderId, receiverId, knowledge);
       });
     });
   }
 
-  generateKnowledgeElement(expression: Expression, receiverId: string, last: Frame, canDescrypt: boolean = true): ParticipantKnowledge[] {
+  generateKnowledgeElement(expression: Expression, receiverId: string, last: Frame, canDescrypt = true): ParticipantKnowledge[] {
     if (expression.child.type == "encryptExpression") {
       const encryptedExpression = expression.child as EncryptExpression;
       return this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt);
@@ -338,13 +341,13 @@ export class Program {
     inner: Expression[],
     outer: Type,
     last: Frame,
-    canDecrypt: boolean = true
+    canDecrypt = true
   ): ParticipantKnowledge[] {
     // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
     // decryptable = true if receiver knows the key, it is therefore not encrypted
     canDecrypt = canDecrypt && last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
 
-    let knowledges: ParticipantKnowledge[] = [];
+    const knowledges: ParticipantKnowledge[] = [];
     inner.forEach((expression) => {
       if (expression.child.type == "encryptExpression") {
         const encryptedExpression = expression.child as EncryptExpression;
@@ -369,7 +372,7 @@ export class Program {
 
   checkKeyRelation(key: Type): Type {
     if (key.type == "id") {
-      let tmp_key = this.keyRelations[key.value];
+      const tmp_key = this.keyRelations[key.value];
       if (tmp_key) return { type: "id", value: tmp_key };
     }
     return key;

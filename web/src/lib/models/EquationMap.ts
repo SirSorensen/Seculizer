@@ -1,4 +1,4 @@
-import type { Equation, FunctionCall, StringLiteral, NumberLiteral, Id } from "$lang/types/parser/interfaces";
+import type { FunctionCall, StringLiteral, NumberLiteral, Id } from "$lang/types/parser/interfaces";
 import { Equal } from './Equal';
 
 
@@ -11,8 +11,8 @@ export class EquationMap {
       this.equations[left.id] = [];
     }
 
-    let equals = this.equations[left.id];
-    let index = equals.findIndex((equal) => {
+    const equals = this.equations[left.id];
+    const index = equals.findIndex((equal) => {
       return this.checkIfSame(right, equal.getRight());
     });
 
@@ -23,8 +23,8 @@ export class EquationMap {
 
   // Returns all the equations for a given function that are applicable to it (see Equal.checkIfAplicable)
   getEquals(func: FunctionCall) {
-    let equals: Equal[] = [];
-    let tmp_equations: Equal[] = this.equations[func.id];
+    const equals: Equal[] = [];
+    const tmp_equations: Equal[] = this.equations[func.id];
 
     if (tmp_equations === undefined) return equals;
 
@@ -56,15 +56,15 @@ export class EquationMap {
           return false;
         }
       }
-    };
+    }
 
     return true;
   }
 
   // Generates all possible equations for a function including itself
   generateEquals(func: FunctionCall): FunctionCall[] {
-    let equals: Equal[] = this.getEquals(func);
-    let newFuncs: FunctionCall[] = [];
+    const equals: Equal[] = this.getEquals(func);
+    const newFuncs: FunctionCall[] = [];
 
     // Generate all possible equations for the function, by checking if the equals list's elements fit the form of the given function
     equals.forEach((equal) => {
@@ -72,7 +72,7 @@ export class EquationMap {
     });
 
     // Add original function if it is not already in the equals list
-    let index = newFuncs.findIndex((equal) => {
+    const index = newFuncs.findIndex((equal) => {
       return this.checkIfSame(func, equal);
     });
     if (index === -1) newFuncs.push(func);

@@ -6,7 +6,7 @@ Protocol: {
 };
 */
   import { parse, ParseError, SepoLexer } from "$lang";
-    import { Program } from "$lib/models/program";
+  import { Program } from "$lib/models/program";
   import MagicString from "magic-string";
   export let content: string = "";
   let hightlighted = content;
@@ -59,9 +59,9 @@ Protocol: {
         let icons = program.getIcons();
         let tmpIds: string[] = [];
         ids.forEach((id) => {
-          if(id === "Shared") return;
+          if (id === "Shared") return;
           let icon = icons.get(id);
-          if(!icon){
+          if (!icon) {
             tmpIds.push(id);
           }
         });
@@ -71,14 +71,14 @@ Protocol: {
           let error = e as ParseError;
           let location = error.location;
           let addBefore = `<span class="token token-Error"><i class="tokenErrMsg">${error.msg}</i>`;
-            
-          if(location.start === 0){
+
+          if (location.start === 0) {
             addBefore = `<span class="line">0</span>` + addBefore;
           }
           const addAfter = `</span>`;
           tmp.prependLeft(location.start, addBefore);
           tmp.appendRight(location.end + 1, addAfter);
-        }else{
+        } else {
           console.error(e);
         }
       }

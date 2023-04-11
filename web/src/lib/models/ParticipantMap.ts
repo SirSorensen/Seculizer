@@ -59,8 +59,8 @@ export class ParticipantMap {
     if(!sender.doesKnowledgeExist(knowledge)) {
       console.error("Knowledge not found!", this.participants[senderId].getName(), knowledge);
       //return;
-    };
-    let tmp_knowledge = sender.getKnowledge(knowledge);
+    }
+    const tmp_knowledge = sender.getKnowledge(knowledge);
     receiver.setKnowledge(tmp_knowledge);
   }
 

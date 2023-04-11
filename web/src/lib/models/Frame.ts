@@ -1,4 +1,4 @@
-import type { Statement, Type } from "$lang/types/parser/interfaces";
+import type { Statement } from "$lang/types/parser/interfaces";
 import type { Participant } from "./Participant";
 import { ParticipantMap } from "./ParticipantMap";
 
@@ -20,7 +20,7 @@ export class Frame {
     this.history = history.concat([]); //Insure that it is a copy
   }
 
-  setNext(frame: Frame | { [id: string]: Frame }, caseIndex: string = "") {
+  setNext(frame: Frame | { [id: string]: Frame }, caseIndex = "") {
     if (caseIndex != "") {
       if (this.next != null && !(this.next instanceof Frame) && frame instanceof Frame) this.next[caseIndex] = frame;
       else console.error("Error: Next is not a map, however a caseIndex was given!");
@@ -37,13 +37,13 @@ export class Frame {
     if (this.next === null) return this;
     if (this.next instanceof Frame) return this.next.getLast();
     else {
-      let tmp_frame = this.next[Object.keys(this.next)[0]];
+      const tmp_frame = this.next[Object.keys(this.next)[0]];
       return tmp_frame.getLast();
     }
   }
 
   //TODO: Make it a clone?
-  getNextFrame(caseIndex: string = ""): Frame {
+  getNextFrame(caseIndex = ""): Frame {
     if (this.next === null) throw new Error("Next is null");
 
     if (caseIndex != "") {
@@ -82,7 +82,7 @@ export class Frame {
       this.next = {};
     }
 
-    let tmp_frame = new Frame(stmnt, this, this.participantMap, this.history);
+    const tmp_frame = new Frame(stmnt, this, this.participantMap, this.history);
 
     this.next[caseIndex] = tmp_frame;
   }
@@ -96,8 +96,8 @@ export class Frame {
   }
 
   //TODO: Mayve do this in a better way than static
-  static newFrame(stmnt: any, participants: ParticipantMap, last: Frame): Frame {
-    let tmp_last = new Frame(stmnt, last, participants, last.history);
+  static newFrame(stmnt: Statement, participants: ParticipantMap, last: Frame): Frame {
+    const tmp_last = new Frame(stmnt, last, participants, last.history);
 
     if (last != null) last.setNext(tmp_last);
 
