@@ -76,7 +76,7 @@ exports[`should parse Clear.sepo 1`] = `
 }
 `;
 
-exports[`should parse DF.sepo 1`] = `
+exports[`should parse Diffie-hellman.sepo 1`] = `
 {
   "equations": {
     "equations": [
@@ -151,37 +151,6 @@ exports[`should parse DF.sepo 1`] = `
             {
               "type": "id",
               "value": "y",
-            },
-          ],
-          "type": "function",
-        },
-        "type": "formatItem",
-      },
-      {
-        "format": {
-          "type": "latex",
-          "value": "$x^{y*z}$",
-        },
-        "id": {
-          "id": "exp",
-          "params": [
-            {
-              "id": "exp",
-              "params": [
-                {
-                  "type": "id",
-                  "value": "x",
-                },
-                {
-                  "type": "id",
-                  "value": "y",
-                },
-              ],
-              "type": "function",
-            },
-            {
-              "type": "id",
-              "value": "z",
             },
           ],
           "type": "function",
@@ -485,7 +454,7 @@ exports[`should parse DF.sepo 1`] = `
 }
 `;
 
-exports[`should parse TPM.sepo 1`] = `
+exports[`should parse Envelope.sepo 1`] = `
 {
   "equations": undefined,
   "format": {
@@ -1724,6 +1693,541 @@ exports[`should parse TPM.sepo 1`] = `
 }
 `;
 
+exports[`should parse TLS-1.3.sepo 1`] = `
+{
+  "equations": {
+    "equations": [
+      {
+        "left": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "a",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+    ],
+    "type": "equations",
+  },
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "latex",
+          "value": "$Hash(x||y)$",
+        },
+        "id": {
+          "id": "hash",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "latex",
+          "value": "\${a + b}$",
+        },
+        "id": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "latex",
+          "value": "$\\\\text{random bytes}_{client}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "clientRandomBytes",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": {
+    "functions": [
+      {
+        "id": {
+          "type": "id",
+          "value": "hash",
+        },
+        "params": 2,
+        "type": "functionDef",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "add",
+        },
+        "params": 2,
+        "type": "functionDef",
+      },
+    ],
+    "type": "functionsDef",
+  },
+  "icons": {
+    "icons": Map {
+      "Client" => "laptop",
+      "serverSk" => "🔑",
+      "serverPk" => "🔑",
+      "pmk" => "🔑",
+      "supportedCipherSuites" => "📝",
+      "supportedExtensions" => "📝",
+      "cipserSuite" => "📝",
+      "clientRandomBytes" => "📝",
+      "serverRandomBytes" => "📝",
+      "extension" => "📝",
+      "TLSVersion" => "input-numbers",
+      "Server" => "home-button",
+    },
+    "type": "icons",
+  },
+  "keyRelations": {
+    "keyRelations": [
+      {
+        "pk": {
+          "type": "id",
+          "value": "serverPk",
+        },
+        "sk": {
+          "type": "id",
+          "value": "serverSk",
+        },
+        "type": "keyRelation",
+      },
+    ],
+    "type": "keyRelations",
+  },
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "TLSVersion",
+          },
+          {
+            "type": "id",
+            "value": "supportedCipherSuites",
+          },
+          {
+            "type": "id",
+            "value": "supportedExtensions",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Client",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "serverSk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Server",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "serverPk",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Shared",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Client",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Server",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "clientRandomBytes",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "\\"Client Hello\\"",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "TLSVersion",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "clientRandomBytes",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "supportedCipherSuites",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "supportedExtensions",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "cipserSuite",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "serverRandomBytes",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "extension",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "string",
+                        "value": "\\"Server Hello\\"",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "cipserSuite",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "serverRandomBytes",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "extension",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "serverPk",
+                  },
+                  "type": "signExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "pmk",
+            },
+            "type": "newStatement",
+          },
+          "id": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "pmk",
+            },
+            "type": "setStatement",
+            "value": {
+              "id": "add",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "clientRandomBytes",
+                },
+                {
+                  "type": "id",
+                  "value": "serverRandomBytes",
+                },
+              ],
+              "type": "function",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "participantStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
 exports[`should parse icon-test.sepo 1`] = `
 {
   "equations": undefined,
@@ -2495,6 +2999,148 @@ exports[`should parse send-with-enc.sepo 1`] = `
                     "value": "key",
                   },
                   "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse send-with-sign.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": undefined,
+  "icons": undefined,
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "msg_B",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "type": "id",
+            "value": "msg_A",
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participant",
+      },
+      {
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participant",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_A",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "key",
+                  },
+                  "type": "signExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msg_B",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "key",
+                  },
+                  "type": "signExpression",
                 },
                 "type": "expression",
               },

@@ -10,12 +10,23 @@ const caseFolder = path.resolve(__dirname, "../../specification/Examples");
 console.log("caseFolder: " + caseFolder);
 
 fs.readdirSync(caseFolder).forEach(function (file) {
-  it("should parse " + file, function () {
-    const input = fs.readFileSync(caseFolder + "/" + file, "utf8").replace(/\r/g, ""); // Windows be like: nEwLIne iS \r\n
+  createTest(file, caseFolder);
+});
 
+function createTest(file: string, relativePath: string){
+  const path = relativePath + "/" + file;
+  const isDir = fs.lstatSync(path).isDirectory() 
+  if (isDir) {
+    fs.readdirSync(path).forEach(function (file) {
+      createTest(file, path);
+    });
+    return;
+  }
+  it("should parse " + file, function () {
+    const input = fs.readFileSync(path, "utf8").replace(/\r/g, ""); // Windows be like: nEwLIne iS \r\n
     if (!input) throw new Error("No input file found");
-    const ast = parse(input, false);
+    const ast = parse(input);
     expect(ast).toBeTruthy();
     expect(ast).toMatchSnapshot();
   });
-});
+}

@@ -33,7 +33,7 @@ afterEach(() => {
 });
 
 test("web/program with simple.sepo", () => {
-  startFunction("simple");
+  startFunction("Samples/simple");
   expect(program).toBeDefined();
 
   expect(program.keyRelations).toBeDefined();
@@ -51,17 +51,17 @@ test("web/program with simple.sepo", () => {
 });
 
 test("web/program with TPM.sepo", () => {
-  startFunction("TPM");
+  startFunction("Protocols/Envelope");
   expect(program).toBeDefined();
 });
 
 test("web/program with key-relation.sepo", () => {
-  startFunction("key-relation");
+  startFunction("Samples/key-relation");
   expect(program).toBeTruthy();
 });
 
 test("web/program with DF.sepo", () => {
-  startFunction("DF");
+  startFunction("Protocols/Diffie-hellman");
   expect(program).toBeDefined();
 
   expect(program.keyRelations).toBeDefined();
@@ -81,7 +81,7 @@ test("web/program with DF.sepo", () => {
 });
 
 test("web/program with send-with-sign.sepo", () => {
-  startFunction("send-with-sign");
+  startFunction("Samples/send-with-sign");
   expect(program).toBeDefined();
 
   expect(program.keyRelations).toBeDefined();
@@ -125,8 +125,7 @@ test("web/program with send-with-sign.sepo", () => {
     knowledge: {
       type: "id",
       value: "msg_A",
-    },
-    value: "",
+    }
   };
 
   const msg_B: ParticipantKnowledge = {
@@ -134,8 +133,7 @@ test("web/program with send-with-sign.sepo", () => {
     knowledge: {
       type: "id",
       value: "msg_B",
-    },
-    value: "",
+    }
   };
 
   expect(first.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_A)).toBeTruthy();
@@ -151,7 +149,7 @@ test("web/program with send-with-sign.sepo", () => {
 });
 
 test("web/program with send-with-enc.sepo", () => {
-  startFunction("send-with-enc");
+  startFunction("Samples/send-with-enc");
   expect(program).toBeDefined();
 
   expect(program.keyRelations).toBeDefined();
@@ -195,7 +193,6 @@ test("web/program with send-with-enc.sepo", () => {
       type: "id",
       value: "msg_A",
     },
-    value: "",
   };
 
   const msg_B: ParticipantKnowledge = {
@@ -204,7 +201,6 @@ test("web/program with send-with-enc.sepo", () => {
       type: "id",
       value: "msg_B",
     },
-    value: "",
   };
 
   expect(first.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_A)).toBeTruthy();
@@ -219,17 +215,17 @@ test("web/program with send-with-enc.sepo", () => {
 });
 
 test("web/program with send.sepo", () => {
-  startFunction("send");
+  startFunction("Samples/send");
   expect(program).toBeTruthy();
 });
 
 test("web/program with send-with-enc.sepo", () => {
-  startFunction("send-with-enc");
+  startFunction("Samples/send-with-enc");
   expect(program).toBeTruthy();
 });
 
 test("web/program with send-and-clear.sepo", () => {
-  startFunction("send-and-clear");
+  startFunction("Samples/send-and-clear");
   expect(program).toBeTruthy();
   let last = program.first?.getLast();
   expect(last).toBeTruthy();
@@ -248,7 +244,7 @@ test("web/program with send-and-clear.sepo", () => {
 });
 
 test("web/Program with icon-test.sepo", () => {
-  startFunction("icon-test");
+  startFunction("Samples/icon-test");
   expect(program).toBeTruthy();
   expect(program.icons).toBeTruthy();
   expect(program.icons.size).toBe(5);
@@ -259,7 +255,7 @@ test("web/Program with icon-test.sepo", () => {
 });
 
 test("web/Program with clear.sepo", () => {
-  startFunction("clear");
+  startFunction("Samples/clear");
   expect(program).toBeTruthy();
   const first = program.first;
   expect(first).toBeTruthy();
