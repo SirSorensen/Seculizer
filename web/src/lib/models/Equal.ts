@@ -1,5 +1,4 @@
-import type { Equation, FunctionCall, StringLiteral, NumberLiteral, Id, Type } from "$lang/types/parser/interfaces";
-import { LatexMap } from './LatexMap';
+import type { FunctionCall, StringLiteral, NumberLiteral, Id } from "$lang/types/parser/interfaces";
 
 export class Equal {
   // exp(exp(A,B),C) = exp(exp(A,C),B)
@@ -14,8 +13,8 @@ export class Equal {
     this.right = right;
     this.left = left;
 
-    let leftParams = this.constructParamArray(left);
-    let rightParams = this.constructParamArray(right);
+    const leftParams = this.constructParamArray(left);
+    const rightParams = this.constructParamArray(right);
 
     // See paramIndex description
     this.paramIndex = rightParams.map((rightParam) => {
@@ -29,7 +28,7 @@ export class Equal {
   constructParamArray(call: FunctionCall): (Id | StringLiteral | NumberLiteral)[] {
     let paramArray: (Id | StringLiteral | NumberLiteral)[] = [];
 
-    call.params.forEach((param, index) => {
+    call.params.forEach((param) => {
       if (param.type != "function") {
         paramArray.push(param);
       } else {
@@ -43,7 +42,7 @@ export class Equal {
   // Generate a new function call with the same parameters as the given function call, but with the parameters in the right function's call order
   generateEqual(call: FunctionCall): FunctionCall {
     // Construct the param array for the given call
-    let callParamArray = this.constructParamArray(call);
+    const callParamArray = this.constructParamArray(call);
 
     // Auxiliar function to generate the new function (it works recursively if the given function contains functions)
     const aux = (newFunction: FunctionCall, i: number): FunctionCall => {
@@ -59,7 +58,7 @@ export class Equal {
     };
 
     // Make a clone of the right for modification in aux
-    let rightClone : FunctionCall = {id: structuredClone(this.right.id), params: structuredClone(this.right.params), type: "function"}
+    const rightClone : FunctionCall = {id: structuredClone(this.right.id), params: structuredClone(this.right.params), type: "function"}
 
     return aux(rightClone, 0);
   }

@@ -2,9 +2,9 @@ export function getEmoji(input: string): { type: "class" | "background"; value: 
   if (containsLatinCodepoints(input)) {
     return { type: "class", value: input };
   } else {
-    let hexArray: string[] = [];
+    const hexArray: string[] = [];
     for (const codePoint of input) {
-      let hex = codePoint.codePointAt(0);
+      const hex = codePoint.codePointAt(0);
       if (hex === undefined) continue;
       hexArray.push(hex.toString(16).toUpperCase());
     }
