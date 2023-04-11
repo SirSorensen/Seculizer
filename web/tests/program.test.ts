@@ -1,5 +1,5 @@
 import { Program } from "$lib/models/program.js";
-import { afterEach, assert, expect, test } from "vitest";
+import { afterEach, expect, test } from "vitest";
 import { readFileSync } from "fs";
 import {parse} from "$lang/index.js";
 import type { Id, Type, FunctionCall } from "$lang/types/parser/interfaces";
@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 import { LatexMap } from "$lib/models/LatexMap";
 import { Equal } from "$lib/models/Equal";
 import { EquationMap } from "$lib/models/EquationMap";
-import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
+import type { ParticipantKnowledge } from "src/types/participant";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,9 +20,9 @@ let program: Program;
 function startFunction(str: string) {
   if (typeof str == "string" && str == "") throw new Error('No test file given! (str == ""');
 
-  let relativePath = path.resolve(examplesFolder, str + ".sepo");
-  let fileStr = readFileSync(relativePath);
-  let json = parse(fileStr, false);
+  const relativePath = path.resolve(examplesFolder, str + ".sepo");
+  const fileStr = readFileSync(relativePath);
+  const json = parse(fileStr, false);
 
   program = new Program(json, false);
 }
@@ -101,7 +101,7 @@ test("web/program with send-with-sign.sepo", () => {
 
 
   expect(program.first).toBeTruthy();
-  let first = program.first as Frame;
+  const first = program.first as Frame;
 
   let last = first.getLast();
   expect(last).toBeTruthy();
@@ -168,7 +168,7 @@ test("web/program with send-with-enc.sepo", () => {
   expect(program.icons.size).toBe(0);
 
   expect(program.first).toBeTruthy();
-  let first = program.first as Frame;
+  const first = program.first as Frame;
 
   let last = first.getLast();
   expect(last).toBeTruthy();
@@ -234,10 +234,10 @@ test("web/program with send-and-clear.sepo", () => {
 
   expect(last.getParticipantMap().getParticipants()).toBeDefined();
 
-  let amountOfParticipants = last.getParticipantMap().getParticipantAmount();
+  const amountOfParticipants = last.getParticipantMap().getParticipantAmount();
   expect(amountOfParticipants).toBe(3);
 
-  let alice = last.getParticipantMap().getParticipant("Alice");
+  const alice = last.getParticipantMap().getParticipant("Alice");
   expect(alice).toBeDefined();
 
   expect(alice?.getKnowledgeList().length).toBe(0);
@@ -281,40 +281,40 @@ test("web/Program with clear.sepo", () => {
 });
 
 test("Construct Latex class & constructLatex method test", () => {
-  let init_param1: Type = { type: "id", value: "x" };
-  let init_param2: Type = { type: "id", value: "y" };
-  let init_func: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
+  const init_param1: Type = { type: "id", value: "x" };
+  const init_param2: Type = { type: "id", value: "y" };
+  const init_func: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
 
-  let latex = new Latex(init_func, "$Hash(x||y||x)$");
+  const latex = new Latex(init_func, "$Hash(x||y||x)$");
 
-  let param1: Type = { type: "id", value: "z" };
-  let param2: Type = { type: "number", value: 5 };
-  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+  const param1: Type = { type: "id", value: "z" };
+  const param2: Type = { type: "number", value: 5 };
+  const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
 
-  let result = latex.constructLatex(func);
+  const result = latex.constructLatex(func);
 
   expect(result).toBe("$Hash(\\text{z}||5||\\text{z})$");
 });
 
 
 test("Make LatexMap and call a function with embedded function", () => {
-    let init_param1: Type = { type: "id", value: "x" };
-    let init_param2: Type = { type: "id", value: "y" };
-    let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
-    let init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] };
+  const init_param1: Type = { type: "id", value: "x" };
+  const init_param2: Type = { type: "id", value: "y" };
+  const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
+  const init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] };
 
-    let latexMap = new LatexMap();
+  const latexMap = new LatexMap();
     latexMap.addLatex(init_func1, "$Hash(x||y||x)$");
     latexMap.addLatex(init_func2, "$Based_{XXX}(y&&x)$");
 
-    let param1: Type = { type: "id", value: "z" };
-    let param2: Type = { type: "number", value: 5 };
-    let param3: Type = { type: "string", value: "Jesus" };
-    let func1: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
-    let func2: FunctionCall = { type: "function", id: "Base", params: [param3, func1] };
+    const param1: Type = { type: "id", value: "z" };
+    const param2: Type = { type: "number", value: 5 };
+    const param3: Type = { type: "string", value: "Jesus" };
+    const func1: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+    const func2: FunctionCall = { type: "function", id: "Base", params: [param3, func1] };
 
 
-    let result = latexMap.getConstructedLatex(func2);
+    const result = latexMap.getConstructedLatex(func2);
 
     expect(result).toBe("$Based_{XXX}({Hash(\\text{z}||5||\\text{z})}&&\\text{Jesus})$");
 
@@ -322,20 +322,20 @@ test("Make LatexMap and call a function with embedded function", () => {
 
 
 test("Construct an Equal and call generateEqual", () => {
-  let init_param1: Type = { type: "id", value: "x" };
-  let init_param2: Type = { type: "id", value: "y" };
-  let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
-  let init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] };
+  const init_param1: Type = { type: "id", value: "x" };
+  const init_param2: Type = { type: "id", value: "y" };
+  const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
+  const init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] };
 
-  let equality = new Equal(init_func1, init_func2);
+  const equality = new Equal(init_func1, init_func2);
 
-  let param1: Type = { type: "id", value: "z" };
-  let param2: Type = { type: "id", value: "v" };
-  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+  const param1: Type = { type: "id", value: "z" };
+  const param2: Type = { type: "id", value: "v" };
+  const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
 
 
-  let result = equality.generateEqual(func);
-  let expected: FunctionCall = { type: "function", id: "Base", params: [param2, param1] };
+  const result = equality.generateEqual(func);
+  const expected: FunctionCall = { type: "function", id: "Base", params: [param2, param1] };
   
   expect(result.id).toBe(expected.id);
   expect(result.type).toBe(expected.type);
@@ -344,27 +344,27 @@ test("Construct an Equal and call generateEqual", () => {
 })
 
 test("Construct an Equal and call generateEqual with embedded functions", () => {
-  let init_param1: Type = { type: "id", value: "x" };
-  let init_param2: Type = { type: "id", value: "y" };
-  let init_param3: Type = { type: "id", value: "z" };
+  const init_param1: Type = { type: "id", value: "x" };
+  const init_param2: Type = { type: "id", value: "y" };
+  const init_param3: Type = { type: "id", value: "z" };
 
-  let init_func1: FunctionCall = { type: "function", id: "exp", params: [init_param2, init_param3] };
-  let init_func2: FunctionCall = { type: "function", id: "exp", params: [init_param1, init_func1] };
+  const init_func1: FunctionCall = { type: "function", id: "exp", params: [init_param2, init_param3] };
+  const init_func2: FunctionCall = { type: "function", id: "exp", params: [init_param1, init_func1] };
 
-  let init_func3: FunctionCall = { type: "function", id: "exp", params: [init_param3, init_param2] };
-  let init_func4: FunctionCall = { type: "function", id: "exp", params: [init_param1, init_func3] };
+  const init_func3: FunctionCall = { type: "function", id: "exp", params: [init_param3, init_param2] };
+  const init_func4: FunctionCall = { type: "function", id: "exp", params: [init_param1, init_func3] };
 
-  let equality = new Equal(init_func2, init_func4);
+  const equality = new Equal(init_func2, init_func4);
 
-  let param1: Type = { type: "id", value: "a" };
-  let param2: Type = { type: "id", value: "b" };
-  let param3: Type = { type: "id", value: "c" };
-  let func1: FunctionCall = { type: "function", id: "exp", params: [param2, param3] };
-  let func2: FunctionCall = { type: "function", id: "exp", params: [param1, func1] };
+  const param1: Type = { type: "id", value: "a" };
+  const param2: Type = { type: "id", value: "b" };
+  const param3: Type = { type: "id", value: "c" };
+  const func1: FunctionCall = { type: "function", id: "exp", params: [param2, param3] };
+  const func2: FunctionCall = { type: "function", id: "exp", params: [param1, func1] };
 
-  let result = equality.generateEqual(func2);
-  let tmp_expected: FunctionCall = { type: "function", id: "exp", params: [param3, param2] };
-  let expected: FunctionCall = { type: "function", id: "exp", params: [param1, tmp_expected] };
+  const result = equality.generateEqual(func2);
+  const tmp_expected: FunctionCall = { type: "function", id: "exp", params: [param3, param2] };
+  const expected: FunctionCall = { type: "function", id: "exp", params: [param1, tmp_expected] };
 
 
   expect(result.id).toBe(expected.id);
@@ -377,25 +377,25 @@ test("Construct an Equal and call generateEqual with embedded functions", () => 
 });
 
 test("Construct an EquationMap and call generateEquals", () => {
-  let init_param1: Type = { type: "id", value: "x" };
-  let init_param2: Type = { type: "id", value: "y" };
-  let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x,y)
-  let init_func2: FunctionCall = { type: "function", id: "Hash", params: [init_param2, init_param1] }; // Hash(y,x)
+  const init_param1: Type = { type: "id", value: "x" };
+  const init_param2: Type = { type: "id", value: "y" };
+  const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x,y)
+  const init_func2: FunctionCall = { type: "function", id: "Hash", params: [init_param2, init_param1] }; // Hash(y,x)
 
-  let init_func3: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] }; // Base(x,y)
-  let init_func4: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] }; // Base(y,x)
+  const init_func3: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] }; // Base(x,y)
+  const init_func4: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] }; // Base(y,x)
 
-  let equalityMap = new EquationMap();
+  const equalityMap = new EquationMap();
   equalityMap.addEquation(init_func1, init_func2);
   equalityMap.addEquation(init_func3, init_func4);
 
-  let param1: Type = { type: "id", value: "z" };
-  let param2: Type = { type: "id", value: "v" };
+  const param1: Type = { type: "id", value: "z" };
+  const param2: Type = { type: "id", value: "v" };
   
-  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] }; // Hash(z,v)
+  const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] }; // Hash(z,v)
 
-  let result = equalityMap.generateEquals(func);
-  let expected: FunctionCall[] = [
+  const result = equalityMap.generateEquals(func);
+  const expected: FunctionCall[] = [
   { type: "function", id: "Hash", params: [param2, param1] }, // Base(v,z)
   func
   ]
@@ -412,23 +412,23 @@ test("Construct an EquationMap and call generateEquals", () => {
 });
 
 test("Construct an EquationMap with multiple of the same fiunction and call generateEquals", () => {
-  let init_param1: Type = { type: "id", value: "x" };
-  let init_param2: Type = { type: "id", value: "y" };
-  let init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x, y)
-  let init_func2: FunctionCall = { type: "function", id: "Hash", params: [init_param2, init_param1] }; // Hash(y, x)
-  let init_func3: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param1] }; // Hash(x, x)
+  const init_param1: Type = { type: "id", value: "x" };
+  const init_param2: Type = { type: "id", value: "y" };
+  const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x, y)
+  const init_func2: FunctionCall = { type: "function", id: "Hash", params: [init_param2, init_param1] }; // Hash(y, x)
+  const init_func3: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param1] }; // Hash(x, x)
 
-  let equalityMap = new EquationMap();
+  const equalityMap = new EquationMap();
   equalityMap.addEquation(init_func1, init_func2); // Hash(x, y) => Hash(y, x)
   equalityMap.addEquation(init_func1, init_func3); // Hash(x, y) => Hash(x, x)
 
-  let param1: Type = { type: "id", value: "z" };
-  let param2: Type = { type: "id", value: "v" };
+  const param1: Type = { type: "id", value: "z" };
+  const param2: Type = { type: "id", value: "v" };
 
-  let func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+  const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
 
-  let result = equalityMap.generateEquals(func);
-  let expected: FunctionCall[] = [
+  const result = equalityMap.generateEquals(func);
+  const expected: FunctionCall[] = [
     { type: "function", id: "Hash", params: [param2, param1] },
     { type: "function", id: "Hash", params: [param1, param1] },
     func,

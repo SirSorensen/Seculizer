@@ -5,19 +5,23 @@ import katex from "katex";
 export function getStringFromType(type: Type): string {
   if (!type) return "null";
   switch (type.type) {
-    case "string":
+    case "string": {
       return type.value;
       break;
-    case "number":
+    }
+    case "number": {
       return type.value.toString();
       break;
-    case "id":
+    }
+    case "id": {
       return type.value;
       break;
-    case "function":
+    }
+    case "function": {
       const { id, params } = type;
       return id + "(" + params.map(getStringFromType).join(", ") + ")";
       break;
+    }
     default:
       return "null";
       break;
@@ -49,7 +53,7 @@ export function getSimpleStringFromExpression(expression: Expression): string {
   if (expression.child.type == "encryptExpression") {
     const encryptedExpression = expression.child as EncryptExpression;
     result.push(`encrypt(${getStringFromType(encryptedExpression.outer)},`);
-    if(encryptedExpression.inner.length > 2) result.push("[");
+    if (encryptedExpression.inner.length > 2) result.push("[");
     for (let i = 0; i < encryptedExpression.inner.length; i++) {
       const innerExpression = encryptedExpression.inner[i];
       const s = getSimpleStringFromExpression(innerExpression);
@@ -60,13 +64,13 @@ export function getSimpleStringFromExpression(expression: Expression): string {
         result.push(", ");
       }
     }
-    
-    if(encryptedExpression.inner.length > 2) result.push("]");
+
+    if (encryptedExpression.inner.length > 2) result.push("]");
     return result.join("") + ")";
   } else if (expression.child.type == "signExpression") {
     const signExpression = expression.child as SignExpression;
     result.push(`sign(${getStringFromType(signExpression.outer)},`);
-    if(signExpression.inner.length > 2) result.push("[");
+    if (signExpression.inner.length > 2) result.push("[");
     for (let i = 0; i < signExpression.inner.length; i++) {
       const innerExpression = signExpression.inner[i];
       const s = getSimpleStringFromExpression(innerExpression);
@@ -77,14 +81,13 @@ export function getSimpleStringFromExpression(expression: Expression): string {
         result.push(", ");
       }
     }
-    if(signExpression.inner.length > 2) result.push("]");
+    if (signExpression.inner.length > 2) result.push("]");
     return result.join("") + ")";
   } else {
     const type = expression.child as Type;
     return getStringFromType(type);
   }
 }
-
 
 export function getStringFromExpression(expression: Expression, program: Program): string {
   const result: string[] = [];
@@ -101,7 +104,7 @@ export function getStringFromExpression(expression: Expression, program: Program
         else result.push(", ");
       }
     }
-    
+
     return result.join("") + " encrypted with " + getFormattedTypeAsHTML(encryptedExpression.outer, program);
   } else if (expression.child.type == "signExpression") {
     const signExpression = expression.child as SignExpression;
@@ -123,7 +126,7 @@ export function getStringFromExpression(expression: Expression, program: Program
   }
 }
 
-export function getFormattedTypeAsHTML(type:Type, program:Program):string{
+export function getFormattedTypeAsHTML(type: Type, program: Program): string {
   if (program.getFormats().contains(type)) {
     let s = program.getFormats().getConstructedLatex(type);
     if (s.startsWith("$")) s = s.slice(1);
@@ -136,16 +139,3 @@ export function getFormattedTypeAsHTML(type:Type, program:Program):string{
     return getStringFromType(type);
   }
 }
-
-/*export function getStringFromKnowledges(knowledges:ParticipantKnowledge[]){
-  let result = "";
-  for (const knowledge of knowledges) {
-    if(knowledge.type === "rawKnowledge"){
-      result += getStringFromType(knowledge.knowledge) + ", ";
-    }else{
-      result += getStringFromKnowledges(knowledge.knowledge) + " encrypted with " + getStringFromType(knowledge.encryption) + ", ";
-    }
-  }
-  if(result.endsWith(", ")) result = result.slice(0, -2);
-  return result;
-}*/

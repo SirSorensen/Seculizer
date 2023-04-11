@@ -1,7 +1,6 @@
 import type { Expression, Type } from "$lang/types/parser/interfaces";
 import type { Program } from "$lib/models/program";
-import { getFormattedTypeAsHTML, getStringFromExpression, getStringFromType } from "./stringUtil";
-import { program } from "../stores/programStore";
+import { getFormattedTypeAsHTML, getStringFromExpression } from "./stringUtil";
 import { getEmoji } from "./EmojiUtil";
 
 const HistoryTemplates = {
@@ -25,7 +24,7 @@ const HistoryTemplates = {
 function formatId(id: string, program: Program):string {
   const icon = program.getIcons().get(id);
   if (icon) {
-    let omaEmoji = getEmoji(icon);
+    const omaEmoji = getEmoji(icon);
     let s = "";
     if(omaEmoji.type === "class"){
       s += `<i class="oma oma-${omaEmoji.value}"></i>`;

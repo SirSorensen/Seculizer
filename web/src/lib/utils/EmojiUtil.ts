@@ -17,5 +17,6 @@ export function getEmoji(input: string): { type: "class" | "background"; value: 
 }
 
 function containsLatinCodepoints(s: string): boolean {
+  // eslint-disable-next-line no-control-regex
   return /[\u0000-\u00ff]/.test(s);
 }
