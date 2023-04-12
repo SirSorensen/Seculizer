@@ -42,6 +42,7 @@
         getContent();
 
         mermaid.render("graphDiv", content).then(({ svg }) => {
+          if(!graph) return;
           graph.innerHTML = svg;
         });
       }
