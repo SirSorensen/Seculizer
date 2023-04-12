@@ -56,7 +56,7 @@ const WhiteSpace = createToken({
 
 const Comment = createToken({
   name: "Comment",
-  pattern: /\/\/.*\n/,
+  pattern: /\/\/.*(\r\n|\n)/,
   group: Lexer.SKIPPED,
 });
 
