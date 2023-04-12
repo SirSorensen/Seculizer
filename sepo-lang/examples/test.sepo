@@ -1,4 +1,4 @@
-Participants: Alice, Parent, TPM;
+Participants: Alice, Parent, TPM; //test
 Knowledge: {
     TPM: tpm_sk;
     Shared: tpm_pk;

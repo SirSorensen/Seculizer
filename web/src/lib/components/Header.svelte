@@ -3,7 +3,7 @@
 </script>
 
 <header>
-  <a href="/"><img src={Logo} alt="" /></a>
+  <a data-sveltekit-reload href="/"><img src={Logo} alt="" /></a>
 </header>
 
 <style>

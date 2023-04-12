@@ -5,7 +5,7 @@
   import { onMount } from "svelte";
   import type { NextFrameNavigation } from "src/types/app";
   import type { ParticipantElements } from "src/types/participant";
-  
+
   export let stmnt: SendStatement;
   export let participantElements: ParticipantElements = {
     container: undefined,
@@ -23,23 +23,29 @@
   let sendLine: HTMLElement;
   let message: HTMLElement;
   function update() {
-    const fromParticipant = participantElements.elements[fromId.value];
-    const toParticipant = participantElements.elements[toId.value];
-
-    const containerOffset = { x: participantElements.container?.offsetLeft || 0, y: participantElements.container?.offsetTop || 0 };
-
+    const fromParticipant = participantElements.elements[fromId.value].getElementsByClassName(
+      "participantInnerContainer"
+    )[0] as HTMLElement;
+    const toParticipant = participantElements.elements[toId.value].getElementsByClassName("participantInnerContainer")[0] as HTMLElement;
+    const fromParent = fromParticipant.parentElement;
+    const toParent = toParticipant.parentElement;
+    if (!fromParent) return;
+    if (!toParent) return;
+    const container = participantElements.container;
+    if (!container) return;
+    const containerOffset = { x: container.offsetLeft || 0, y: container.offsetTop || 0 };
     from = {
-      left: fromParticipant.offsetLeft + containerOffset.x - fromParticipant.offsetWidth / 2,
-      top: fromParticipant.offsetTop + containerOffset.y - fromParticipant.offsetHeight / 2,
+      left: fromParent.offsetLeft + containerOffset.x - fromParticipant.offsetWidth / 2,
+      top: fromParent.offsetTop + containerOffset.y - fromParticipant.offsetHeight / 2,
       width: fromParticipant.offsetWidth,
-      height: fromParticipant.offsetHeight,
+      height: fromParticipant.offsetWidth,
     };
 
     to = {
-      left: toParticipant.offsetLeft + containerOffset.x - toParticipant.offsetWidth / 2,
-      top: toParticipant.offsetTop + containerOffset.y - toParticipant.offsetHeight / 2,
+      left: toParent.offsetLeft + containerOffset.x - toParticipant.offsetWidth / 2,
+      top: toParent.offsetTop + containerOffset.y - toParticipant.offsetHeight / 2,
       width: toParticipant.offsetWidth,
-      height: toParticipant.offsetHeight,
+      height: toParticipant.offsetWidth,
     };
     updateLine();
   }
@@ -50,6 +56,7 @@
     let length = right - left;
     let height = to.top - from.top;
     let rad = Math.atan2(height, length);
+
     left = left + (Math.cos(rad) * from.width) / 2;
     length = length - Math.cos(rad) * from.width;
 
@@ -84,7 +91,6 @@
 </script>
 
 <svelte:window on:resize={update} />
-
 <div class="line" bind:this={sendLine}>
   {#if !child}
     <p>Invalid statement</p>

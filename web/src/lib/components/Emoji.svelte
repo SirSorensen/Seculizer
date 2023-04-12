@@ -10,16 +10,11 @@
   $: omaEmoji = getEmoji(content);
 </script>
 
-<p class="emoji">
+<div class="emoji">
   {#if omaEmoji.type === "class"}
     <i class="oma oma-{omaEmoji.value}" />
   {:else if omaEmoji.type === "background"}
     <i class="oma" style="background-image: url({omaEmoji.value})" />
   {/if}
-</p>
+</div>
 
-<style>
-  p {
-    margin: 0;
-  }
-</style>

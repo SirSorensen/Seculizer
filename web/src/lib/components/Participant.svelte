@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade, fly } from "svelte/transition";
   import type { Id, Type } from "$lang/types/parser/interfaces";
   import { program } from "$lib/stores/programStore";
   import { getStringFromType } from "$lib/utils/stringUtil";
@@ -8,39 +9,11 @@
   export let name: Id;
   export let emoji: string;
   export let knowledge: VisualKnowledge[] = [];
-
-  let container: HTMLDivElement;
+  export let pos = { left: 0, top: 0 };
+  export let element: HTMLElement;
   let showKnowledge = false;
-  export function accordion(node: HTMLDivElement, showKnowledge: boolean) {
-    let initialHeight = node.offsetHeight;
-    node.style.height = showKnowledge ? "auto" : "0";
-    node.style.overflow = "hidden";
-    return {
-      update(showKnowledge: boolean) {
-        let animation = node.animate(
-          [
-            {
-              height: initialHeight + "px",
-              overflow: "hidden",
-            },
-            {
-              height: 0,
-              overflow: "hidden",
-            },
-          ],
-          { duration: 500, fill: "both" }
-        );
-        animation.pause();
-        if (!showKnowledge) {
-          animation.play();
-        } else {
-          animation.reverse();
-        }
-      },
-    };
-  }
 
-  function nodeContains(event: MouseEvent, container: HTMLDivElement) {
+  function nodeContains(event: MouseEvent, container: HTMLElement) {
     let node = event.relatedTarget as Node;
     return container.contains(node);
   }
@@ -55,11 +28,14 @@
     }
     return flat;
   }
+  let endHover = false;
 </script>
 
 <div
-  class="outerContainer"
-  bind:this={container}
+  class="participantContainer"
+  style:left={pos.left + "px"}
+  style:top={pos.top + "px"}
+  bind:this={element}
   on:focus={() => {
     showKnowledge = true;
   }}
@@ -68,26 +44,48 @@
   }}
   on:mouseover={() => {
     showKnowledge = true;
+    endHover = false;
   }}
   on:mouseout={(e) => {
-    if (nodeContains(e, container)) return;
-
-    showKnowledge = false;
+    if (nodeContains(e, element)) return;
+    endHover = true;
+    setTimeout(() => {
+      if (endHover) showKnowledge = false;
+    }, 1000);
   }}
 >
-  <div class="container">
+  <div class="participantInnerContainer">
     <div class="participant-item">
       <Item value={name} {emoji} />
     </div>
-    {#key knowledge.length}
-      <div class="knowledges" use:accordion={showKnowledge}>
+  </div>
+  {#key knowledge.length}
+    {#if showKnowledge}
+      <div class="knowledges" in:fly={{ y: -100, duration: 500 }} out:fade>
         {#if knowledge.length === 0}
           <p class="emptyText">Empty</p>
         {:else}
           {#each knowledge as visualKnowledge}
-            {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
-              {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
-                <Item value={type} emoji={visualKnowledge.emoji}>
+            <div class="knowledge">
+              {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
+                {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
+                  <Item value={type} emoji={visualKnowledge.emoji}>
+                    {#if value}
+                      <div class="knowledgeValue">
+                        {#if $program.getFormats().contains(value)}
+                          {@const format = $program.getFormats().getConstructedLatex(value)}
+                          <Latex input={format} />
+                        {:else}
+                          <small>{getStringFromType(value)}</small>
+                        {/if}
+                      </div>
+                      <!--Should this value be available if encrypted?-->
+                    {/if}
+                  </Item>
+                {/each}
+              {:else}
+                {@const value = visualKnowledge.knowledge.value}
+                <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
                   {#if value}
                     <div class="knowledgeValue">
                       {#if $program.getFormats().contains(value)}
@@ -100,51 +98,54 @@
                     <!--Should this value be available if encrypted?-->
                   {/if}
                 </Item>
-              {/each}
-            {:else}
-              {@const value = visualKnowledge.knowledge.value}
-              <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
-                {#if value}
-                  <div class="knowledgeValue">
-                    {#if $program.getFormats().contains(value)}
-                      {@const format = $program.getFormats().getConstructedLatex(value)}
-                      <Latex input={format} />
-                    {:else}
-                      <small>{getStringFromType(value)}</small>
-                    {/if}
-                  </div>
-                  <!--Should this value be available if encrypted?-->
-                {/if}
-              </Item>
-            {/if}
+              {/if}
+            </div>
           {/each}
         {/if}
       </div>
-    {/key}
-  </div>
+    {/if}
+  {/key}
 </div>
 
 <style>
-  div.outerContainer {
-    width: 100%;
+  div.participantContainer {
+    position: absolute;
+    z-index: 5;
+    transform: translate(-50%, -50%);
   }
-  div.container {
+  div.participantInnerContainer,
+  .knowledges {
     background-color: #fff3d3;
+    text-align: center;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  }
+  div.participantInnerContainer {
     align-items: center;
     font-size: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border-radius: 1000px;
-    text-align: center;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-    transition: all 2s ease-in-out;
     width: 125px;
-    min-height: 125px;
+    height: 125px;
+    border-radius: 125px;
   }
   .knowledges {
-    overflow: hidden;
-    transition: all 2s ease-in-out;
+    min-width: 125px;
+    max-width: 400px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 1rem;
+    border-radius: 15px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .knowledge {
+    flex-basis: 50%;
   }
   .emptyText {
     font-size: 1rem;
