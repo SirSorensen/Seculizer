@@ -11,9 +11,9 @@
   import Item from "$lib/components/Item.svelte";
   import EncryptIcon from "$lib/Icons/EncryptIcon.svelte";
   import SignIcon from "$lib/Icons/SignIcon.svelte";
-    import Latex from "../Latex.svelte";
+  import Latex from "../Latex.svelte";
 
-    import { program } from "$lib/stores/programStore.js";
+  import { program } from "$lib/stores/programStore.js";
   export let expression: ExpressionAST;
   let child = expression.child;
 
@@ -37,14 +37,14 @@
   {@const signExpression = castToSignExpression(child)}
   {@const inner = signExpression.inner}
   {#each inner as innerExpression}
-    <svelte:self {program} expression={innerExpression} />
+    <svelte:self expression={innerExpression} />
   {/each}
   {@const outer = signExpression.outer}
   <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} />
 {:else if child.type === "string" || child.type === "number" || child.type === "function"}
   {@const type = castToType(child)}
   <p>
-  {#if $program.getFormats().contains(type)}
+    {#if $program.getFormats().contains(type)}
       {@const format = $program.getFormats().getConstructedLatex(type)}
       <Latex input={format} />
     {:else}
@@ -59,7 +59,7 @@
 <style>
   p {
     margin: 0;
-    padding: .5rem;
+    padding: 0.5rem;
     text-align: center;
     font-size: 1rem;
   }

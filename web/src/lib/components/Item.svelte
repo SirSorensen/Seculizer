@@ -21,7 +21,7 @@
 </div>
 
 <style>
-  .item :global(.emoji) {
+  .item :global(.emoji i) {
     font-size: 3rem;
   }
 

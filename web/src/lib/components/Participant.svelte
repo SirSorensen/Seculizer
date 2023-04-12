@@ -28,6 +28,7 @@
     }
     return flat;
   }
+  let endHover = false;
 </script>
 
 <div
@@ -43,10 +44,14 @@
   }}
   on:mouseover={() => {
     showKnowledge = true;
+    endHover = false;
   }}
   on:mouseout={(e) => {
     if (nodeContains(e, element)) return;
-    showKnowledge = false;
+    endHover = true;
+    setTimeout(() => {
+      if (endHover) showKnowledge = false;
+    }, 1000);
   }}
 >
   <div class="participantInnerContainer">
@@ -61,9 +66,26 @@
           <p class="emptyText">Empty</p>
         {:else}
           {#each knowledge as visualKnowledge}
-            {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
-              {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
-                <Item value={type} emoji={visualKnowledge.emoji}>
+            <div class="knowledge">
+              {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
+                {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
+                  <Item value={type} emoji={visualKnowledge.emoji}>
+                    {#if value}
+                      <div class="knowledgeValue">
+                        {#if $program.getFormats().contains(value)}
+                          {@const format = $program.getFormats().getConstructedLatex(value)}
+                          <Latex input={format} />
+                        {:else}
+                          <small>{getStringFromType(value)}</small>
+                        {/if}
+                      </div>
+                      <!--Should this value be available if encrypted?-->
+                    {/if}
+                  </Item>
+                {/each}
+              {:else}
+                {@const value = visualKnowledge.knowledge.value}
+                <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
                   {#if value}
                     <div class="knowledgeValue">
                       {#if $program.getFormats().contains(value)}
@@ -76,23 +98,8 @@
                     <!--Should this value be available if encrypted?-->
                   {/if}
                 </Item>
-              {/each}
-            {:else}
-              {@const value = visualKnowledge.knowledge.value}
-              <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
-                {#if value}
-                  <div class="knowledgeValue">
-                    {#if $program.getFormats().contains(value)}
-                      {@const format = $program.getFormats().getConstructedLatex(value)}
-                      <Latex input={format} />
-                    {:else}
-                      <small>{getStringFromType(value)}</small>
-                    {/if}
-                  </div>
-                  <!--Should this value be available if encrypted?-->
-                {/if}
-              </Item>
-            {/if}
+              {/if}
+            </div>
           {/each}
         {/if}
       </div>
@@ -104,24 +111,41 @@
   div.participantContainer {
     position: absolute;
     z-index: 5;
+    transform: translate(-50%, -50%);
+  }
+  div.participantInnerContainer,
+  .knowledges {
+    background-color: #fff3d3;
+    text-align: center;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   }
   div.participantInnerContainer {
-    background-color: #fff3d3;
     align-items: center;
     font-size: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border-radius: 1000px;
-    text-align: center;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-    transition: all 2s ease-in-out;
     width: 125px;
     height: 125px;
+    border-radius: 125px;
   }
   .knowledges {
-    overflow: hidden;
-    transition: all 2s ease-in-out;
+    min-width: 125px;
+    max-width: 400px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 1rem;
+    border-radius: 15px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .knowledge {
+    flex-basis: 50%;
   }
   .emptyText {
     font-size: 1rem;
