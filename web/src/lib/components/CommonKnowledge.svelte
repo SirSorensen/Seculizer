@@ -2,6 +2,8 @@
   import type { Type } from "$lang/types/parser/interfaces";
   import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import Item from "./Item.svelte";
+  import { Knowledge } from "$lang";
+    import Latex from "./Latex.svelte";
 
   export let knowledges: VisualKnowledge[] = [];
 
@@ -29,6 +31,16 @@
           {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as encryptedKnowledgeType}
             <Item value={encryptedKnowledgeType} emoji={visualKnowledge.emoji} />
           {/each}
+        {:else if visualKnowledge.knowledge.comment}
+          <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+            <svelte:fragment slot="hover">
+              {#if visualKnowledge.knowledge.comment.value.type === "string"}
+                <small>{visualKnowledge.knowledge.comment.value.value}</small>
+              {:else}
+                <Latex input={visualKnowledge.knowledge.comment.value.value} />
+              {/if}
+            </svelte:fragment>
+          </Item>
         {:else}
           <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
         {/if}

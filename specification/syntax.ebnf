@@ -71,3 +71,6 @@ iconSet ::= string ":" id ("," id)* ";" /* Example: "👩‍👦": "Alice", "Bob
 
 /* --- Latex ---  */
 latex ::= "$" [^$]* "$" /* Example: $x^y$ */
+
+/* --- Statement comments --- */
+stmtComment ::= "?" string | latex /* Example: ? "This is a comment" */

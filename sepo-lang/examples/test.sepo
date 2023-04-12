@@ -1,6 +1,6 @@
 Participants: Alice, Parent, TPM; //test
 Knowledge: {
-    TPM: tpm_sk;
+    TPM: tpm_sk ? "secret key of TPM", tes, test ? "test";
     Shared: tpm_pk;
 };
 KeyRelations: (sk:tmp_sk, pk:tpm_pk);
@@ -17,9 +17,9 @@ Icons: {
 
 Protocol: {
     Alice -> TPM: "Boot";
-    TPM: pcr := '1';
+    TPM: pcr := '1'; ? "We initilize PCR in the TPM to 1"
     TPM -> Alice: "Booted";
-    Alice: new n;
+    Alice: new n; ? $n=5$
     Alice: new esk;
     Alice -> TPM: "Session", {esk}tpm_pk;
     TPM: new sid;

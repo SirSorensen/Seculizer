@@ -1,4 +1,4 @@
-import type { Type } from "$lang/types/parser/interfaces";
+import type { StmtComment, Type } from "$lang/types/parser/interfaces";
 interface ParticipantElements {
   container: HTMLElement | undefined;
   elements: { [key: string]: HTMLElement };
@@ -12,6 +12,7 @@ type RawParticipantKnowledge = {
   type: "rawKnowledge";
   knowledge: Type;
   value?: Type;
+  comment?: StmtComment;
 };
 
 type EncryptedParticipantKnowledge = {

@@ -16,47 +16,47 @@ Icons: {
 };
 
 Protocol: {
-    Alice -> TPM: "Boot";
-    TPM: pcr := '1';
+    Alice -> TPM: "Boot"; ? "Alice boots the TPM"
+    TPM: pcr := '1'; ? "The TPM initilize PCR to 1"
     TPM -> Alice: "Booted";
-    Alice: new n;
-    Alice: new esk;
-    Alice -> TPM: "Session", {esk}tpm_pk;
-    TPM: new sid;
-    TPM -> Alice: sid;
+    Alice: new n; ? "A new nonce is generated"
+    Alice: new esk; ? "A new session key is generated"
+    Alice -> TPM: "Session", {esk}tpm_pk; ? "Alice sends the TPM a session key encrypted with the TPM's public key"
+    TPM: new sid; ? "The TPM generates a new session id"
+    TPM -> Alice: sid; ? "The TPM sends the session id to Alice"
 
-    Alice -> TPM: {"Extend", n, sid}esk;
-    TPM: pcr := hash(n, pcr);
-    TPM -> Alice: "Extended", pcr;
+    Alice -> TPM: {"Extend", n, sid}esk; ? "Alice extends the PCR with the nonce and the session id"
+    TPM: pcr := hash(n, pcr); ? "The TPM extends the PCR"
+    TPM -> Alice: "Extended", pcr; ? "The TPM sends the new PCR to Alice"
     
-    Alice -> TPM: "Create", hash('obt', pcr);
-    TPM: new k;
-    TPM -> Alice: {|"Created", k, hash('obt', pcr)|}tpm_sk;
+    Alice -> TPM: "Create", hash('obt', pcr); ? "Alice requests the TPM to create a new key"
+    TPM: new k; ? "The TPM generates a new key"
+    TPM -> Alice: {|"Created", k, hash('obt', pcr)|}tpm_sk; ? "The TPM sends the new key and the PCR to Alice"
 
-    clear: sid, esk;
-    Alice: new v;
-    Alice -> Parent: "Envelope", {v}k;
+    clear: sid, esk; ? "The session key and the session id are cleared"
+    Alice: new v; ? "Alice creates an abilitry value"
+    Alice -> Parent: "Envelope", {v}k; ? "Alice sends the abilitry value encrypted with the new key to the parent"
 
-    Parent: new esk;
-    Parent -> TPM : "Session", {esk}tpm_pk;
-    TPM: new sid;
-    TPM -> Parent: sid;
+    Parent: new esk; ? "The parent generates a new session key"
+    Parent -> TPM : "Session", {esk}tpm_pk; ? "The parent sends the TPM a session key encrypted with the TPM's public key"
+    TPM: new sid; ? "The TPM generates a new session id"
+    TPM -> Parent: sid; ? "The TPM sends the session id to the parent"
 
     Parent -> TPM: match {
         "Refuse":{
-            Parent -> TPM: {"Extend", "ref", sid}esk;
-            TPM: pcr := hash("ref", pcr);
-            TPM -> Parent: "Extended", pcr;
-            Parent -> TPM: "Quote", {v}k;
-            TPM -> Parent: {|"Quoted", pcr, {v}k|}tpm_sk;
+            Parent -> TPM: {"Extend", "ref", sid}esk; ? "The parent requests the TPM to extend the PCR with the refusal value and the session id"
+            TPM: pcr := hash("ref", pcr); ? "The TPM extends the PCR"
+            TPM -> Parent: "Extended", pcr; ? "The TPM sends the new PCR to the parent"
+            Parent -> TPM: "Quote", {v}k; ? "The parent requests the TPM to quote the PCR"
+            TPM -> Parent: {|"Quoted", pcr, {v}k|}tpm_sk; ? "The TPM sends the PCR and the abilitry value encrypted with the new key to the parent"
         };
         "Obtain":{
-            Parent -> TPM: {"Extend", "obt", sid}esk;
-            TPM: pcr := hash("obt", pcr);
-            TPM -> Parent: "Extended", pcr;
-            Parent -> TPM: "Decrypt",{v}k, pcr;
-            TPM -> Parent: v;
+            Parent -> TPM: {"Extend", "obt", sid}esk; ? "The parent requests the TPM to extend the PCR with the abilitry value and the session id"
+            TPM: pcr := hash("obt", pcr); ? "The TPM extends the PCR"
+            TPM -> Parent: "Extended", pcr; ? "The TPM sends the new PCR to the parent"
+            Parent -> TPM: "Decrypt",{v}k, pcr; ? "The parent requests the TPM to decrypt the abilitry value"
+            TPM -> Parent: v; ? "The TPM sends the abilitry value to the parent"
         };
 
-    };
+    }; ? "The parent now has a choice to either refuse or obtain the abilitry value"
 };

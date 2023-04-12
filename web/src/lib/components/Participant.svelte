@@ -85,19 +85,42 @@
                 {/each}
               {:else}
                 {@const value = visualKnowledge.knowledge.value}
-                <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
-                  {#if value}
-                    <div class="knowledgeValue">
-                      {#if $program.getFormats().contains(value)}
-                        {@const format = $program.getFormats().getConstructedLatex(value)}
-                        <Latex input={format} />
+                {#if visualKnowledge.knowledge.comment}
+                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+                    {#if value}
+                      <div class="knowledgeValue">
+                        {#if $program.getFormats().contains(value)}
+                          {@const format = $program.getFormats().getConstructedLatex(value)}
+                          <Latex input={format} />
+                        {:else}
+                          <small>{getStringFromType(value)}</small>
+                        {/if}
+                      </div>
+                      <!--Should this value be available if encrypted?-->
+                    {/if}
+                    <svelte:fragment slot="hover">
+                      {#if visualKnowledge.knowledge.comment.value.type === "string"}
+                        <small>{visualKnowledge.knowledge.comment.value.value}</small>
                       {:else}
-                        <small>{getStringFromType(value)}</small>
+                        <Latex input={visualKnowledge.knowledge.comment.value.value} />
                       {/if}
-                    </div>
-                    <!--Should this value be available if encrypted?-->
-                  {/if}
-                </Item>
+                    </svelte:fragment>
+                  </Item>
+                  {:else}
+                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+                    {#if value}
+                      <div class="knowledgeValue">
+                        {#if $program.getFormats().contains(value)}
+                          {@const format = $program.getFormats().getConstructedLatex(value)}
+                          <Latex input={format} />
+                        {:else}
+                          <small>{getStringFromType(value)}</small>
+                        {/if}
+                      </div>
+                      <!--Should this value be available if encrypted?-->
+                    {/if}
+                  </Item>
+                {/if}
               {/if}
             </div>
           {/each}

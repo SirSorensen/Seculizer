@@ -45,6 +45,7 @@ export const Set = createToken({ name: "Set", pattern: /:=/ });
 export const Slash = createToken({ name: "Slash", pattern: /\// });
 export const Pipe = createToken({ name: "Pipe", pattern: /\|/ });
 export const Dollar = createToken({ name: "Dollar", pattern: /\$/ });
+export const QuestionMark = createToken({ name: "QuestionMark", pattern: /\?/ });
 export const Semicolon = createToken({ name: "Semicolon", pattern: /;/ });
 export const End = createToken({ name: "End", pattern: /eof/ });
 
@@ -88,13 +89,14 @@ export const allTokens = [
   Comma,
   Colon,
   Arrow,
+  QuestionMark,
   Semicolon,
-  End,
   Slash,
   ArrowEqual,
   Equal,
   Pipe,
   Dollar,
+  End,
   Id,
 ];
 // Define the lexer

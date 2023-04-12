@@ -32,6 +32,7 @@ import {
   publicKey,
   secretKey,
   Set,
+  QuestionMark,
 } from "./lexer.js";
 //Lexical Tokens
 
@@ -98,9 +99,13 @@ export class SepoParser extends CstParser {
     this.CONSUME(Colon);
     this.MANY_SEP({
       SEP: Comma,
-      DEF: () => this.SUBRULE(this.type),
+      DEF: () => this.SUBRULE(this.knowledgeItem),
     });
     this.CONSUME(Semicolon);
+  });
+  private knowledgeItem = this.RULE("knowledgeItem", () => {
+    this.SUBRULE(this.type);
+    this.OPTION(() => this.SUBRULE(this.stmtComment));
   });
 
   private keyRelationList = this.RULE("keyRelationList", () => {
@@ -253,6 +258,12 @@ export class SepoParser extends CstParser {
       },
     ]);
     this.CONSUME(Semicolon);
+    this.OPTION(() => this.SUBRULE(this.stmtComment));
+  });
+
+  private stmtComment = this.RULE("stmtComment", () => {
+    this.CONSUME(QuestionMark);
+    this.OR([{ ALT: () => this.CONSUME(StringLiteral) }, { ALT: () => this.SUBRULE(this.latex) }]);
   });
 
   private clear = this.RULE("clear", () => {

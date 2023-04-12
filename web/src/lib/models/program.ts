@@ -27,6 +27,7 @@ import type {
   Protocol,
   Equations,
   Equation,
+  StmtComment,
 } from "$lang/types/parser/interfaces";
 import { getSimpleStringFromExpression, getStringFromType } from "$lib/utils/stringUtil";
 import { EquationMap } from "./EquationMap";
@@ -108,8 +109,8 @@ export class Program {
     //Add given knowledge to participants
     if (knowledge) {
       knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
-        knowledge.children.forEach((child: Type) => {
-          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, { type: "rawKnowledge", knowledge: child });
+        knowledge.children.forEach((child: {value: Type, comment?: StmtComment}) => {
+          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, { type: "rawKnowledge", knowledge: child.value, comment: child.comment });
         });
       });
       if (this.log) console.log("Knowledge added to participants", this.init_participants);

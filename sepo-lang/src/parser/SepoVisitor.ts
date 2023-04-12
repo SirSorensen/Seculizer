@@ -32,6 +32,7 @@ import {
   Knowledge,
   KnowledgeCST,
   KnowledgeItem,
+  KnowledgeItemCST,
   KnowledgeListCST,
   LatexCST,
   LatexLiteral,
@@ -62,10 +63,12 @@ import {
   SignExpression,
   Statement,
   StatementCST,
+  StmtCommentCST,
   Type,
   TypeCST,
 } from "./interfaces.js";
-import { CstNode, IToken } from "chevrotain";
+import { IToken } from "chevrotain";
+import { StmtComment } from "./interfaces";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -139,9 +142,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  knowledge(ctx: KnowledgeCST): KnowledgeItem {
+  knowledge(ctx: KnowledgeCST): KnowledgeItem {    
     const id: string = ctx.Id[0].image;
-    const children = ctx.type.map((t: TypeCST) => this.visit(t));
+    const children = ctx.knowledgeItem.map((k: KnowledgeItemCST) => this.visit(k));
     return {
       type: "knowledgeItem",
       id: {
@@ -149,6 +152,15 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         value: id,
       },
       children: children,
+    };
+  }
+
+  knowledgeItem(ctx:KnowledgeItemCST):{value: Type, comment?: StmtComment}{
+    const type:Type = this.visit(ctx.type);
+    const comment:(StmtComment | undefined) = ctx.stmtComment ? this.visit(ctx.stmtComment) : undefined;
+    return {
+      value: type,
+      comment: comment,
     };
   }
 
@@ -320,11 +332,13 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   statement(ctx: StatementCST): Statement {
+    const comment = this.visit(ctx.stmtComment);
     const clear = this.visit(ctx.clear);
     if (clear) {
       return {
         type: "statement",
         child: clear,
+        comment: comment,
       };
     }
     const participantStatement = this.visit(ctx.participantStatement);
@@ -332,6 +346,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
       return {
         type: "statement",
         child: participantStatement,
+        comment: comment,
       };
     }
     if (ctx.Id && ctx.Id.length >= 2) {
@@ -354,6 +369,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         return {
           type: "statement",
           child: send,
+          comment: comment,
         };
       }
       const messageSend = this.visit(ctx.messageSend);
@@ -373,11 +389,26 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         return {
           type: "statement",
           child: send,
+          comment: comment,
         };
       }
     }
-    //TODO THROW ERROR HERE and remove possibility of null
     return throwSimpleParseError("Uknown statement", ctx[Object.keys(ctx)[0]][0], this.template);
+  }
+
+  stmtComment(ctx: StmtCommentCST): StmtComment {
+    const latexComment = this.visit(ctx.latex);
+    if (latexComment) {
+      return {
+        type: "stmtComment",
+        value: latexComment,
+      };
+    }
+    const stringComment = ctx.StringLiteral[0].image;
+    return {
+      type: "stmtComment",
+      value: { type: "string", value: stringComment.slice(1, -1) },
+    };
   }
 
   clear(ctx: ClearCST): ClearStatement {

@@ -111,7 +111,7 @@ export interface Knowledge extends ASTNode {
 export interface KnowledgeItem extends ASTNode {
   type: "knowledgeItem";
   id: Id;
-  children: Type[];
+  children: {value: Type, comment?: StmtComment}[];
 }
 
 export interface Protocol extends ASTNode {
@@ -122,6 +122,12 @@ export interface Protocol extends ASTNode {
 export interface Statement extends ASTNode {
   type: "statement";
   child: StatementNode;
+  comment?: StmtComment;
+}
+
+export interface StmtComment extends ASTNode {
+  type: "stmtComment";
+  value: LatexLiteral | StringLiteral;
 }
 
 export interface StatementNode extends ASTNode {}
@@ -231,7 +237,12 @@ export interface KnowledgeListCST extends CstNode {
 
 export interface KnowledgeCST extends CstNode {
   Id: IToken[];
+  knowledgeItem: KnowledgeItemCST[];
+}
+
+export interface KnowledgeItemCST extends CstNode {
   type: TypeCST[];
+  stmtComment?: StmtCommentCST;
 }
 
 export interface KeyRelationListCST extends CstNode {
@@ -293,9 +304,14 @@ export interface StatementCST extends CstNode {
   Id: IToken[];
   match: MatchCST;
   messageSend: MessageSendCST;
+  stmtComment: StmtCommentCST;
   [key: string]: any;
 }
 
+export interface StmtCommentCST extends CstNode {
+  StringLiteral: IToken[];
+  latex: LatexCST;
+}
 export interface ClearCST extends CstNode {
   Id: IToken[];
 }
