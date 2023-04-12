@@ -29,10 +29,11 @@
         htmlLabels: true,
       },
     });
+    isInitialized = true;
+    if(!graph) return;
     getContent();
     const { svg } = await mermaid.render("graphDiv", content);
     graph.innerHTML = svg;
-    isInitialized = true;
   });
 
   function rerender() {

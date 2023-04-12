@@ -294,7 +294,7 @@ export class Program {
   // Set Statement
   setStmnt(participant: string, knowledge: Type, value: Type, last: Frame) {
     last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: knowledge, value: value});
-    last.addToHistory(HistoryTemplates.set(participant, knowledge, value, this), `Note over ${participant}: ${getStringFromType(knowledge)} = ${value}`);
+    last.addToHistory(HistoryTemplates.set(participant, knowledge, value, this), `Note over ${participant}: ${getStringFromType(knowledge)} = ${getStringFromType(value)}`);
   }
 
   // Pipe SendStatement to messageSendStatement, or matchStatement
