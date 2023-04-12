@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade, fly } from "svelte/transition";
   import type { Id, Type } from "$lang/types/parser/interfaces";
   import { program } from "$lib/stores/programStore";
   import { getStringFromType } from "$lib/utils/stringUtil";
@@ -8,39 +9,11 @@
   export let name: Id;
   export let emoji: string;
   export let knowledge: VisualKnowledge[] = [];
-
-  let container: HTMLDivElement;
+  export let pos = { left: 0, top: 0 };
+  export let element: HTMLElement;
   let showKnowledge = false;
-  export function accordion(node: HTMLDivElement, showKnowledge: boolean) {
-    let initialHeight = node.offsetHeight;
-    node.style.height = showKnowledge ? "auto" : "0";
-    node.style.overflow = "hidden";
-    return {
-      update(showKnowledge: boolean) {
-        let animation = node.animate(
-          [
-            {
-              height: initialHeight + "px",
-              overflow: "hidden",
-            },
-            {
-              height: 0,
-              overflow: "hidden",
-            },
-          ],
-          { duration: 500, fill: "both" }
-        );
-        animation.pause();
-        if (!showKnowledge) {
-          animation.play();
-        } else {
-          animation.reverse();
-        }
-      },
-    };
-  }
 
-  function nodeContains(event: MouseEvent, container: HTMLDivElement) {
+  function nodeContains(event: MouseEvent, container: HTMLElement) {
     let node = event.relatedTarget as Node;
     return container.contains(node);
   }
@@ -58,8 +31,10 @@
 </script>
 
 <div
-  class="outerContainer"
-  bind:this={container}
+  class="participantContainer"
+  style:left={pos.left + "px"}
+  style:top={pos.top + "px"}
+  bind:this={element}
   on:focus={() => {
     showKnowledge = true;
   }}
@@ -70,17 +45,18 @@
     showKnowledge = true;
   }}
   on:mouseout={(e) => {
-    if (nodeContains(e, container)) return;
-
+    if (nodeContains(e, element)) return;
     showKnowledge = false;
   }}
 >
-  <div class="container">
+  <div class="participantInnerContainer">
     <div class="participant-item">
       <Item value={name} {emoji} />
     </div>
-    {#key knowledge.length}
-      <div class="knowledges" use:accordion={showKnowledge}>
+  </div>
+  {#key knowledge.length}
+    {#if showKnowledge}
+      <div class="knowledges" in:fly={{ y: -100, duration: 500 }} out:fade>
         {#if knowledge.length === 0}
           <p class="emptyText">Empty</p>
         {:else}
@@ -120,15 +96,16 @@
           {/each}
         {/if}
       </div>
-    {/key}
-  </div>
+    {/if}
+  {/key}
 </div>
 
 <style>
-  div.outerContainer {
-    width: 100%;
+  div.participantContainer {
+    position: absolute;
+    z-index: 5;
   }
-  div.container {
+  div.participantInnerContainer {
     background-color: #fff3d3;
     align-items: center;
     font-size: 1.5rem;
@@ -140,7 +117,7 @@
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
     transition: all 2s ease-in-out;
     width: 125px;
-    min-height: 125px;
+    height: 125px;
   }
   .knowledges {
     overflow: hidden;

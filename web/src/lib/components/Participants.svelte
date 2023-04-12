@@ -43,14 +43,13 @@
 <div class="container" bind:this={container} bind:offsetWidth={containerWidth} bind:offsetHeight={containerHeight}>
   {#if positions.length > 0}
     {#each participants as parti, index}
-      <div
-        class="participantContainer"
-        style:left={positions[index].x + "px"}
-        style:top={positions[index].y + "px"}
-        bind:this={participantElements[parti.Name.value]}
-      >
-        <Participant name={parti.Name} emoji={parti.Emoji} knowledge={parti.Knowledge} />
-      </div>
+      <Participant
+        bind:element={participantElements[parti.Name.value]}
+        pos={{ left: positions[index].x, top: positions[index].y }}
+        name={parti.Name}
+        emoji={parti.Emoji}
+        knowledge={parti.Knowledge}
+      />
     {/each}
   {/if}
 </div>
@@ -63,10 +62,5 @@
     align-items: flex-start;
     height: 100%;
     position: relative;
-  }
-
-  div.participantContainer {
-    position: absolute;
-    z-index: 5;
   }
 </style>
