@@ -68,7 +68,7 @@ export interface FunctionsDef extends ASTNode {
 export interface FunctionDefItem extends ASTNode {
   type: "functionDef";
   id: Id;
-  params: Number;
+  params: number;
 }
 
 export interface Equations extends ASTNode {
