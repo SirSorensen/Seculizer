@@ -3,7 +3,7 @@
   import { getIconFromType } from "$lib/utils/stringUtil";
   import CommonKnowledge from "./CommonKnowledge.svelte";
   import Statement from "./messages/Statements/Statement.svelte";
-  import type { Id, Statement as StatementAST } from "$lang/types/parser/interfaces";
+  import type { Id, Statement as StatementAST, StmtComment } from "$lang/types/parser/interfaces";
   import Participants from "./Participants.svelte";
   import type { NextFrameNavigation } from "src/types/app";
   import type { ParticipantElements, ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
@@ -15,6 +15,7 @@
   let participants: {
     Name: Id;
     Emoji: string;
+    Comment?: StmtComment;
     Knowledge: VisualKnowledge[];
   }[] = [];
   let commonKnowledge: VisualKnowledge[] = [];
@@ -28,10 +29,12 @@
         const obj: {
           Name: Id;
           Emoji: string;
+          Comment?: StmtComment;
           Knowledge: VisualKnowledge[];
         } = {
           Name: { type: "id", value: participant.getName() },
           Emoji: $program.getIcon(participant.getName()), //participant.emoji
+          Comment: participant.getComment(),
           Knowledge: participant.getKnowledgeList().sort((a, b) => b.id - a.id).map(({item,id}) => {            
             const emoji = item.type === "encryptedKnowledge" ? "🔒" : getIconFromType(item.knowledge, $program);
             return {

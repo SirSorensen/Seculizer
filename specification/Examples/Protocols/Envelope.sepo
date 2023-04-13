@@ -1,4 +1,4 @@
-Participants: Alice, Parent, TPM;
+Participants: Alice, Parent, TPM ? "Trusted Platform Module, a secure cryptoprocessor";
 Knowledge: {
     TPM: tpm_sk;
     Shared: tpm_pk;
@@ -19,7 +19,7 @@ Protocol: {
     Alice -> TPM: "Boot"; ? "Alice boots the TPM"
     TPM: pcr := '1'; ? "The TPM initilize PCR to 1"
     TPM -> Alice: "Booted";
-    Alice: new n; ? "A new nonce is generated"
+    Alice: new n ? "Nonce"; ? "A new nonce is generated"
     Alice: new esk; ? "A new session key is generated"
     Alice -> TPM: "Session", {esk}tpm_pk; ? "Alice sends the TPM a session key encrypted with the TPM's public key"
     TPM: new sid; ? "The TPM generates a new session id"

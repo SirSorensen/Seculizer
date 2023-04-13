@@ -1,7 +1,7 @@
 Participants: Alice, Bob;
 Knowledge: {
             Alice: X ? "This is an nonce", msgA;
-            Bob: Y, msgB;
+            Bob: Y ? "This is a random number", msgB ? "This is Bob's message";
             Shared: g ? "This is a generator";
         };
       

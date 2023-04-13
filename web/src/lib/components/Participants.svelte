@@ -1,11 +1,12 @@
 <script lang="ts">
-  import type { Id } from "$lang/types/parser/interfaces";
+  import type { Id, StmtComment } from "$lang/types/parser/interfaces";
   import { calcPositions } from "$lib/utils/PositionUtil";
   import type { VisualKnowledge } from "src/types/participant";
   import Participant from "./Participant.svelte";
   export let participants: {
     Name: Id;
     Emoji: string;
+    Comment?: StmtComment
     Knowledge: VisualKnowledge[];
   }[] = [];
 
@@ -27,6 +28,7 @@
         bind:element={participantElements[parti.Name.value]}
         pos={{ left: positions[index].x, top: positions[index].y }}
         name={parti.Name}
+        comment={parti.Comment}
         emoji={parti.Emoji}
         knowledge={parti.Knowledge}
       />

@@ -1,5 +1,4 @@
 import type {
-  Participant as ParticipantAST,
   Statement,
   ParticipantStatement,
   SendStatement,
@@ -28,6 +27,7 @@ import type {
   Equations,
   Equation,
   StmtComment,
+  ParticipantItem,
 } from "$lang/types/parser/interfaces";
 import { getSimpleStringFromExpression, getStringFromType } from "$lib/utils/stringUtil";
 import { EquationMap } from "./EquationMap";
@@ -94,8 +94,8 @@ export class Program {
     if (participants) {
       if (this.log) console.log(participants.participants);
 
-      participants.participants.forEach((participant: ParticipantAST) => {
-        this.init_participants.addParticipant(participant.id.value);
+      participants.participants.forEach((participant: ParticipantItem) => {
+        this.init_participants.addParticipant(participant.id.value, participant.comment);
       });
       if (this.log) console.log("Participants created", this.init_participants);
     } else if (this.log) console.log("No participants found");
@@ -277,7 +277,7 @@ export class Program {
     // Pipe ParticipantStatement
     if (stmnt.child.type == "newStatement") {
       const newStmnt = stmnt.child as NewStatement;
-      this.newStmnt(stmnt.id.value, newStmnt.id, last);
+      this.newStmnt(stmnt.id.value, newStmnt.id, last, newStmnt.comment);
     } else if (stmnt.child.type == "setStatement") {
       const sendStmnt = stmnt.child as SetStatement;
       this.setStmnt(stmnt.id.value, sendStmnt.id, sendStmnt.value, last);
@@ -287,8 +287,8 @@ export class Program {
   }
 
   // New Statement
-  newStmnt(participant: string, newKnowledge: Type, last: Frame) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge });
+  newStmnt(participant: string, newKnowledge: Type, last: Frame, comment?: StmtComment) {
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
     last.addToHistory(HistoryTemplates.new(participant, newKnowledge, this), `Note over ${participant}: New ${getStringFromType(newKnowledge)}`);
   }
 

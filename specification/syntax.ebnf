@@ -43,12 +43,12 @@ new_stmt ::= "new " id      /* Example: Alice: new msgA; */
 set_stmt ::= id ":=" type   /* Example: TPM: pid := "1" ; */
 
 /* ---- Participants ---- */
-participants ::= participant ("," participant)* /* Example: alice, bob */
+participants ::= participant stmtComment? ("," stmtComment?)* /* Example: alice, bob */
 participant ::= id                              /* Example: alice */
 
 /* ---- Knowledge ---- */
 knowledge_list ::= "{" knowledge* "}" ";"                                   /* Example: {Alice: X, msgA; Bob: Y, msgB; Shared: g; }; */
-knowledge ::= participant ":" type ("," type)* ";"    /* Example: Alice: X, msgA; */
+knowledge ::= participant ":" type stmtComment? ("," type stmtComment?)* ";"    /* Example: Alice: X, msgA; */
 
 /* ---- KeyRelations ---- */
 keyRelations ::= keyRelation ("," keyRelation)*                                     /* Example: KeyRelations: (sk:tmp_sk, pk:tpm_pk), (pk:a_pk, sk:a_sk); */

@@ -41,7 +41,13 @@ export interface Program extends ASTNode {
 
 export interface Participants extends ASTNode {
   type: "participants";
-  participants: Participant[];
+  participants: ParticipantItem[];
+}
+
+export interface ParticipantItem extends ASTNode {
+  type: "participantItem";
+  id: Id;
+  comment?: StmtComment;
 }
 
 export interface Participant extends ASTNode {
@@ -148,6 +154,7 @@ export interface ParticipantStatementNode extends ASTNode {}
 export interface NewStatement extends ParticipantStatementNode {
   type: "newStatement";
   id: Id;
+  comment?: StmtComment;
 }
 
 export interface SetStatement extends ParticipantStatementNode {
@@ -224,9 +231,13 @@ export interface FunctionCallCST extends CstNode {
 }
 
 export interface ParticipantsCST extends CstNode {
-  participant: ParticipantCST[];
+  participantItem: ParticipantItemCST[];
 }
 
+export interface ParticipantItemCST extends CstNode {
+  participant: ParticipantCST;
+  stmtComment?: StmtCommentCST;
+}
 export interface ParticipantCST extends CstNode {
   Id: IToken[];
 }
@@ -325,6 +336,7 @@ export interface ParticipantStatementCST extends CstNode {
 
 export interface NewCST extends CstNode {
   Id: IToken[];
+  stmtComment?: StmtCommentCST;
 }
 
 export interface SetCST extends CstNode {

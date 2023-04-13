@@ -44,8 +44,9 @@ import {
   MessageSendStatement,
   NewCST,
   NewStatement,
-  Participant,
   ParticipantCST,
+  ParticipantItem,
+  ParticipantItemCST,
   Participants,
   ParticipantsCST,
   ParticipantStatement,
@@ -68,7 +69,7 @@ import {
   TypeCST,
 } from "./interfaces.js";
 import { IToken } from "chevrotain";
-import { StmtComment } from "./interfaces";
+import { StmtComment, Participant } from './interfaces';
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -209,11 +210,21 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   participants(ctx: ParticipantsCST): Participants {
-    const participants = ctx.participant.map((p: ParticipantCST) => this.visit(p));
+    const participants = ctx.participantItem.map((p: ParticipantItemCST) => this.visit(p));
 
     return {
       type: "participants",
       participants: participants,
+    };
+  }
+
+  participantItem(ctx: ParticipantItemCST): ParticipantItem {
+    const participant: Participant = this.visit(ctx.participant);
+    const comment: StmtComment | undefined = ctx.stmtComment ? this.visit(ctx.stmtComment) : undefined;
+    return {
+      type: "participantItem",
+      id: participant.id,
+      comment: comment,
     };
   }
 
@@ -452,12 +463,14 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   new(ctx: NewCST): NewStatement {
     const id: string = ctx.Id[0].image;
+    const comment = ctx.stmtComment ? this.visit(ctx.stmtComment) : undefined;
     return {
       type: "newStatement",
       id: {
         type: "id",
         value: id,
       },
+      comment: comment,
     };
   }
 

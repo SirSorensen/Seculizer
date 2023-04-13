@@ -1,13 +1,15 @@
 <script lang="ts">
   import { fade, fly } from "svelte/transition";
-  import type { Id, Type } from "$lang/types/parser/interfaces";
+  import type { Id, StmtComment, Type } from "$lang/types/parser/interfaces";
   import { program } from "$lib/stores/programStore";
   import { getStringFromType } from "$lib/utils/stringUtil";
   import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import Item from "./Item.svelte";
   import Latex from "./Latex.svelte";
+  import Comment from "./Comment.svelte";
   export let name: Id;
   export let emoji: string;
+  export let comment: StmtComment | undefined;
   export let knowledge: VisualKnowledge[] = [];
   export let pos = { left: 0, top: 0 };
   export let element: HTMLElement;
@@ -51,17 +53,25 @@
     endHover = true;
     setTimeout(() => {
       if (endHover) showKnowledge = false;
-    }, 1000);
+    }, 750);
   }}
 >
   <div class="participantInnerContainer">
     <div class="participant-item">
-      <Item value={name} {emoji} />
+      {#if comment}
+        <Item value={name} {emoji}>
+          <svelte:fragment slot="hover">
+            <Comment {comment} />
+          </svelte:fragment>
+        </Item>
+      {:else}
+        <Item value={name} {emoji} />
+      {/if}
     </div>
   </div>
   {#key knowledge.length}
     {#if showKnowledge}
-      <div class="knowledges" in:fly={{ y: -100, duration: 500 }} out:fade>
+      <div class="knowledges" in:fly={{ y: -100, duration: 500 }} out:fly={{ y: -50, duration: 350 }}>
         {#if knowledge.length === 0}
           <p class="emptyText">Empty</p>
         {:else}
@@ -99,14 +109,10 @@
                       <!--Should this value be available if encrypted?-->
                     {/if}
                     <svelte:fragment slot="hover">
-                      {#if visualKnowledge.knowledge.comment.value.type === "string"}
-                        <small>{visualKnowledge.knowledge.comment.value.value}</small>
-                      {:else}
-                        <Latex input={visualKnowledge.knowledge.comment.value.value} />
-                      {/if}
+                      <Comment comment={visualKnowledge.knowledge.comment} />
                     </svelte:fragment>
                   </Item>
-                  {:else}
+                {:else}
                   <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
                     {#if value}
                       <div class="knowledgeValue">

@@ -162,9 +162,14 @@ export class SepoParser extends CstParser {
   private participants = this.RULE("participants", () => {
     this.MANY_SEP({
       SEP: Comma,
-      DEF: () => this.SUBRULE(this.participant),
+      DEF: () => this.SUBRULE(this.participantItem),
     });
     this.CONSUME(Semicolon);
+  });
+
+  private participantItem = this.RULE("participantItem", () => {
+    this.SUBRULE(this.participant);
+    this.OPTION(() => this.SUBRULE(this.stmtComment));
   });
 
   private participant = this.RULE("participant", () => {
@@ -284,6 +289,9 @@ export class SepoParser extends CstParser {
   private new = this.RULE("new", () => {
     this.CONSUME(New);
     this.CONSUME(Id);
+    this.OPTION(() => {
+      this.SUBRULE(this.stmtComment);
+    });
   });
 
   private set = this.RULE("set", () => {

@@ -1,4 +1,4 @@
-Participants: Alice, Parent, TPM; //test
+Participants: Alice ? "ALICE IS PREGANT?", Parent, TPM; //test
 Knowledge: {
     TPM: tpm_sk ? "secret key of TPM", tes, test ? "test";
     Shared: tpm_pk;
@@ -19,7 +19,7 @@ Protocol: {
     Alice -> TPM: "Boot";
     TPM: pcr := '1'; ? "We initilize PCR in the TPM to 1"
     TPM -> Alice: "Booted";
-    Alice: new n; ? $n=5$
+    Alice: new n ? "Nonce?"; ? $n=5$
     Alice: new esk;
     Alice -> TPM: "Session", {esk}tpm_pk;
     TPM: new sid;

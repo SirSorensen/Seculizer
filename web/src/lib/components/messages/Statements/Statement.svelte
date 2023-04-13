@@ -8,13 +8,13 @@
   } from "$lang/types/parser/interfaces";
 	import { quintOut } from 'svelte/easing';
 	import { crossfade } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
   import type { NextFrameNavigation } from "src/types/app";
   import ClearStatement from "./ClearStatement.svelte";
   import SendStatement from "./SendStatement.svelte";
   import ParticipantStatement from "./ParticipantStatement.svelte";
   import type { ParticipantElements } from "src/types/participant";
   import Latex from "$lib/components/Latex.svelte";
+    import Comment from "$lib/components/Comment.svelte";
   const [send, receive] = crossfade({
 		fallback(node, params) {
 			const style = getComputedStyle(node);
@@ -50,11 +50,7 @@
 {/if}
 {#if statement.comment && statement.comment !== null}
     <p class="comment" in:receive={{key: statement.comment.value}} out:send={{key: statement.comment.value}}>
-      {#if statement.comment.value.type === "string"}
-        {statement.comment.value.value}
-      {:else if statement.comment.value.type === "latex"}
-        <Latex input={statement.comment.value.value} />
-      {/if}
+      <Comment comment={statement.comment} />
     </p>
 {/if}
 

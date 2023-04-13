@@ -1,11 +1,15 @@
+import type { StmtComment } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge } from "src/types/participant";
 
 export class Participant {
   private name: string;
   private knowledge: { item: ParticipantKnowledge, id:number }[];
   private currentKnowledgeId = 0;
-  constructor(name: string, knowledge: { item: ParticipantKnowledge, id:number }[] = []) {
+  private comment?: StmtComment;
+  constructor(name: string, knowledge: { item: ParticipantKnowledge, id:number }[] = [], comment?: StmtComment) {
     this.name = name;
+    this.comment = comment;
+    
     this.knowledge = knowledge;
     this.knowledge.forEach(({ id }) => {
       if(id > this.currentKnowledgeId) this.currentKnowledgeId = id;
@@ -72,5 +76,9 @@ export class Participant {
       return tmp.length === 0;
     }
     return false;
+  }
+
+  getComment(): StmtComment | undefined {
+    return this.comment;
   }
 }

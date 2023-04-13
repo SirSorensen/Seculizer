@@ -1,4 +1,4 @@
-import type { Type } from "$lang/types/parser/interfaces";
+import type { StmtComment, Type } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge } from "src/types/participant";
 import { Participant } from "./Participant";
 
@@ -8,7 +8,7 @@ export class ParticipantMap {
   constructor(participants: { [id: string]: Participant } = {}) {
     Object.keys(participants).forEach(
       (participant: string) =>
-        (this.participants[participant] = new Participant(participant, participants[participant].cloneKnowledgeList()))
+        (this.participants[participant] = new Participant(participant, participants[participant].cloneKnowledgeList(), participants[participant].getComment()))
     );
   }
 
@@ -29,8 +29,8 @@ export class ParticipantMap {
   }
 
   // Add participant to map
-  addParticipant(name: string) {
-    this.participants[name] = new Participant(name, []);
+  addParticipant(name: string, comment?: StmtComment) {
+    this.participants[name] = new Participant(name, [], comment);
   }
 
   // Insert given knowledge into given participant or update existing knowledge
