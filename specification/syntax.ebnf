@@ -21,7 +21,6 @@ stmt ::=
     message_send_stmt
     | match_stmt
     | clear_stmt
-    | call_stmt
     | participant_stmt
 
 message_send_stmt ::= id "->" id ":" expression ("," expression)* ";"   /* Example: alice -> bob: key, key2*/
@@ -34,8 +33,6 @@ match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: 
 match_case ::= type ":" "{" stmt* "}" ";"                           /* Example: "refuse": { ... }; */
 
 clear_stmt ::= "clear" ":" id ("," id)* ";"   /* Example: clear akey; */
-
-call_stmt ::= function ("," function)*";"   /* Example: f(x); */
 
 participant_stmt ::= id ": " (new_stmt | set_stmt) ";"  /* Example: Alice: new msgA; */
 
