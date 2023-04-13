@@ -7,6 +7,7 @@
   import type { ParticipantElements } from "src/types/participant";
 
   import { program } from "$lib/stores/programStore.js";
+  import Comment from "$lib/components/Comment.svelte";
 
   export let stmnt: ParticipantStatement;
   export let participantElements: ParticipantElements = {
@@ -53,7 +54,13 @@
     {@const id = newStmnt.id}
     {@const icon = $program.getIcon(id.value)}
     <ActionBox title="new">
-      <Item emoji={icon} value={id} />
+      {#if newStmnt.comment}
+        <Item emoji={icon} value={id}>
+          <Comment comment={newStmnt.comment} slot="hover" />
+        </Item>
+      {:else}
+        <Item emoji={icon} value={id} />
+      {/if}
     </ActionBox>
   {:else if child.type === "setStatement"}
     {@const setStmnt = castToSetStatement(child)}
