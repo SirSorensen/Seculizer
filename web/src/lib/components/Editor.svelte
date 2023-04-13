@@ -30,42 +30,30 @@ Protocol: {
     tokenType: TokenType;
   };
   let tokens: Token[] = [];
-  let ids: string[] = [];
+
   $: {
     if (content !== "" && content) {
       tokens = SepoLexer.tokenize(content + " eof").tokens;
       let tmp = new MagicString(content);
-      tokens.forEach((token) => {
-        let type = token.tokenType.name;
-        if (type === "End") return;
-        if (type === "Id") {
-          if (!ids.includes(token.image)) ids.push(token.image);
-        }
-        const addBefore = `<span class="token token-${type}">`;
-        const addAfter = `</span>`;
-
-        tmp.update(token.startOffset, token.startOffset + token.image.length, addBefore + token.image + addAfter);
-      });
       let re = /(\r\n)|\n/g;
       let match;
       let line = 0;
       tmp.prependLeft(0, `<span class="line">${line++}</span>`);
       while ((match = re.exec(content)) != null) {
         tmp.update(match.index, match.index + match[0].length, `</br><span class="line">${line++}</span>`);
+        //tmp.prependLeft(match.index, `<span class="line">${line++}</span>`);
       }
+      tokens.forEach((token) => {
+        let type = token.tokenType.name;
+        if (type === "End") return;
+        const addBefore = `<span class="token token-${type}">`;
+        const addAfter = `</span>`;
+
+        tmp.update(token.startOffset, token.startOffset + token.image.length, addBefore + token.image + addAfter);
+      });
       try {
         let ast = parse(content, false);
         let program = new Program(ast, false);
-        let icons = program.getIcons();
-        let tmpIds: string[] = [];
-        ids.forEach((id) => {
-          if (id === "Shared") return;
-          let icon = icons.get(id);
-          if (!icon) {
-            tmpIds.push(id);
-          }
-        });
-        ids = tmpIds;
       } catch (e: any) {
         if (e instanceof Error && e instanceof ParseError) {
           let error = e as ParseError;
@@ -76,6 +64,7 @@ Protocol: {
             addBefore = `<span class="line">0</span>` + addBefore;
           }
           const addAfter = `</span>`;
+
           tmp.prependLeft(location.start, addBefore);
           tmp.appendRight(location.end + 1, addAfter);
         } else {
@@ -111,6 +100,49 @@ Protocol: {
     }
   }
 
+  function handleKeyPress(e: KeyboardEvent) {
+    if (!(e.target instanceof HTMLTextAreaElement)) return;
+
+    if (e.key === "Tab") {
+      e.preventDefault();
+
+      const start = e.target.selectionStart;
+      const end = e.target.selectionEnd;
+      content = content.substring(0, start) + "  " + content.substring(end);
+      setTimeout(() => {
+        if (!(e.target instanceof HTMLTextAreaElement)) return;
+        e.target.selectionStart = e.target.selectionEnd = start + 2;
+      }, 1);
+    } else if (e.key === "{" || e.key === "(" || e.key === "[" || e.key === '"') {
+      e.preventDefault();
+      const start = e.target.selectionStart;
+      const end = e.target.selectionEnd;
+      const alt = e.key === "{" ? "}" : e.key === "(" ? ")" : e.key === "[" ? "]" : '"';
+      content = content.substring(0, start) + e.key + alt + content.substring(end);
+      setTimeout(() => {
+        if (!(e.target instanceof HTMLTextAreaElement)) return;
+        e.target.selectionStart = e.target.selectionEnd = start + 1;
+      }, 1);
+    } else if (e.key === "Backspace") {
+      const start = e.target.selectionStart;
+      const end = e.target.selectionEnd;
+      if (start === end && start > 0) {
+        const deleted = content[start - 1];
+        if (deleted === "{" || deleted === "(" || deleted === "[" || deleted === '"') {
+          const alt = deleted === "{" ? "}" : deleted === "(" ? ")" : deleted === "[" ? "]" : '"';
+          if (content[start] !== alt) return;
+
+          e.preventDefault();
+          content = content.substring(0, start - 1) + content.substring(end + 1);
+          setTimeout(() => {
+            if (!(e.target instanceof HTMLTextAreaElement)) return;
+            e.target.selectionStart = e.target.selectionEnd = start - 1;
+          }, 1);
+        }
+      }
+    }
+  }
+
   let dark = true;
 </script>
 
@@ -128,6 +160,7 @@ Protocol: {
     placeholder="Insert code here..."
     bind:value={content}
     on:scroll={updateScroll}
+    on:keydown={handleKeyPress}
   />
   <pre class="highlighter" aria-hidden="true" bind:this={preElement}><code>{@html hightlighted}</code></pre>
   <div id="darkInputContainer">
@@ -142,7 +175,6 @@ Protocol: {
     <input type="checkbox" name="dark-mode" id="darkinput" bind:checked={dark} />
   </div>
 </div>
-{ids}
 
 <style>
   .editor-container {
@@ -300,8 +332,8 @@ Protocol: {
   }
   .editor-container :global(.token.token-Error),
   .editor-container :global(.token.token-Error .token) {
-    color: black;
-    background-color: var(--ecolor-error);
+    color: var(--ecolor-text);
+    border-bottom: .15rem dashed var(--ecolor-error);
     position: relative;
   }
 
@@ -319,6 +351,7 @@ Protocol: {
     box-shadow: 0 0 5px;
     margin-top: 0.5rem;
     padding: 0.2rem;
+    color: black;
   }
 
   .editor-container :global(.token.token-Error.hover .tokenErrMsg) {
