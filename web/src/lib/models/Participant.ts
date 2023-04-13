@@ -21,6 +21,10 @@ export class Participant {
     const index = this.findKnowledgeIndex(knowledge);
 
     if (index >= 0) {
+      const { item } = this.knowledge[index];
+      if(knowledge.type === "rawKnowledge" && !knowledge.comment &&item.type == "rawKnowledge"){
+        knowledge.comment = item.comment;
+      }
       this.knowledge[index] = { item: knowledge, id: this.currentKnowledgeId++ };
     } else {
       this.knowledge.push({ item: knowledge, id: this.currentKnowledgeId++ });
@@ -39,13 +43,9 @@ export class Participant {
     this.knowledge = this.knowledge.filter(({ item }) => !this.isKnowledgeEqual(item, elem));
   }
 
-  getKnowledge(knowledge: ParticipantKnowledge): ParticipantKnowledge {
+  getKnowledge(knowledge: ParticipantKnowledge): ParticipantKnowledge | undefined {
     const result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge));
-
-    if (result === undefined) {
-      return knowledge;
-    }
-    return result.item;
+    return result?.item;
   }
 
   cloneKnowledgeList(): { item: ParticipantKnowledge, id:number }[] {

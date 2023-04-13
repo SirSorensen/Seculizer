@@ -100,7 +100,7 @@
     <div class="message" bind:this={message} class:multiMessage={messageSendElements.length > 1}>
       {#each messageSendElements as messageSendElement}
         {@const expression = messageSendElement}
-        <MessageBox messageExpressions={[expression]} />
+        <MessageBox messageExpressions={[expression]} participants={{from: fromId, to: toId}}/>
       {/each}
     </div>
   {:else if child.type === "matchStatement"}

@@ -13,7 +13,9 @@
   import SignIcon from "$lib/Icons/SignIcon.svelte";
   import Latex from "../Latex.svelte";
 
-  import { program } from "$lib/stores/programStore.js";
+  import { currentFrame, program } from "$lib/stores/programStore.js";
+  import Comment from "../Comment.svelte";
+  export let participants: { from: Id; to: Id };
   export let expression: ExpressionAST;
   let child = expression.child;
 
@@ -29,18 +31,20 @@
   {@const encryptExpression = castToEncryptExpression(child)}
   {@const inner = encryptExpression.inner}
   {#each inner as innerExpression}
-    <svelte:self expression={innerExpression} />
+    <svelte:self expression={innerExpression} {participants} />
   {/each}
   {@const outer = encryptExpression.outer}
-  <EncryptIcon encryptType={outer} />
+  {@const encryptComment = outer.type === "id" ? $currentFrame.getParticipantKnowledgeComment(participants.from.value, outer) : undefined}
+  <EncryptIcon encryptType={outer} comment={encryptComment} />
 {:else if child.type === "signExpression"}
   {@const signExpression = castToSignExpression(child)}
   {@const inner = signExpression.inner}
   {#each inner as innerExpression}
-    <svelte:self expression={innerExpression} />
+    <svelte:self expression={innerExpression} {participants} />
   {/each}
   {@const outer = signExpression.outer}
-  <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} />
+  {@const signComment = outer.type === "id" ? $currentFrame.getParticipantKnowledgeComment(participants.from.value, outer) : undefined}
+  <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} comment={signComment} />
 {:else if child.type === "string" || child.type === "number" || child.type === "function"}
   {@const type = castToType(child)}
   <p>
@@ -53,7 +57,14 @@
   </p>
 {:else if child.type === "id"}
   {@const id = castToId(child)}
-  <Item value={id} emoji={$program.getIcon(id.value)} />
+  {@const comment = $currentFrame.getParticipantKnowledgeComment(participants.from.value, id)}
+  {#if comment}
+    <Item value={id} emoji={$program.getIcon(id.value)}>
+      <Comment {comment} slot="hover" />
+    </Item>
+  {:else}
+    <Item value={id} emoji={$program.getIcon(id.value)} />
+  {/if}
 {/if}
 
 <style>

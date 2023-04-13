@@ -8,7 +8,11 @@ export class ParticipantMap {
   constructor(participants: { [id: string]: Participant } = {}) {
     Object.keys(participants).forEach(
       (participant: string) =>
-        (this.participants[participant] = new Participant(participant, participants[participant].cloneKnowledgeList(), participants[participant].getComment()))
+        (this.participants[participant] = new Participant(
+          participant,
+          participants[participant].cloneKnowledgeList(),
+          participants[participant].getComment()
+        ))
     );
   }
 
@@ -56,16 +60,16 @@ export class ParticipantMap {
     if (!receiver) throw new Error("Receiver not found!");
 
     if (this.isSimpleKnowledge(knowledge)) return;
-    if(!sender.doesKnowledgeExist(knowledge)) {
-      console.error("Knowledge not found!", this.participants[senderId].getName(), knowledge);
-      //return;
-    }
     const tmp_knowledge = sender.getKnowledge(knowledge);
-    receiver.setKnowledge(tmp_knowledge);
+    if (tmp_knowledge) receiver.setKnowledge(tmp_knowledge);
+    else {
+      console.error("Knowledge not found!", this.participants[senderId].getName(), knowledge);
+      receiver.setKnowledge(knowledge);
+    }
   }
 
   isSimpleKnowledge(knowledge: ParticipantKnowledge): boolean {
-    if(knowledge.type === "rawKnowledge") {
+    if (knowledge.type === "rawKnowledge") {
       return knowledge.knowledge.type == "string" || knowledge.knowledge.type == "number";
     }
     return knowledge.knowledge.every((item) => this.isSimpleKnowledge(item));

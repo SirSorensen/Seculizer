@@ -49,7 +49,8 @@
     top: 100%;
     left: 0;
     display: none;
-    min-width: 100%;
+    min-width: 100px;
+    text-align: center;
     width: max-content;
     max-width: 300px;
     background-color: #fff3d3;

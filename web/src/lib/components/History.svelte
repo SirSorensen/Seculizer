@@ -43,7 +43,7 @@
 <div class="historyContainer" class:open={historyState.open}>
   <div class="option" class:open={historyState.state === "history"}>
     <ol class="history" bind:this={historyElem}>
-      {#if $currentFrame.getHistory().length > 0}
+      {#if $currentFrame && $currentFrame.getHistory().length > 0}
         {#each $currentFrame.getHistory() as history}
           <li class="history-item">{@html history.string}</li>
         {/each}

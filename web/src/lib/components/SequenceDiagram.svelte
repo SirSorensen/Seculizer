@@ -7,6 +7,7 @@
   let isInitialized = false;
   function getContent() {
     content = "sequenceDiagram\n";
+    if(!$currentFrame) return;
     $currentFrame
       .getParticipantMap()
       .getParticipantsNames()
@@ -50,7 +51,7 @@
   $: $currentFrame && $currentFrame.getHistory() && rerender();
 </script>
 
-{#if $currentFrame.getHistory().length > 0 && content.trim() !== ""}
+{#if $currentFrame && $currentFrame.getHistory().length > 0 && content.trim() !== ""}
   <pre bind:this={graph} />
 {:else}
   <p class="no-history">No history yet</p>

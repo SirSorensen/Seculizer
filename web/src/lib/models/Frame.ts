@@ -1,4 +1,4 @@
-import type { Statement } from "$lang/types/parser/interfaces";
+import type { Id, Statement, StmtComment } from "$lang/types/parser/interfaces";
 import type { Participant } from "./Participant";
 import { ParticipantMap } from "./ParticipantMap";
 
@@ -114,5 +114,14 @@ export class Frame {
 
   addToHistory(history: string, mermaid: string) {
     this.history.push({string: history, mermaid: mermaid});
+  }
+
+  getParticipantKnowledgeComment(participantId:string, id:Id): StmtComment | undefined {
+    let knowledge = this.participantMap.getParticipant(participantId).getKnowledge({type: "rawKnowledge", knowledge: id});
+    if (knowledge && knowledge.type == "rawKnowledge") return knowledge.comment;
+    //Check shared
+    knowledge = this.participantMap.getParticipant("Shared").getKnowledge({type: "rawKnowledge", knowledge: id});
+    if (knowledge && knowledge.type == "rawKnowledge") return knowledge.comment;
+    return undefined;
   }
 }

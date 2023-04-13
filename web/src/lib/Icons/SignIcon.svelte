@@ -1,14 +1,24 @@
 <script lang="ts">
-  import type { Type } from "$lang/types/parser/interfaces";
+  import type { StmtComment, Type } from "$lang/types/parser/interfaces";
   import Emoji from "$lib/components/Emoji.svelte";
   import Latex from "$lib/components/Latex.svelte";
+    import Comment from "$lib/components/Comment.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
+  import { program } from "$lib/stores/programStore.js";
   export let signType: Type;
   export let signieIcon: string;
-  import { program } from "$lib/stores/programStore.js";
+  export let comment: StmtComment | undefined;
+  let item: HTMLElement;
+  let hoverValues = { left: "0px", top: "100%" };
+  function handleMouse(e: MouseEvent) {
+    const { clientX, clientY } = e;
+    const { left, top } = item.getBoundingClientRect();
+    hoverValues.left = `${clientX - left + 10}px`;
+    hoverValues.top = `${clientY - top + 10}px`;
+  }
 </script>
 
-<div class="sign-icon">
+<div class="sign-icon" bind:this={item} on:mousemove={handleMouse}>
   <div class="emoji-container">
     <Emoji content="pen" />
     <span class="signie-emoji">
@@ -23,6 +33,11 @@
       {getStringFromType(signType)}
     {/if}
   </p>
+  {#if comment}
+    <div class="item-hover" style:left={hoverValues.left} style:top={hoverValues.top}>
+      <Comment {comment} />
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -50,5 +65,26 @@
     font-size: 2rem;
     margin: 0;
     text-align: center;
+  }
+  
+  .sign-icon .item-hover {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    min-width: 100px;
+    text-align: center;
+    width: max-content;
+    max-width: 300px;
+    background-color: #fff3d3;
+    text-align: center;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+    padding: 0.5rem;
+    z-index: 10;
+    font-size: 1rem;
+  }
+
+  .sign-icon:hover .item-hover {
+    display: flex;
   }
 </style>

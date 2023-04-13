@@ -1,12 +1,13 @@
 <script lang="ts">
   import ExpressionBox from "./ExpressionBox.svelte";
-  import type { Expression as ExpressionAST} from "$lang/types/parser/interfaces";
+  import type { Expression as ExpressionAST, Id} from "$lang/types/parser/interfaces";
   export let messageExpressions:ExpressionAST[];
+  export let participants:{from:Id, to:Id};
 </script>
 
 <div class="message">
   {#each messageExpressions as messageExpression}
-      <ExpressionBox expression={messageExpression} />
+      <ExpressionBox expression={messageExpression} {participants} />
   {/each}
 </div>
 

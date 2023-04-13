@@ -3,8 +3,8 @@
 Participants: Client, Server;
 Knowledge: {
     Client: TLSVersion, supportedCipherSuites, supportedExtensions;
-    Server: serverSk;
-    Shared: serverPk;
+    Server: serverSk ? "Server private key";
+    Shared: serverPk ? "Server public key";
 };
 KeyRelations: (sk:serverSk, pk:serverPk);
 Functions: hash/2, add/2;
@@ -30,6 +30,6 @@ Protocol: {
     Server: new extension;
     Server -> Client: {|"Server Hello", cipserSuite, serverRandomBytes, extension|}serverPk;
 
-    Client: new pmk; //Burde man kunne bare sige pmk := add(...) her?
+    Client: new pmk ? "Pre-master-key"; //Burde man kunne bare sige pmk := add(...) her?
     Client: pmk := add(clientRandomBytes, serverRandomBytes);
 };

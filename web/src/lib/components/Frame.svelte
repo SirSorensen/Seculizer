@@ -21,38 +21,40 @@
   let presentation: StatementAST | null = null;
   $: {
     participants = [];
-    if ($currentFrame && $currentFrame.getParticipantMap()) {
-      for (const key in $currentFrame.getParticipantMap().getParticipants()) {
-        const participant = $currentFrame.getParticipantMap().getParticipant(key);
+    if ($currentFrame) {
+      if ($currentFrame.getParticipantMap()) {
+        for (const key in $currentFrame.getParticipantMap().getParticipants()) {
+          const participant = $currentFrame.getParticipantMap().getParticipant(key);
 
-        const obj: {
-          Name: Id;
-          Emoji: string;
-          Comment?: StmtComment;
-          Knowledge: VisualKnowledge[];
-        } = {
-          Name: { type: "id", value: participant.getName() },
-          Emoji: $program.getIcon(participant.getName()), //participant.emoji
-          Comment: participant.getComment(),
-          Knowledge: participant
-            .getKnowledgeList()
-            .sort((a, b) => b.id - a.id)
-            .map(({ item }) => {
-              const emoji = item.type === "encryptedKnowledge" ? "🔒" : getIconFromType(item.knowledge, $program);
-              return {
-                knowledge: item,
-                emoji: emoji,
-              };
-            }),
-        };
+          const obj: {
+            Name: Id;
+            Emoji: string;
+            Comment?: StmtComment;
+            Knowledge: VisualKnowledge[];
+          } = {
+            Name: { type: "id", value: participant.getName() },
+            Emoji: $program.getIcon(participant.getName()), //participant.emoji
+            Comment: participant.getComment(),
+            Knowledge: participant
+              .getKnowledgeList()
+              .sort((a, b) => b.id - a.id)
+              .map(({ item }) => {
+                const emoji = item.type === "encryptedKnowledge" ? "🔒" : getIconFromType(item.knowledge, $program);
+                return {
+                  knowledge: item,
+                  emoji: emoji,
+                };
+              }),
+          };
 
-        if (obj.Name.value === "Shared") commonKnowledge = obj.Knowledge;
-        else participants.push(obj);
+          if (obj.Name.value === "Shared") commonKnowledge = obj.Knowledge;
+          else participants.push(obj);
 
-        participants = participants;
+          participants = participants;
+        }
       }
+      presentation = $currentFrame.getPresentation();
     }
-    presentation = $currentFrame.getPresentation();
   }
 
   let participantElements: ParticipantElements = { container: undefined, elements: {} };
@@ -70,7 +72,7 @@
       <Statement {participantElements} {nextFrame} statement={presentation} />
     {/key}
   {/if}
-  <History/>
+  <History />
 </div>
 
 <style>

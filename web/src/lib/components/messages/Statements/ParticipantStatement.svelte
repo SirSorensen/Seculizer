@@ -6,7 +6,7 @@
   import SetItem from "$lib/components/SetItem.svelte";
   import type { ParticipantElements } from "src/types/participant";
 
-  import { program } from "$lib/stores/programStore.js";
+  import { currentFrame, program } from "$lib/stores/programStore.js";
   import Comment from "$lib/components/Comment.svelte";
 
   export let stmnt: ParticipantStatement;
@@ -67,7 +67,8 @@
     {@const id = setStmnt.id}
     {@const icon = $program.getIcon(id.value)}
     {@const value = setStmnt.value}
-    <ActionBox title="Update"><SetItem emoji={icon} value={id} newValue={value} /></ActionBox>
+    {@const comment = $currentFrame.getParticipantKnowledgeComment(stmnt.id.value, id)}
+    <ActionBox title="Update"><SetItem emoji={icon} value={id} newValue={value} {comment}/></ActionBox>
   {/if}
 </div>
 
