@@ -54,14 +54,13 @@
     {@const icon = $program.getIcon(id.value)}
     <ActionBox title="new">
       <Item emoji={icon} value={id} />
-      
     </ActionBox>
   {:else if child.type === "setStatement"}
     {@const setStmnt = castToSetStatement(child)}
     {@const id = setStmnt.id}
     {@const icon = $program.getIcon(id.value)}
     {@const value = setStmnt.value}
-    <ActionBox title="Update"><div><SetItem emoji={icon} value={id} newValue={value} /></div></ActionBox>
+    <ActionBox title="Update"><SetItem emoji={icon} value={id} newValue={value} /></ActionBox>
   {/if}
 </div>
 
