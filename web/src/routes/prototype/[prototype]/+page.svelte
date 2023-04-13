@@ -5,7 +5,7 @@
   import { parse } from "$lang";
   import { page } from "$app/stores";
   import { z } from "zod";
-  import { program } from "$lib/stores/programStore.js";
+  import { program, currentFrame } from "$lib/stores/programStore.js";
   import { Program } from "$lib/models/program";
   import LZString from "lz-string";
   import Frame from "$lib/components/Frame.svelte";
@@ -16,7 +16,6 @@
     prev: null,
     next: null,
   };
-  let current: FrameType | null = null;
   onMount(() => {
     if($page.params.prototype === undefined) return;
     const proto = $page.params.prototype;
@@ -38,17 +37,21 @@
       error = errorMsg.message;
       return;
     }
-    current = $program.first;
+    if($program.first === null) {
+      error = "No frames found";
+      return;
+    };
+    $currentFrame = $program.first;
   }
   function updateNavigation() {
-    if (!current || current === null) {
+    if (!$currentFrame || $currentFrame === null) {
       navigation = {
         prev: null,
         next: null,
       };
     } else {
-      navigation.prev = current.getPrev();
-      const next = z.instanceof(FrameType).safeParse(current.getNext());
+      navigation.prev = $currentFrame.getPrev();
+      const next = z.instanceof(FrameType).safeParse($currentFrame.getNext());
       navigation.next = null;
       if (next !== null) {
         navigation.next = next.success ? next.data : null;
@@ -57,18 +60,22 @@
   }
 
   function prevFrame() {
-    if (current === null) return;
-    current = navigation.prev;
+    if ($currentFrame === null) return;
+    if(navigation.prev === null) {
+      error = "Invalid previous frame";
+      return;
+    };
+    $currentFrame = navigation.prev;
     updateNavigation();
   }
 
   function nextFrame(frame: FrameType | string) {
-    if (current === null) return;
+    if ($currentFrame === null) return;
     const isString = z.string().safeParse(frame).success;
     if (isString) {
-      current = current.getNextFrame(frame as string);
+      $currentFrame = $currentFrame.getNextFrame(frame as string);
     } else {
-      current = frame as FrameType;
+      $currentFrame = frame as FrameType;
     }
     updateNavigation();
   }
@@ -76,12 +83,12 @@
 {#if error}
   <p class="error">{error}</p>
 {/if}
-{#if $program && current !== null}
+{#if $program && $currentFrame !== null}
   <div class="program-container">
     <div class="button-area">
       <PrevButton {navigation} {prevFrame} />
     </div>
-    <Frame frame={current} {nextFrame} />
+    <Frame {nextFrame} />
     <div class="button-area">
       <NextButton {navigation} {nextFrame} />
     </div>

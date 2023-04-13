@@ -1,22 +1,20 @@
 <script lang="ts">
   import mermaid from "mermaid";
   import { onMount } from "svelte";
-  import type { Frame } from "$lib/models/Frame";
-
-  export let frame: Frame;
+  import { currentFrame } from "$lib/stores/programStore.js";
   let graph: HTMLElement;
   let content = "";
   let isInitialized = false;
   function getContent() {
     content = "sequenceDiagram\n";
-    frame
+    $currentFrame
       .getParticipantMap()
       .getParticipantsNames()
       .forEach((name) => {
         if (name === "Shared") return;
         content += `participant ${name}\n`;
       });
-    frame.getHistory().forEach((event) => {
+    $currentFrame.getHistory().forEach((event) => {
       if (event.mermaid.trim() !== "") content += event.mermaid + "\n";
     });
   }
@@ -30,7 +28,7 @@
       },
     });
     isInitialized = true;
-    if(!graph) return;
+    if (!graph) return;
     getContent();
     const { svg } = await mermaid.render("graphDiv", content);
     graph.innerHTML = svg;
@@ -42,24 +40,25 @@
         getContent();
 
         mermaid.render("graphDiv", content).then(({ svg }) => {
-          if(!graph) return;
+          if (!graph) return;
           graph.innerHTML = svg;
         });
       }
     }
   }
 
-  $: frame && frame.getHistory() && rerender();
+  $: $currentFrame && $currentFrame.getHistory() && rerender();
 </script>
 
-{#if frame.getHistory().length > 0 && content.trim() !== ""}
+{#if $currentFrame.getHistory().length > 0 && content.trim() !== ""}
   <pre bind:this={graph} />
 {:else}
   <p class="no-history">No history yet</p>
 {/if}
 
 <style>
-  pre, .no-history {
+  pre,
+  .no-history {
     max-height: 100%;
     max-height: calc(100% - 75px);
     overflow-y: auto;

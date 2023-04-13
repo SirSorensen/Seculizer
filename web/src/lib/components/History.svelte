@@ -1,8 +1,6 @@
 <script lang="ts">
-  import type { Frame } from "$lib/models/Frame";
   import SequenceDiagram from "./SequenceDiagram.svelte";
-
-  export let frame: Frame;
+  import { currentFrame } from "$lib/stores/programStore.js";
 
   type state = "history" | "sequenceDiagram";
   let historyState: { state: state; open: boolean } = { state: "history", open: false };
@@ -45,8 +43,8 @@
 <div class="historyContainer" class:open={historyState.open}>
   <div class="option" class:open={historyState.state === "history"}>
     <ol class="history" bind:this={historyElem}>
-      {#if frame.getHistory().length > 0}
-        {#each frame.getHistory() as history}
+      {#if $currentFrame.getHistory().length > 0}
+        {#each $currentFrame.getHistory() as history}
           <li class="history-item">{@html history.string}</li>
         {/each}
       {:else}
@@ -55,7 +53,7 @@
     </ol>
   </div>
   <div class="option" class:open={historyState.state === "sequenceDiagram"}>
-      <SequenceDiagram {frame} />
+      <SequenceDiagram/>
   </div>
   <div class="buttonContainer">
     <button class="roundButton" on:click={toggleSequenceDiagram}><i class="oma oma-people-dialogue" /></button>
