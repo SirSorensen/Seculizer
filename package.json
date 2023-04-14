@@ -6,7 +6,8 @@
     "scripts": {
       "lang": "cd ./sepo-lang/ && npm run build",
       "web": "cd ./web/ && npm run dev",
-      "dev": "npm run lang && npm run web"
+      "dev": "npm run lang && npm run web",
+      "production": "cd ./sepo-lang/ && npm i && npm run build && cd ../web/ && npm i && npm run build && node build"
     },
     "repository": {
       "type": "git",
