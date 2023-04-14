@@ -3,6 +3,7 @@ import { Equal } from './Equal';
 
 
 
+
 export class EquationMap {
   private equations: { [id: string]: Equal[] } = {};
 

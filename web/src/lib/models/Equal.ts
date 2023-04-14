@@ -1,4 +1,6 @@
-import type { FunctionCall, StringLiteral, NumberLiteral, Id } from "$lang/types/parser/interfaces";
+import type { FunctionCall, StringLiteral, NumberLiteral, Id, Type } from "$lang/types/parser/interfaces";
+import type { RawParticipantKnowledge } from "src/types/participant";
+import type { Participant } from "./Participant";
 
 export class Equal {
   // exp(exp(A,B),C) = exp(exp(A,C),B)
@@ -86,7 +88,7 @@ export class Equal {
     let rawKnowledge: RawParticipantKnowledge = {
       type: "rawKnowledge",
       knowledge: input,
-      value: getStringFromType(input), //TODO: (suggestion) This could just be empty string
+      value: input,
     };
 
     if (participant.doesKnowledgeExist(rawKnowledge)) return true;

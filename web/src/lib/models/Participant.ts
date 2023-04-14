@@ -1,19 +1,20 @@
-import type { StmtComment } from "$lang/types/parser/interfaces";
+import type { StmtComment, Type } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge } from "src/types/participant";
+import RawParticipantKnowledge from "src/types/participant";
 
 export class Participant {
   private name: string;
-  private knowledge: { item: ParticipantKnowledge, id:number }[];
+  private knowledge: { item: ParticipantKnowledge; id: number }[];
   private currentKnowledgeId = 0;
   private comment?: StmtComment;
-  constructor(name: string, knowledge: { item: ParticipantKnowledge, id:number }[] = [], comment?: StmtComment) {
+  constructor(name: string, knowledge: { item: ParticipantKnowledge; id: number }[] = [], comment?: StmtComment) {
     this.name = name;
     this.comment = comment;
-    
+
     this.knowledge = knowledge;
     this.knowledge.forEach(({ id }) => {
-      if(id > this.currentKnowledgeId) this.currentKnowledgeId = id;
-      else if(id === this.currentKnowledgeId) this.currentKnowledgeId++;
+      if (id > this.currentKnowledgeId) this.currentKnowledgeId = id;
+      else if (id === this.currentKnowledgeId) this.currentKnowledgeId++;
     });
   }
 
@@ -22,7 +23,7 @@ export class Participant {
 
     if (index >= 0) {
       const { item } = this.knowledge[index];
-      if(knowledge.type === "rawKnowledge" && !knowledge.comment &&item.type == "rawKnowledge"){
+      if (knowledge.type === "rawKnowledge" && !knowledge.comment && item.type == "rawKnowledge") {
         knowledge.comment = item.comment;
       }
       this.knowledge[index] = { item: knowledge, id: this.currentKnowledgeId++ };
@@ -31,12 +32,23 @@ export class Participant {
     }
   }
 
-  findKnowledgeIndex(element: ParticipantKnowledge): number {
-    return this.knowledge.findIndex(({ item }) => this.isKnowledgeEqual(item, element));
+  findKnowledgeIndex(element: ParticipantKnowledge, strict: boolean = false): number {
+    return this.knowledge.findIndex(({ item }) => this.isKnowledgeEqual(item, element, strict));
   }
 
-  doesKnowledgeExist(element: ParticipantKnowledge): boolean {
+  doesKnowledgeExist(element: ParticipantKnowledge, strict: boolean = false): boolean {
     return this.findKnowledgeIndex(element) >= 0;
+  }
+
+  doesTypeAndValueExist(type: Type, val: Type | undefined = undefined): boolean {
+    return this.doesKnowledgeExist(
+      {
+        type: "rawKnowledge",
+        knowledge: type,
+        value: val,
+      },
+      true
+    );
   }
 
   clearKnowledgeElement(elem: ParticipantKnowledge) {
@@ -48,11 +60,11 @@ export class Participant {
     return result?.item;
   }
 
-  cloneKnowledgeList(): { item: ParticipantKnowledge, id:number }[] {
+  cloneKnowledgeList(): { item: ParticipantKnowledge; id: number }[] {
     return structuredClone(this.knowledge);
   }
 
-  getKnowledgeList(): { item: ParticipantKnowledge, id:number }[] {
+  getKnowledgeList(): { item: ParticipantKnowledge; id: number }[] {
     return this.knowledge;
   }
 
@@ -60,9 +72,12 @@ export class Participant {
     return this.name;
   }
 
-  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge): boolean {
+  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict: boolean = false): boolean {
     if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
-      return JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge);
+      return (
+        JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge) && // check if knowledge is the same
+        (!strict || JSON.stringify(knowledgeA.value) === JSON.stringify(knowledgeB.value)) // if strict is true, then we need to check the value as well
+      );
     } else if (knowledgeA.type === "encryptedKnowledge" && knowledgeB.type === "encryptedKnowledge") {
       if (JSON.stringify(knowledgeA.encryption) !== JSON.stringify(knowledgeB.encryption)) return false;
       if (knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
