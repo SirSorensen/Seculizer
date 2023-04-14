@@ -46,23 +46,25 @@ export class Equal {
     // Construct the param array for the given call
     const callParamArray = this.constructParamArray(call);
 
+    let i = 0;
+
     // Auxiliar function to generate the new function (it works recursively if the given function contains functions)
-    const aux = (newFunction: FunctionCall, i: number): FunctionCall => {
+    const aux = (newFunction: FunctionCall): FunctionCall => {
       newFunction.params.forEach((param, index) => {
         if (param.type != "function") {
           newFunction.params[index] = callParamArray[this.paramIndex[i]];
           i++;
         } else {
-          newFunction.params[index] = aux(param, i);
+          newFunction.params[index] = aux(param);
         }
       });
       return newFunction;
     };
 
     // Make a clone of the right for modification in aux
-    const rightClone : FunctionCall = {id: structuredClone(this.right.id), params: structuredClone(this.right.params), type: "function"}
+    const rightClone : FunctionCall = {type: "function", id: structuredClone(this.right.id), params: structuredClone(this.right.params)}
 
-    return aux(rightClone, 0);
+    return aux(rightClone);
   }
 
   // Check if the given function call is applicable to the equation, by comparing the parameters' types and amount thereof

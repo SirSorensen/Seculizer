@@ -1,6 +1,5 @@
 import type { StmtComment, Type } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge } from "src/types/participant";
-import RawParticipantKnowledge from "src/types/participant";
 
 export class Participant {
   private name: string;
@@ -37,7 +36,7 @@ export class Participant {
   }
 
   doesKnowledgeExist(element: ParticipantKnowledge, strict: boolean = false): boolean {
-    return this.findKnowledgeIndex(element) >= 0;
+    return this.findKnowledgeIndex(element, strict) >= 0;
   }
 
   doesTypeAndValueExist(type: Type, val: Type | undefined = undefined): boolean {
@@ -74,6 +73,8 @@ export class Participant {
 
   isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict: boolean = false): boolean {
     if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
+      const strA = JSON.stringify(knowledgeA.knowledge);
+      const strB = JSON.stringify(knowledgeB.knowledge);
       return (
         JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge) && // check if knowledge is the same
         (!strict || JSON.stringify(knowledgeA.value) === JSON.stringify(knowledgeB.value)) // if strict is true, then we need to check the value as well

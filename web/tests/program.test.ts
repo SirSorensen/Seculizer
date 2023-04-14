@@ -1,7 +1,7 @@
 import { Program } from "$lib/models/program.js";
 import { afterEach, expect, test } from "vitest";
 import { readFileSync } from "fs";
-import {parse} from "$lang/index.js";
+import { parse } from "$lang/index.js";
 import type { Id, Type, FunctionCall } from "$lang/types/parser/interfaces";
 import type { Frame } from "$lib/models/Frame";
 import path from "path";
@@ -10,7 +10,8 @@ import { fileURLToPath } from "url";
 import { LatexMap } from "$lib/models/LatexMap";
 import { Equal } from "$lib/models/Equal";
 import { EquationMap } from "$lib/models/EquationMap";
-import type { ParticipantKnowledge } from "src/types/participant";
+import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
+import { Participant } from "$lib/models/Participant";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,7 +48,7 @@ test("web/program with simple.sepo", () => {
 
   expect(Object.keys(program.equations).length).toBeGreaterThan(0);
 
-  expect((program.icons.size)).toBe(0);
+  expect(program.icons.size).toBe(0);
 });
 
 test("web/program with TPM.sepo", () => {
@@ -77,7 +78,7 @@ test("web/program with DF.sepo", () => {
   expect(Object.keys(program.equations).length).toBe(1);
 
   expect(program.icons).toBeDefined();
-  expect((program.icons.size)).toBe(7);
+  expect(program.icons.size).toBe(7);
 });
 
 test("web/program with send-with-sign.sepo", () => {
@@ -98,7 +99,6 @@ test("web/program with send-with-sign.sepo", () => {
 
   expect(program.icons).toBeDefined();
   expect(program.icons.size).toBe(0);
-
 
   expect(program.first).toBeTruthy();
   const first = program.first as Frame;
@@ -125,7 +125,7 @@ test("web/program with send-with-sign.sepo", () => {
     knowledge: {
       type: "id",
       value: "msg_A",
-    }
+    },
   };
 
   const msg_B: ParticipantKnowledge = {
@@ -133,7 +133,7 @@ test("web/program with send-with-sign.sepo", () => {
     knowledge: {
       type: "id",
       value: "msg_B",
-    }
+    },
   };
 
   expect(first.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_A)).toBeTruthy();
@@ -145,7 +145,6 @@ test("web/program with send-with-sign.sepo", () => {
   expect(last.getParticipantMap().getParticipant("Alice").doesKnowledgeExist(msg_B)).toBeTruthy();
   expect(last.getParticipantMap().getParticipant("Bob").doesKnowledgeExist(msg_A)).toBeTruthy();
   expect(last.getParticipantMap().getParticipant("Bob").doesKnowledgeExist(msg_B)).toBeTruthy();
-
 });
 
 test("web/program with send-with-enc.sepo", () => {
@@ -296,7 +295,6 @@ test("Construct Latex class & constructLatex method test", () => {
   expect(result).toBe("$Hash(\\text{z}||5||\\text{z})$");
 });
 
-
 test("Make LatexMap and call a function with embedded function", () => {
   const init_param1: Type = { type: "id", value: "x" };
   const init_param2: Type = { type: "id", value: "y" };
@@ -304,22 +302,19 @@ test("Make LatexMap and call a function with embedded function", () => {
   const init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] };
 
   const latexMap = new LatexMap();
-    latexMap.addLatex(init_func1, "$Hash(x||y||x)$");
-    latexMap.addLatex(init_func2, "$Based_{XXX}(y&&x)$");
+  latexMap.addLatex(init_func1, "$Hash(x||y||x)$");
+  latexMap.addLatex(init_func2, "$Based_{XXX}(y&&x)$");
 
-    const param1: Type = { type: "id", value: "z" };
-    const param2: Type = { type: "number", value: 5 };
-    const param3: Type = { type: "string", value: "Jesus" };
-    const func1: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
-    const func2: FunctionCall = { type: "function", id: "Base", params: [param3, func1] };
+  const param1: Type = { type: "id", value: "z" };
+  const param2: Type = { type: "number", value: 5 };
+  const param3: Type = { type: "string", value: "Jesus" };
+  const func1: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+  const func2: FunctionCall = { type: "function", id: "Base", params: [param3, func1] };
 
+  const result = latexMap.getConstructedLatex(func2);
 
-    const result = latexMap.getConstructedLatex(func2);
-
-    expect(result).toBe("$Based_{XXX}({Hash(\\text{z}||5||\\text{z})}&&\\text{Jesus})$");
-
-})
-
+  expect(result).toBe("$Based_{XXX}({Hash(\\text{z}||5||\\text{z})}&&\\text{Jesus})$");
+});
 
 test("Construct an Equal and call generateEqual", () => {
   const init_param1: Type = { type: "id", value: "x" };
@@ -333,15 +328,14 @@ test("Construct an Equal and call generateEqual", () => {
   const param2: Type = { type: "id", value: "v" };
   const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
 
-
   const result = equality.generateEqual(func);
   const expected: FunctionCall = { type: "function", id: "Base", params: [param2, param1] };
-  
+
   expect(result.id).toBe(expected.id);
   expect(result.type).toBe(expected.type);
   expect(result.params[0]).toBe(expected.params[0]);
   expect(result.params[1]).toBe(expected.params[1]);
-})
+});
 
 test("Construct an Equal and call generateEqual with embedded functions", () => {
   const init_param1: Type = { type: "id", value: "x" };
@@ -366,7 +360,6 @@ test("Construct an Equal and call generateEqual with embedded functions", () => 
   const tmp_expected: FunctionCall = { type: "function", id: "exp", params: [param3, param2] };
   const expected: FunctionCall = { type: "function", id: "exp", params: [param1, tmp_expected] };
 
-
   expect(result.id).toBe(expected.id);
   expect(result.type).toBe(expected.type);
   expect(result.params[0]).toBe(expected.params[0]);
@@ -376,7 +369,7 @@ test("Construct an Equal and call generateEqual with embedded functions", () => 
   }
 });
 
-test("Construct an EquationMap and call generateEquals", () => {
+test("Construct an EquationMap and check if Participant knows", () => {
   const init_param1: Type = { type: "id", value: "x" };
   const init_param2: Type = { type: "id", value: "y" };
   const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x,y)
@@ -391,60 +384,109 @@ test("Construct an EquationMap and call generateEquals", () => {
 
   const param1: Type = { type: "id", value: "z" };
   const param2: Type = { type: "id", value: "v" };
-  
+
   const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] }; // Hash(z,v)
+  const modified_func: FunctionCall = { type: "function", id: "Hash", params: [param2, param1] }; // Hash(v,z)
+  const base_func: FunctionCall = { type: "function", id: "Base", params: [param1, param2] }; // Base(z,v)
 
-  const result = equalityMap.generateEquals(func);
-  const expected: FunctionCall[] = [
-  { type: "function", id: "Hash", params: [param2, param1] }, // Base(v,z)
-  func
-  ]
+  const init_knowledge: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: func,
+  };
 
-  expect(result.length).toBe(2);
-  expect(result[0].id).toBe(expected[0].id);
-  expect(result[0].type).toBe(expected[0].type);
-  expect(result[0].params[0]).toBe(expected[0].params[0]);
-  expect(result[0].params[1]).toBe(expected[0].params[1]);
-  expect(result[1].id).toBe(expected[1].id);
-  expect(result[1].type).toBe(expected[1].type);
-  expect(result[1].params[0]).toBe(expected[1].params[0]);
-  expect(result[1].params[1]).toBe(expected[1].params[1]);
+  const parti: Participant = new Participant("Alice");
+  parti.setKnowledge(init_knowledge);
+
+  const result1 = equalityMap.doesParticipantKnow(parti, func);
+  const result2 = equalityMap.doesParticipantKnow(parti, modified_func);
+  const result3 = equalityMap.doesParticipantKnow(parti, base_func);
+
+  expect(result1).toBeTruthy();
+  expect(result2).toBeTruthy();
+  expect(result3).toBeFalsy();
 });
 
-test("Construct an EquationMap with multiple of the same fiunction and call generateEquals", () => {
-  const init_param1: Type = { type: "id", value: "x" };
-  const init_param2: Type = { type: "id", value: "y" };
-  const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x, y)
-  const init_func2: FunctionCall = { type: "function", id: "Hash", params: [init_param2, init_param1] }; // Hash(y, x)
-  const init_func3: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param1] }; // Hash(x, x)
+test("Construct an EquationMap with functions with nested functions", () => {
+  const init_param1: Type = { type: "id", value: "a" };
+  const init_param2: Type = { type: "id", value: "b" };
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a, b)
+  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a, b)
+  const init_func3: FunctionCall = { type: "function", id: "foo", params: [init_func2, init_param2] }; // foo(lee(a,b),b)
 
   const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func2); // Hash(x, y) => Hash(y, x)
-  equalityMap.addEquation(init_func1, init_func3); // Hash(x, y) => Hash(x, x)
+  equalityMap.addEquation(init_func1, init_func3); // Hash(x, y) => Hash(y, x)
 
-  const param1: Type = { type: "id", value: "z" };
-  const param2: Type = { type: "id", value: "v" };
+  const param1: Type = { type: "id", value: "x" };
+  const param2: Type = { type: "id", value: "y" };
 
-  const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
+  const func: FunctionCall = { type: "function", id: "foo", params: [param1, param2] }; // foo(x,y)
+  const help_func1: FunctionCall = { type: "function", id: "lee", params: [param1, param2] }; // lee(x,y)
+  const modified_func: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(lee(x,y),y))
+  const help_func2: FunctionCall = { type: "function", id: "lee", params: [help_func1, param2] }; // lee(lee(x,y),y)
+  const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(lee(x,y),y))
+  const help_func3: FunctionCall = { type: "function", id: "lee", params: [help_func2, param2] }; // lee(lee(lee(x,y),y),y)
+  const modified_func3: FunctionCall = { type: "function", id: "foo", params: [help_func3, param2] }; // foo(lee(lee(lee(x,y),y),y))
+  const help_func4: FunctionCall = { type: "function", id: "lee", params: [help_func3, param2] }; // lee(lee(lee(lee(x,y),y),y))
+  const modified_func4: FunctionCall = { type: "function", id: "foo", params: [help_func4, param2] }; // foo(lee(lee(lee(lee(x,y),y),y)))
 
-  const result = equalityMap.generateEquals(func);
-  const expected: FunctionCall[] = [
-    { type: "function", id: "Hash", params: [param2, param1] },
-    { type: "function", id: "Hash", params: [param1, param1] },
-    func,
-  ];
+  const init_knowledge: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: modified_func,
+  };
+  const init_knowledge2: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: modified_func2,
+  };
+  const init_knowledge3: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: modified_func3,
+  };
+  const init_knowledge4: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: modified_func4,
+  };
 
-  expect(result.length).toBe(expected.length);
-  expect(result[0].id).toBe(expected[0].id);
-  expect(result[0].type).toBe(expected[0].type);
-  expect(result[0].params[0]).toBe(expected[0].params[0]);
-  expect(result[0].params[1]).toBe(expected[0].params[1]);
-  expect(result[1].id).toBe(expected[1].id);
-  expect(result[1].type).toBe(expected[1].type);
-  expect(result[1].params[0]).toBe(expected[1].params[0]);
-  expect(result[1].params[1]).toBe(expected[1].params[1]);
-  expect(result[2].id).toBe(expected[2].id);
-  expect(result[2].type).toBe(expected[2].type);
-  expect(result[2].params[0]).toBe(expected[2].params[0]);
-  expect(result[2].params[1]).toBe(expected[2].params[1]);
+  const parti: Participant = new Participant("Alice");
+  parti.setKnowledge(init_knowledge);
+
+  const parti2: Participant = new Participant("Alice2");
+  parti2.setKnowledge(init_knowledge2);
+
+  const parti3: Participant = new Participant("Alice3");
+  parti3.setKnowledge(init_knowledge3);
+
+  const parti4: Participant = new Participant("Alice4");
+  parti3.setKnowledge(init_knowledge4);
+
+  const result1 = equalityMap.doesParticipantKnow(parti, func);
+  const result2 = equalityMap.doesParticipantKnow(parti, help_func1);
+  const result3 = equalityMap.doesParticipantKnow(parti, modified_func);
+
+  const result1_2 = equalityMap.doesParticipantKnow(parti2, func);
+  const result2_2 = equalityMap.doesParticipantKnow(parti2, help_func1);
+  const result3_2 = equalityMap.doesParticipantKnow(parti2, modified_func);
+
+  const result1_3 = equalityMap.doesParticipantKnow(parti3, func);
+  const result2_3 = equalityMap.doesParticipantKnow(parti3, help_func1);
+  const result3_3 = equalityMap.doesParticipantKnow(parti3, modified_func);
+
+  const result1_4 = equalityMap.doesParticipantKnow(parti4, func);
+  const result2_4 = equalityMap.doesParticipantKnow(parti4, help_func1);
+  const result3_4 = equalityMap.doesParticipantKnow(parti4, modified_func);
+
+  expect(result1).toBeTruthy();
+  expect(result2).toBeFalsy();
+  expect(result3).toBeTruthy();
+
+  expect(result1_2).toBeTruthy();
+  expect(result2_2).toBeFalsy();
+  expect(result3_2).toBeTruthy();
+
+  expect(result1_3).toBeTruthy();
+  expect(result2_3).toBeFalsy();
+  expect(result3_3).toBeTruthy();
+
+  expect(result1_4).toBeTruthy();
+  expect(result2_4).toBeFalsy();
+  expect(result3_4).toBeTruthy();
 });

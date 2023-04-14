@@ -1,87 +1,71 @@
-import type { FunctionCall, StringLiteral, NumberLiteral, Id } from "$lang/types/parser/interfaces";
-import { Equal } from './Equal';
+import type { FunctionCall, StringLiteral, NumberLiteral, Id, Type } from "$lang/types/parser/interfaces";
+import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
+import { Equal } from "./Equal";
+import type { Participant } from "./Participant";
+import { getStringFromType } from "$lib/utils/stringUtil";
 
+type equalResult = {
+  eqs: Equal[];
+  maxDepth: number;
+};
 
-
+type queueElement = {
+    f: FunctionCall;
+    depth: number;
+}
 
 export class EquationMap {
-  private equations: { [id: string]: Equal[] } = {};
+  private equations: { [id: string]: equalResult } = {};
 
   addEquation(left: FunctionCall, right: FunctionCall) {
     if (this.equations[left.id] === undefined) {
-      this.equations[left.id] = [];
+      this.equations[left.id] = { eqs: [], maxDepth: 0 };
     }
-
-    const equals = this.equations[left.id];
-    const index = equals.findIndex((equal) => {
-      return this.checkIfSame(right, equal.getRight());
-    });
-
-    if (index === -1) {
-      this.equations[left.id].push(new Equal(left, right));
-    }
+    this.equations[left.id].eqs.push(new Equal(left, right));
+    this.equations[left.id].maxDepth += this.functionIdParameter(right);
   }
 
-  // Returns all the equations for a given function that are applicable to it (see Equal.checkIfAplicable)
-  getEquals(func: FunctionCall) {
-    const equals: Equal[] = [];
-    const tmp_equations: Equal[] = this.equations[func.id];
+  doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined = undefined): boolean {
+    let history: Map<string, boolean> = new Map();
+    let queue: queueElement[] = [];
+    if (this.equations[f.id] === undefined) return parti.doesTypeAndValueExist(f, val);
+    const maxDepth = this.equations[f.id].maxDepth;
+    
 
-    if (tmp_equations === undefined) return equals;
+    queue.push({ f: f, depth: 0 });
 
-    tmp_equations.forEach((equation) => {
-      if (equation.checkIfAplicable(func)) {
-        equals.push(equation);
-      }
-    });
+    while (queue.length > 0) {
+      let current = queue.shift();
+      if (current === undefined) continue;
+      if (current.depth > maxDepth) continue;
 
-    return equals;
-  }
+      let _f = current.f
+      if (history.has(getStringFromType(_f))) continue;
+      history.set(getStringFromType(_f), true);
 
-  // Check if two function calls are the same by comparing their names and their parameters
-  checkIfSame(func1: FunctionCall, func2: FunctionCall): boolean {
-    if (func1.id !== func2.id) return false;
-    if (func1.params.length !== func2.params.length) return false;
+      if (parti.doesTypeAndValueExist(_f, val)) return true;
 
-    for (let i = 0; i < func1.params.length; i++) {
-      if (func1.params[i].type !== func2.params[i].type) {
-        return false;
-      }
-
-      if (func1.params[i].type !== "function" && func2.params[i].type !== "function") {
-        if ((func1.params[i] as Id | StringLiteral | NumberLiteral).value !== (func2.params[i] as Id | StringLiteral | NumberLiteral).value) {
-          return false;
-        }
-      } else {
-        if (!this.checkIfSame(func1.params[i] as FunctionCall, func2.params[i] as FunctionCall)) {
-          return false;
-        }
+      for (const eq of this.equations[_f.id].eqs) {
+        let _fEq = eq.generateEqual(_f);
+        queue.push({ f: _fEq, depth: current.depth + 1 });
       }
     }
 
-    return true;
+    return false;
   }
 
-  // Generates all possible equations for a function including itself
-  generateEquals(func: FunctionCall): FunctionCall[] {
-    const equals: Equal[] = this.getEquals(func);
-    const newFuncs: FunctionCall[] = [];
+  private functionIdParameter(f: FunctionCall): number {
+    let idParams = 0;
 
-    // Generate all possible equations for the function, by checking if the equals list's elements fit the form of the given function
-    equals.forEach((equal) => {
-      newFuncs.push(equal.generateEqual(func));
+    f.params.forEach((t) => {
+      if (t.type == "function") idParams += this.functionIdParameter(t);
+      else idParams += 1;
     });
 
-    // Add original function if it is not already in the equals list
-    const index = newFuncs.findIndex((equal) => {
-      return this.checkIfSame(func, equal);
-    });
-    if (index === -1) newFuncs.push(func);
-
-    return newFuncs;
+    return idParams;
   }
 
-  getEquations() {
+  getEquations(){
     return this.equations;
   }
 }
