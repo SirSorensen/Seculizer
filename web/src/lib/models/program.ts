@@ -93,7 +93,9 @@ export class Program {
     // Add given participants
     if (participants) {
       if (this.log) console.log(participants.participants);
-
+      if(participants.participants.length > 8){
+        throw new Error("More than 8 participants are not supported");
+      }
       participants.participants.forEach((participant: ParticipantItem) => {
         this.init_participants.addParticipant(participant.id.value, participant.comment);
       });
