@@ -379,8 +379,8 @@ test("Construct an EquationMap and check if Participant knows", () => {
   const init_func4: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] }; // Base(y,x)
 
   const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func2);
-  equalityMap.addEquation(init_func3, init_func4);
+  equalityMap.addEquation(init_func1, init_func2); // Hash(x,y) => Hash(y,x)
+  equalityMap.addEquation(init_func3, init_func4); // Base(x,y) => Base(y,x)
 
   const param1: Type = { type: "id", value: "z" };
   const param2: Type = { type: "id", value: "v" };
@@ -409,19 +409,19 @@ test("Construct an EquationMap and check if Participant knows", () => {
 test("Construct an EquationMap with functions with nested functions", () => {
   const init_param1: Type = { type: "id", value: "a" };
   const init_param2: Type = { type: "id", value: "b" };
-  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a, b)
-  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a, b)
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
+  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
   const init_func3: FunctionCall = { type: "function", id: "foo", params: [init_func2, init_param2] }; // foo(lee(a,b),b)
 
   const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func3); // Hash(x, y) => Hash(y, x)
+  equalityMap.addEquation(init_func1, init_func3); // foo(a,b) => foo(lee(a,b),b)
 
   const param1: Type = { type: "id", value: "x" };
   const param2: Type = { type: "id", value: "y" };
 
   const func: FunctionCall = { type: "function", id: "foo", params: [param1, param2] }; // foo(x,y)
   const help_func1: FunctionCall = { type: "function", id: "lee", params: [param1, param2] }; // lee(x,y)
-  const modified_func: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(lee(x,y),y))
+  const modified_func1: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(lee(x,y),y))
   const help_func2: FunctionCall = { type: "function", id: "lee", params: [help_func1, param2] }; // lee(lee(x,y),y)
   const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(lee(x,y),y))
   const help_func3: FunctionCall = { type: "function", id: "lee", params: [help_func2, param2] }; // lee(lee(lee(x,y),y),y)
@@ -431,7 +431,7 @@ test("Construct an EquationMap with functions with nested functions", () => {
 
   const init_knowledge: RawParticipantKnowledge = {
     type: "rawKnowledge",
-    knowledge: modified_func,
+    knowledge: modified_func1,
   };
   const init_knowledge2: RawParticipantKnowledge = {
     type: "rawKnowledge",
@@ -460,19 +460,19 @@ test("Construct an EquationMap with functions with nested functions", () => {
 
   const result1 = equalityMap.doesParticipantKnow(parti, func);
   const result2 = equalityMap.doesParticipantKnow(parti, help_func1);
-  const result3 = equalityMap.doesParticipantKnow(parti, modified_func);
+  const result3 = equalityMap.doesParticipantKnow(parti, modified_func1);
 
   const result1_2 = equalityMap.doesParticipantKnow(parti2, func);
   const result2_2 = equalityMap.doesParticipantKnow(parti2, help_func1);
-  const result3_2 = equalityMap.doesParticipantKnow(parti2, modified_func);
+  const result3_2 = equalityMap.doesParticipantKnow(parti2, modified_func1);
 
   const result1_3 = equalityMap.doesParticipantKnow(parti3, func);
   const result2_3 = equalityMap.doesParticipantKnow(parti3, help_func1);
-  const result3_3 = equalityMap.doesParticipantKnow(parti3, modified_func);
+  const result3_3 = equalityMap.doesParticipantKnow(parti3, modified_func1);
 
   const result1_4 = equalityMap.doesParticipantKnow(parti4, func);
   const result2_4 = equalityMap.doesParticipantKnow(parti4, help_func1);
-  const result3_4 = equalityMap.doesParticipantKnow(parti4, modified_func);
+  const result3_4 = equalityMap.doesParticipantKnow(parti4, modified_func1);
 
   expect(result1).toBeTruthy();
   expect(result2).toBeFalsy();
