@@ -8,8 +8,10 @@ Protocol: {
   import { parse, ParseError, SepoLexer } from "$lang";
   import { Program } from "$lib/models/program";
   import MagicString from "magic-string";
+  import { onMount } from "svelte";
   export let content: string = "";
   let hightlighted = content;
+  let loaded = false;
   type TokenType = {
     name: string;
     pattern: RegExp;
@@ -102,7 +104,10 @@ Protocol: {
 
   function handleKeyPress(e: KeyboardEvent) {
     if (!(e.target instanceof HTMLTextAreaElement)) return;
-
+    if (!loaded) {
+      e.preventDefault();
+      return;
+    }
     if (e.key === "Tab") {
       e.preventDefault();
 
@@ -143,13 +148,17 @@ Protocol: {
     }
   }
 
+  onMount(() => {
+    loaded = true;
+  });
   let dark = true;
 </script>
 
-<div class="editor-container" on:mousemove={mouseMove} class:dark>
+<div class="editor-container" on:mousemove={mouseMove} class:loading={!loaded} class:dark>
   <textarea
     name="editor"
     class="editor"
+    disabled={!loaded}
     autocomplete="off"
     autocorrect="off"
     autocapitalize="off"
@@ -205,6 +214,10 @@ Protocol: {
     --ecolor-bg: #1f2430;
     --ecolor-caret: white;
   }
+
+  .editor-container.loading{
+    opacity: 0.9;
+  }
   .editor-container {
     position: relative;
     width: 100%;
@@ -212,6 +225,7 @@ Protocol: {
     max-height: 80vh;
     margin: 0 auto;
     background-color: var(--ecolor-bg);
+    transition: opacity 0.2s ease-in-out;
   }
 
   .editor,
@@ -333,7 +347,7 @@ Protocol: {
   .editor-container :global(.token.token-Error),
   .editor-container :global(.token.token-Error .token) {
     color: var(--ecolor-text);
-    border-bottom: .15rem dashed var(--ecolor-error);
+    border-bottom: 0.15rem dashed var(--ecolor-error);
     position: relative;
   }
 

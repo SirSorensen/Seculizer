@@ -8,8 +8,10 @@
   import { program } from "$lib/stores/programStore.js";
   let content = "";
   let error: string | undefined = undefined;
-
+  let parsing = false;
   function parseContent() {
+    if(parsing) return;
+    parsing = true;
     error = undefined;
     let ast;
     if(content.trim() === "") return;
@@ -31,7 +33,7 @@
   {/if}
   <FileUpload bind:content />
   <Editor bind:content />
-  <button disabled={content.trim() === ""} on:click={parseContent}>Generate</button>
+  <button disabled={content.trim() === "" || parsing} on:click={parseContent}>{parsing ? "Parsing..." : "Generate"}</button>
 </div>
 
 <style>

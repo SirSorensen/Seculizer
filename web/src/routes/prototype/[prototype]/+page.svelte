@@ -16,8 +16,9 @@
     prev: null,
     next: null,
   };
+  let loaded = false;
   onMount(() => {
-    if($page.params.prototype === undefined) return;
+    if ($page.params.prototype === undefined) return;
     const proto = $page.params.prototype;
     if (proto !== null) {
       const content = LZString.decompressFromEncodedURIComponent(proto);
@@ -25,6 +26,7 @@
       parseContent(content);
     }
     updateNavigation();
+    loaded = true;
   });
   function parseContent(input: string) {
     error = undefined;
@@ -37,10 +39,10 @@
       error = errorMsg.message;
       return;
     }
-    if($program.first === null) {
+    if ($program.first === null) {
       error = "No frames found";
       return;
-    };
+    }
     $currentFrame = $program.first;
   }
   function updateNavigation() {
@@ -61,10 +63,10 @@
 
   function prevFrame() {
     if ($currentFrame === null) return;
-    if(navigation.prev === null) {
+    if (navigation.prev === null) {
       error = "Invalid previous frame";
       return;
-    };
+    }
     $currentFrame = navigation.prev;
     updateNavigation();
   }
@@ -80,22 +82,30 @@
     updateNavigation();
   }
 </script>
+
 {#if error}
   <p class="error">{error}</p>
 {/if}
-{#if $program && $currentFrame !== null}
-  <div class="program-container">
-    <div class="button-area">
-      <PrevButton {navigation} {prevFrame} />
+{#if loaded}
+  {#if $program && $currentFrame !== null}
+    <div class="program-container">
+      <div class="button-area">
+        <PrevButton {navigation} {prevFrame} />
+      </div>
+      <Frame {nextFrame} />
+      <div class="button-area">
+        <NextButton {navigation} {nextFrame} />
+      </div>
     </div>
-    <Frame {nextFrame} />
-    <div class="button-area">
-      <NextButton {navigation} {nextFrame} />
-    </div>
-  </div>
+  {:else}
+    <p class="error">There is no program to display</p>
+    <button><a href="/">Go back</a></button>
+  {/if}
 {:else}
-  <p class="error">There is no program to display</p>
-  <button><a href="/">Go back</a></button>
+  <div class="loading">
+    <div class="square" />
+    <p>Loading...</p>
+  </div>
 {/if}
 
 <style>
@@ -119,5 +129,47 @@
     margin: 0;
     padding: 1rem;
     font-weight: bold;
+  }
+  .loading {
+    font-size: 1.5rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100vh - 75px);
+    transform: translateY(-75px);
+  }
+  .loading .square {
+    height: 1.5rem;
+    width: 1.5rem;
+    background-color: #d94141;
+    animation: squareDelay 5s 0s infinite cubic-bezier(0.09, 0.57, 0.49, 0.9);
+    animation-fill-mode: both;
+    perspective: 2rem;
+    display: block;
+    margin-right: 0.5rem;
+  }
+  @keyframes squareDelay {
+    25% {
+      background-color: #d94141;
+      -webkit-transform: rotateX(180deg) rotateY(0);
+      transform: rotateX(180deg) rotateY(0);
+    }
+    50% {
+      background-color: #cad941;
+      -webkit-transform: rotateX(180deg) rotateY(180deg);
+      transform: rotateX(180deg) rotateY(180deg);
+    }
+    75% {
+      background-color: #41d980;
+      -webkit-transform: rotateX(0) rotateY(180deg);
+      transform: rotateX(0) rotateY(180deg);
+    }
+    100% {
+      background-color: #4150d9;
+      -webkit-transform: rotateX(0) rotateY(0);
+      transform: rotateX(0) rotateY(0);
+    }
   }
 </style>
