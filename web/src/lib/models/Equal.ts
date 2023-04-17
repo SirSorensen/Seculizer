@@ -62,7 +62,7 @@ export class Equal {
     };
 
     // Make a clone of the right for modification in aux
-    const rightClone : FunctionCall = {type: "function", id: structuredClone(this.right.id), params: structuredClone(this.right.params)}
+    const rightClone: FunctionCall = { type: "function", id: structuredClone(this.right.id), params: structuredClone(this.right.params) };
 
     return aux(rightClone);
   }
@@ -86,21 +86,17 @@ export class Equal {
     return this.right;
   }
 
-  checkIfInputisKnown(input: Type, participant: Participant): boolean {
-    let rawKnowledge: RawParticipantKnowledge = {
-      type: "rawKnowledge",
-      knowledge: input,
-      value: input,
-    };
+  static checkIfInputisKnown(input: Type, participant: Participant, val: Type | undefined = undefined): boolean {
+    if (participant.doesTypeAndValueExist(input, val)) return true;
 
-    if (participant.doesKnowledgeExist(rawKnowledge)) return true;
-
-    if (input.type === "function") {
-      input.params.forEach((param) => {
-        if (this.checkIfInputisKnown(param, participant)) return true;
-      });
+    if (input.type === "function" && val == undefined) {
+      for(const param of input.params) {
+        if (!this.checkIfInputisKnown(param, participant)) return false;
+      }
+    } else {
+      return false
     }
 
-    return false;
+    return true;
   }
 }

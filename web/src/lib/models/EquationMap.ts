@@ -28,12 +28,12 @@ export class EquationMap {
   doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined = undefined): boolean {
     let history: Map<string, boolean> = new Map();
     let queue: queueElement[] = [];
-    if (this.equations[f.id] === undefined) return parti.doesTypeAndValueExist(f, val);
+    if (this.equations[f.id] === undefined) return Equal.checkIfInputisKnown(f, parti);
     const maxDepth = this.equations[f.id].maxDepth;
     
-
     queue.push({ f: f, depth: 0 });
 
+    //TODO: generateEquals for inner functions
     while (queue.length > 0) {
       let current = queue.shift();
       if (current === undefined) continue;
@@ -43,7 +43,7 @@ export class EquationMap {
       if (history.has(getStringFromType(_f))) continue;
       history.set(getStringFromType(_f), true);
 
-      if (parti.doesTypeAndValueExist(_f, val)) return true;
+      if (Equal.checkIfInputisKnown(_f, parti)) return true;
 
       for (const eq of this.equations[_f.id].eqs) {
         let _fEq = eq.generateEqual(_f);
