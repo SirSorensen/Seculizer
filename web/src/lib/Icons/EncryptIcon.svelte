@@ -41,7 +41,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    transform: translate(20%, 50%);
+    transform: translate(40%, 50%);
   }
   .id-container {
     position: relative;
@@ -53,6 +53,7 @@
   }
   .encrypt-icon :global(.emoji) {
     font-size: 2rem;
+    height: 2.1rem;
     margin: 0;
     text-align: center;
   }

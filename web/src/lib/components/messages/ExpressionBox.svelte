@@ -15,6 +15,7 @@
 
   import { currentFrame, program } from "$lib/stores/programStore.js";
   import Comment from "../Comment.svelte";
+  export let isSubmessage = false;
   export let participants: { from: Id; to: Id };
   export let expression: ExpressionAST;
   let child = expression.child;
@@ -30,21 +31,39 @@
 {:else if child.type === "encryptExpression"}
   {@const encryptExpression = castToEncryptExpression(child)}
   {@const inner = encryptExpression.inner}
-  {#each inner as innerExpression}
-    <svelte:self expression={innerExpression} {participants} />
-  {/each}
   {@const outer = encryptExpression.outer}
   {@const encryptComment = outer.type === "id" ? $currentFrame.getParticipantKnowledgeComment(participants.from.value, outer) : undefined}
-  <EncryptIcon encryptType={outer} comment={encryptComment} />
+  {#if isSubmessage}
+    <div class="subMessage">
+      {#each inner as innerExpression}
+        <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+      {/each}
+      <EncryptIcon encryptType={outer} comment={encryptComment} />
+    </div>
+  {:else}
+    {#each inner as innerExpression}
+      <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+    {/each}
+    <EncryptIcon encryptType={outer} comment={encryptComment} />
+  {/if}
 {:else if child.type === "signExpression"}
   {@const signExpression = castToSignExpression(child)}
   {@const inner = signExpression.inner}
-  {#each inner as innerExpression}
-    <svelte:self expression={innerExpression} {participants} />
-  {/each}
   {@const outer = signExpression.outer}
   {@const signComment = outer.type === "id" ? $currentFrame.getParticipantKnowledgeComment(participants.from.value, outer) : undefined}
-  <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} comment={signComment} />
+  {#if isSubmessage}
+    <div class="subMessage">
+      {#each inner as innerExpression}
+        <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+      {/each}
+      <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} comment={signComment} />
+    </div>
+  {:else}
+    {#each inner as innerExpression}
+      <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+    {/each}
+    <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} comment={signComment} />
+  {/if}
 {:else if child.type === "string" || child.type === "number" || child.type === "function"}
   {@const type = castToType(child)}
   <p>

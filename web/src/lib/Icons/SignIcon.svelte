@@ -63,6 +63,7 @@
   }
   .sign-icon :global(.emoji) {
     font-size: 2rem;
+    height: 2.1rem;
     margin: 0;
     text-align: center;
   }
