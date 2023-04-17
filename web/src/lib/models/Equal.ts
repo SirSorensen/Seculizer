@@ -1,10 +1,12 @@
-import type { FunctionCall, StringLiteral, NumberLiteral, Id } from "$lang/types/parser/interfaces";
+import type { FunctionCall, StringLiteral, NumberLiteral, Id, Type } from "$lang/types/parser/interfaces";
+import type { RawParticipantKnowledge } from "src/types/participant";
+import type { Participant } from "./Participant";
 
 export class Equal {
   // exp(exp(A,B),C) = exp(exp(A,C),B)
 
   private right: FunctionCall;
-  private left: FunctionCall
+  private left: FunctionCall;
 
   // The index of the parameters of the right function call in the left function call (i.e. exp(A,B) => exp(B,A) -> [1, 0])
   private paramIndex: number[] = [];
@@ -44,27 +46,29 @@ export class Equal {
     // Construct the param array for the given call
     const callParamArray = this.constructParamArray(call);
 
+    let i = 0;
+
     // Auxiliar function to generate the new function (it works recursively if the given function contains functions)
-    const aux = (newFunction: FunctionCall, i: number): FunctionCall => {
+    const aux = (newFunction: FunctionCall): FunctionCall => {
       newFunction.params.forEach((param, index) => {
         if (param.type != "function") {
           newFunction.params[index] = callParamArray[this.paramIndex[i]];
           i++;
         } else {
-          newFunction.params[index] = aux(param, i);
+          newFunction.params[index] = aux(param);
         }
       });
       return newFunction;
     };
 
     // Make a clone of the right for modification in aux
-    const rightClone : FunctionCall = {id: structuredClone(this.right.id), params: structuredClone(this.right.params), type: "function"}
+    const rightClone: FunctionCall = { type: "function", id: structuredClone(this.right.id), params: structuredClone(this.right.params) };
 
-    return aux(rightClone, 0);
+    return aux(rightClone);
   }
 
   // Check if the given function call is applicable to the equation, by comparing the parameters' types and amount thereof
-  checkIfAplicable(func: FunctionCall) : boolean {
+  checkIfAplicable(func: FunctionCall): boolean {
     if (func.params.length != this.left.params.length) return false;
 
     for (let i = 0; i < func.params.length; i++) {
@@ -79,6 +83,20 @@ export class Equal {
   }
 
   getRight() {
-    return this.right
+    return this.right;
+  }
+
+  static checkIfInputisKnown(input: Type, participant: Participant, val: Type | undefined = undefined): boolean {
+    if (participant.doesTypeAndValueExist(input, val)) return true;
+
+    if (input.type === "function" && val == undefined) {
+      for(const param of input.params) {
+        if (!this.checkIfInputisKnown(param, participant)) return false;
+      }
+    } else {
+      return false
+    }
+
+    return true;
   }
 }

@@ -348,7 +348,12 @@ export class Program {
   ): ParticipantKnowledge[] {
     // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
     // decryptable = true if receiver knows the key, it is therefore not encrypted
-    canDecrypt = canDecrypt && last.getParticipantMap().checkKeyKnowledge(receiverId, this.checkKeyRelation(outer));
+    const key = this.checkKeyRelation(outer);
+    const receiver = last.getParticipantMap().getParticipant(receiverId);
+    const keyVal = receiver.getValueOfKnowledge(key);
+    
+    if (key.type != "function") canDecrypt = canDecrypt && receiver.doesTypeAndValueExist(key, keyVal);
+    else canDecrypt = canDecrypt && this.equations.doesParticipantKnow(receiver, key, keyVal);
 
     const knowledges: ParticipantKnowledge[] = [];
     inner.forEach((expression) => {
