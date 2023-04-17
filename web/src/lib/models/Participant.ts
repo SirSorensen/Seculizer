@@ -1,5 +1,5 @@
 import type { StmtComment, Type } from "$lang/types/parser/interfaces";
-import type { ParticipantKnowledge } from "src/types/participant";
+import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 
 export class Participant {
   private name: string;
@@ -50,12 +50,24 @@ export class Participant {
     );
   }
 
+  //TODO : Test this
+  getValueOfKnowledge(knowledge: Type): Type | undefined {
+    const partiKnowledge : RawParticipantKnowledge = {
+      type: "rawKnowledge",
+      knowledge: knowledge
+    };
+    const result = this.getKnowledge(partiKnowledge, false);
+
+    if (result?.type === "rawKnowledge") return result?.value;
+    else return undefined;
+  }
+
   clearKnowledgeElement(elem: ParticipantKnowledge) {
     this.knowledge = this.knowledge.filter(({ item }) => !this.isKnowledgeEqual(item, elem));
   }
 
-  getKnowledge(knowledge: ParticipantKnowledge): ParticipantKnowledge | undefined {
-    const result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge));
+  getKnowledge(knowledge: ParticipantKnowledge, strict: boolean = false): ParticipantKnowledge | undefined {
+    const result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge, strict));
     return result?.item;
   }
 
