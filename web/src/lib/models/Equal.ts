@@ -1,5 +1,4 @@
 import type { FunctionCall, StringLiteral, NumberLiteral, Id, Type } from "$lang/types/parser/interfaces";
-import type { RawParticipantKnowledge } from "src/types/participant";
 import type { Participant } from "./Participant";
 
 export class Equal {
@@ -29,14 +28,13 @@ export class Equal {
   // Construct an array of the parameters of the given function call (i.e. exp(A,B) -> [0, 1])
   constructParamArray(call: FunctionCall): (Id | StringLiteral | NumberLiteral)[] {
     let paramArray: (Id | StringLiteral | NumberLiteral)[] = [];
-
-    call.params.forEach((param) => {
+    for (const param of call.params) {
       if (param.type != "function") {
         paramArray.push(param);
       } else {
         paramArray = paramArray.concat(this.constructParamArray(param));
       }
-    });
+    }
 
     return paramArray;
   }
@@ -68,7 +66,7 @@ export class Equal {
   }
 
   // Check if the given function call is applicable to the equation, by comparing the parameters' types and amount thereof
-  checkIfAplicable(func: FunctionCall): boolean {
+  checkIfApplicable(func: FunctionCall): boolean {
     if (func.params.length != this.left.params.length) return false;
 
     for (let i = 0; i < func.params.length; i++) {
@@ -78,11 +76,11 @@ export class Equal {
     return true;
   }
 
-  getLeft() {
+  getLeft():FunctionCall {
     return this.left;
   }
 
-  getRight() {
+  getRight():FunctionCall {
     return this.right;
   }
 
@@ -91,12 +89,9 @@ export class Equal {
 
     if (input.type === "function" && val == undefined) {
       for(const param of input.params) {
-        if (!this.checkIfInputisKnown(param, participant)) return false;
+        if (!Equal.checkIfInputisKnown(param, participant)) return false;
       }
-    } else {
-      return false
     }
-
-    return true;
+    return false;
   }
 }
