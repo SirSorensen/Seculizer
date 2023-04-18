@@ -91,6 +91,7 @@ export class Equal {
       for(const param of input.params) {
         if (!Equal.checkIfInputisKnown(param, participant)) return false;
       }
+      return true;
     }
     return false;
   }
