@@ -1,0 +1,24 @@
+Participants: A ? "Alice",B ? "Bob",s ? "Server";
+Knowledge: {
+    A: kas ? "Shared key between Alice and Server";
+    B: kbs ? "Shared key between Bob and Server";
+    s: kas ? "Shared key between Alice and Server",kbs ? "Shared key between Bob and Server";
+};
+Format: kas = $K_{A,s}$, kbs = $K_{B,s}$, Kab = $K_{A,B}$, NA = $N_{A}$, NB = $N_{B}$, subtract(NB, 1) = $N_{B} - 1$;
+Icons: {
+    "woman": A;
+    "man": B;
+    "save": s;
+    "🔑": kas, kbs, Kab;
+    "input-numbers": NA, NB;
+};
+Protocol: {
+    A: new NA ? "Alice nonce"; ? "Alice creates a nonce"
+    A->s: A,B,NA; ? "Alice sends her, Bob, and the nonce to the server"
+    s: new Kab ? "Shared key between Alice and Bob"; ? "Server creates a shared key"
+    s->A: { Kab,B, NA, { Kab,A }kbs }kas; ? "Server sends Bob, the nonce, and the shared key encrypted with the shared key to Alice"
+    A->B: { Kab,A }kbs; ? "Alice sends the shared key encrypted with the shared key to Bob"
+    B: new NB ? "Bob nonce"; ? "Bob creates a nonce"
+    B->A: { NB }Kab; ? "Bob sends the nonce encrypted with the shared key to Alice"
+    A->B: {subtract(NB, 1)}Kab; ? "Alice performs a simple operation on the nonce, re-encrypts it and sends it back verifying that she is still alive and that she holds the key."
+};
