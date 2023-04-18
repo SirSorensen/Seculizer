@@ -10,9 +10,10 @@ type equalResult = {
 };
 
 type queueElement = {
-    f: FunctionCall;
-    depth: number;
-}
+  f: FunctionCall;
+  search_depth: number;
+  param_depth: number;
+};
 
 export class EquationMap {
   private equations: { [id: string]: equalResult } = {};
@@ -29,15 +30,15 @@ export class EquationMap {
     let history: Map<string, boolean> = new Map();
     let queue: queueElement[] = [];
     if (this.equations[f.id] === undefined) return Equal.checkIfInputisKnown(f, parti);
-    const maxDepth = this.equations[f.id].maxDepth;
+    let maxDepth = this.calcMaxDepth(f);
     
-    queue.push({ f: f, depth: 0 });
+    queue.push({ f: f, search_depth: 0, param_depth: 0});
 
     //TODO: generateEquals for inner functions
     while (queue.length > 0) {
       let current = queue.shift();
       if (current === undefined) continue;
-      if (current.depth > maxDepth) continue;
+      if (current.search_depth > maxDepth) continue;
 
       let _f = current.f
       if (history.has(getStringFromType(_f))) continue;
@@ -47,11 +48,47 @@ export class EquationMap {
 
       for (const eq of this.equations[_f.id].eqs) {
         let _fEq = eq.generateEqual(_f);
-        queue.push({ f: _fEq, depth: current.depth + 1 });
+        queue.push({ f: _fEq, search_depth: current.search_depth + 1, param_depth: current.param_depth });
       }
+
+      let param_depth = this.calcParamDepth(_f, current.param_depth);
+      if (param_depth !== undefined) {
+        maxDepth += this.equations[(f.params[param_depth - 1] as FunctionCall).id].maxDepth;
+        queue.push({ f: _f, search_depth: current.search_depth + 1, param_depth: current.param_depth + 1 });
+      };
     }
 
     return false;
+  }
+
+  private calcMaxDepth(f: FunctionCall) : number {
+    let maxDepth = 0;
+    maxDepth += this.equations[f.id].maxDepth;
+    for (const param of f.params) {
+      if (param.type == "function" && this.equations[param.id] !== undefined) {
+        maxDepth += this.equations[param.id].maxDepth;
+      }
+    }
+
+    return maxDepth;
+  }
+
+  private calcParamDepth(f: FunctionCall, param_depth : number, i : number = 0): number | undefined {
+
+    const aux = (_f : FunctionCall) => {
+        for (const param of f.params) {
+        i += 1;
+        if (param.type == "function"){ 
+          if (i > param_depth) return i;
+          else aux(param)
+        }
+      }
+
+      return undefined;
+    }
+
+    aux(f);
+    return i;
   }
 
   private functionIdParameter(f: FunctionCall): number {
