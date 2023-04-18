@@ -23,6 +23,7 @@ export class EquationMap {
     }
     this.equations[left.id].eqs.push(new Equal(left, right));
     this.equations[left.id].maxDepth += this.functionIdParameter(right);
+    if (this.equations[left.id].maxDepth > 1) this.equations[left.id].maxDepth -= 1; 
   }
 
   doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined = undefined): boolean {
@@ -128,13 +129,12 @@ export class EquationMap {
   private functionIdParameter(f: FunctionCall): number {
     let idParams = 0;
 
-    for (const t of f.params) {
-      if (t.type == "function") idParams += this.functionIdParameter(t);
+    for (const param of f.params) {
+      if (param.type === "function") idParams += this.functionIdParameter(param);
       else idParams += 1;
     }
 
-    if (idParams > 1) return idParams - 1;
-    else return idParams;
+    return idParams;
   }
 
   getEquations() {
