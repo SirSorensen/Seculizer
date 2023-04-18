@@ -16,7 +16,7 @@ export class Latex {
     //Params amount = 1 if the call was not a function, and the amount of params of the call if it was a function
     this.paramAmount = params.length;
 
-    const latex_array: string[] = latex.match(/([.,+*-?^$&§()[\]{}|/\\|_ ]+)|([a-z,A-Z]+)/g) as string[];
+    const latex_array: string[] = latex.match(/([.,+*-?^$&§()[\]{}|/\\|_ ]+)|([a-z,A-Z,α-ω,Α-Ω]+)/g) as string[];
 
     if (latex_array == null) throw new Error("No matches were found!");
 
