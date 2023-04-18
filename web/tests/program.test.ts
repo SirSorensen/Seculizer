@@ -12,6 +12,7 @@ import { Equal } from "$lib/models/Equal";
 import { EquationMap } from "$lib/models/EquationMap";
 import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { Participant } from "$lib/models/Participant";
+import { getStringFromType } from "$lib/utils/stringUtil";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -404,6 +405,23 @@ test("Construct an EquationMap and check if Participant knows", () => {
   expect(result1).toBeTruthy();
   expect(result2).toBeTruthy();
   expect(result3).toBeFalsy();
+});
+
+test("Does cloneFunctionChangedParams work", () => {
+  const init_param1: Type = { type: "id", value: "x" };
+  const init_param2: Type = { type: "id", value: "y" };
+  const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] }; // Hash(x,y)
+  const init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_func1] }; // Base(y,Hash(x,y))
+  const init_func3: FunctionCall = { type: "function", id: "shesh", params: [init_param1, init_param2] }; // shesh(x,y)
+
+  const param_depth = [1];
+
+  const equalityMap = new EquationMap();
+
+  const f = equalityMap.cloneFunctionChangedParam(init_func2, param_depth, init_func3);
+  const expectedF: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_func3] }; // Base(y,shesh(x,y))
+
+  expect(getStringFromType(expectedF)).toBe(getStringFromType(f));
 });
 
 test("Construct an EquationMap with functions with nested functions", () => {
