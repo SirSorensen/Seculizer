@@ -31,11 +31,11 @@ export class Participant {
     }
   }
 
-  findKnowledgeIndex(element: ParticipantKnowledge, strict: boolean = false): number {
+  findKnowledgeIndex(element: ParticipantKnowledge, strict = false): number {
     return this.knowledge.findIndex(({ item }) => this.isKnowledgeEqual(item, element, strict));
   }
 
-  doesKnowledgeExist(element: ParticipantKnowledge, strict: boolean = false): boolean {
+  doesKnowledgeExist(element: ParticipantKnowledge, strict = false): boolean {
     return this.findKnowledgeIndex(element, strict) >= 0;
   }
 
@@ -66,7 +66,7 @@ export class Participant {
     this.knowledge = this.knowledge.filter(({ item }) => !this.isKnowledgeEqual(item, elem));
   }
 
-  getKnowledge(knowledge: ParticipantKnowledge, strict: boolean = false): ParticipantKnowledge | undefined {
+  getKnowledge(knowledge: ParticipantKnowledge, strict = false): ParticipantKnowledge | undefined {
     const result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge, strict));
     return result?.item;
   }
@@ -83,7 +83,7 @@ export class Participant {
     return this.name;
   }
 
-  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict: boolean = false): boolean {
+  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
     if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
       const strA = JSON.stringify(knowledgeA.knowledge);
       const strB = JSON.stringify(knowledgeB.knowledge);
