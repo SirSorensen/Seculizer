@@ -441,11 +441,11 @@ test("Construct an EquationMap with functions with nested functions", () => {
   const help_func1: FunctionCall = { type: "function", id: "lee", params: [param1, param2] }; // lee(x,y)
   const modified_func1: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(lee(x,y),y))
   const help_func2: FunctionCall = { type: "function", id: "lee", params: [help_func1, param2] }; // lee(lee(x,y),y)
-  const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(lee(x,y),y))
+  const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(lee(x,y),y),y)
   const help_func3: FunctionCall = { type: "function", id: "lee", params: [help_func2, param2] }; // lee(lee(lee(x,y),y),y)
-  const modified_func3: FunctionCall = { type: "function", id: "foo", params: [help_func3, param2] }; // foo(lee(lee(lee(x,y),y),y))
+  const modified_func3: FunctionCall = { type: "function", id: "foo", params: [help_func3, param2] }; // foo(lee(lee(lee(x,y),y),y),y)
   const help_func4: FunctionCall = { type: "function", id: "lee", params: [help_func3, param2] }; // lee(lee(lee(lee(x,y),y),y))
-  const modified_func4: FunctionCall = { type: "function", id: "foo", params: [help_func4, param2] }; // foo(lee(lee(lee(lee(x,y),y),y)))
+  const modified_func4: FunctionCall = { type: "function", id: "foo", params: [help_func4, param2] }; // foo(lee(lee(lee(lee(x,y),y),y),y),y)
 
   const init_knowledge: RawParticipantKnowledge = {
     type: "rawKnowledge",
