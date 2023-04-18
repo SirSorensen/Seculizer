@@ -18,33 +18,34 @@ export class Latex {
 
     const latex_array: string[] = latex.match(/([.,+*-?^$&§()[\]{}|/\\|_ ]+)|([a-z,A-Z,α-ω,Α-Ω]+)/g) as string[];
 
-    if (latex_array == null) throw new Error("No matches were found!");
+    if (latexArray == null) throw new Error("No matches were found!");
 
-    // char_index_arr = array of indexes of characters in latex_array
-    const char_index_arr = latex_array.map((element, index) => {
+    // charIndexArr = array of indexes of characters in latexArray
+    const charIndexArr = latexArray
+      .map((element, index) => {
         if (element.match(/([a-z,A-Z]+)/g)) return index;
       })
       .filter(Boolean);
 
-    // params_index_arr = array of arrays of indexes of parameters in latex_array
-    const params_index_arr: number[][] = [];
+    // paramsIndexArr = array of arrays of indexes of parameters in latexArray
+    const paramsIndexArr: number[][] = [];
 
-    char_index_arr.forEach((val: number | undefined) => {
-      if (val != undefined) {
-        params.forEach((param, index) => {
-          if (param.type == "function") throw new Error("Function type not supported for latex initialization!");
-          if (params_index_arr[index] == undefined) params_index_arr[index] = [];
-          if (latex_array[val] == (param.value as string)) {
-            params_index_arr[index].push(val);
-          }
-        });
+    for (const val of charIndexArr) {
+      if (!val) continue;
+      for (let index = 0; index < params.length; index++) {
+        const param = params[index];
+        if (param.type == "function") throw new Error("Function type not supported for latex initialization!");
+        if (!paramsIndexArr[index]) paramsIndexArr[index] = [];
+        if (latexArray[val] == (param.value as string)) {
+          paramsIndexArr[index].push(val);
+        }
       }
-    });
+    }
 
-    // params_index_arr_flat          = params_index_arr flattened from [][] to []
-    // params_index_arr_flat_indexed  = has each given call param index in relation to the params_index_arr_flat
-    const params_index_arr_flat = params_index_arr.flat();
-    const params_index_arr_flat_indexed = params_index_arr
+    // paramsIndexArrFlat          = paramsIndexArr flattened from [][] to []
+    // paramsIndexArrFlatIndexed = has each given call param index in relation to the paramsIndexArrFlat
+    const paramsIndexArrFlat = paramsIndexArr.flat();
+    const paramsIndexArrFlatIndexed = paramsIndexArr
       .map((val, index) => {
         return val.map(() => {
           return index;
@@ -53,17 +54,17 @@ export class Latex {
       .flat();
 
     // stringArray = array of strings, each string is a part of the latex string, where the seperations is to be filled by the parameters of call
-    latex_array.forEach((val: string, index) => {
-      if (val != undefined) {
-        const indexOf = params_index_arr_flat.indexOf(index);
-        if (indexOf >= 0) {
-          this.stringArray.push("");
-          this.paramIndex.push(params_index_arr_flat_indexed[indexOf]);
-        } else {
-          this.stringArray[this.stringArray.length - 1] += val;
-        }
+    for (let index=0; index < latexArray.length; index++) {
+      const val = latexArray[index];
+      if (!val) continue;
+      const indexOf = paramsIndexArrFlat.indexOf(index);
+      if (indexOf >= 0) {
+        this.stringArray.push("");
+        this.paramIndex.push(paramsIndexArrFlatIndexed[indexOf]);
+      } else {
+        this.stringArray[this.stringArray.length - 1] += val;
       }
-    });
+    }
   }
 
   constructLatex(call: Type, map: LatexMap | undefined = undefined): string {
@@ -76,21 +77,23 @@ export class Latex {
     if (params.length != this.paramAmount)
       throw new Error("The amount of parameters given does not match the amount of parameters expected!");
 
-    let tmp_latex = this.stringArray[0];
+    let tmpLatex = this.stringArray[0];
 
     for (let i = 1; i < this.stringArray.length; i++) {
       const param = params[this.paramIndex[i - 1]];
-      if (param.type == "function") { //Function gets { } around it
-        if (map == undefined) throw new Error("No LatexMap was given! For Function");
-        tmp_latex += "{" + map.getConstructedLatex(param).slice(1, -1) + "}"; 
-      } else if (param.type != "number") { //Anything else gets \text{ } around it
-        tmp_latex += "\\text{" + param.value + "}";
+      if (param.type == "function") {
+        //Function gets { } around it
+        if (!map) throw new Error("No LatexMap was given! For Function");
+        tmpLatex += "{" + map.getConstructedLatex(param).slice(1, -1) + "}";
+      } else if (param.type != "number") {
+        //Anything else gets \text{ } around it
+        tmpLatex += "\\text{" + param.value + "}";
       } else {
-        tmp_latex += param.value;
+        tmpLatex += param.value;
       }
-      tmp_latex += this.stringArray[i];
+      tmpLatex += this.stringArray[i];
     }
 
-    return tmp_latex;
+    return tmpLatex;
   }
 }
