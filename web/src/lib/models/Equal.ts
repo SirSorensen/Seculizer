@@ -100,19 +100,33 @@ export class Equal {
   // Generate a new function call with the same parameters as the given function call, but with the parameters in the right function's call order
   generateEqual(call: FunctionCall): FunctionCall {
     // Construct the param array for the given call
-    const callParamArray = this.constructLeftParamArray(call);
+    
     let i = 0;
+
+    const getParam = (params: Type[], paramIndex: paramIndexType): Type => {
+      if (typeof paramIndex === "number") return params[paramIndex];
+
+      const funIndex = paramIndex[0];
+      if (!funIndex) throw new Error("Invalid paramIndexType");
+      if (typeof funIndex !== "number") throw new Error("Invalid paramIndexType");
+      if (params[funIndex].type !== "function") throw new Error("Invalid funIndex");
+
+      const newF = paramIndex[1];
+      if (!newF) throw new Error("Invalid paramIndexType");
+
+      return getParam((params[funIndex] as FunctionCall).params, newF);
+    };
 
     // Auxiliar function to generate the new function (it works recursively if the given function contains functions)
     const aux = (newFunction: FunctionCall): FunctionCall => {
-      newFunction.params.forEach((param, index) => {
-        if (param.type != "function") {
-          newFunction.params[index] = callParamArray[this.paramIndex[i]];
+      for (let j = 0; j < newFunction.params.length; j++) {
+        if (newFunction.params[j].type != "function") {
+          newFunction.params[j] = getParam(call.params, this.paramIndex[i]);
           i++;
         } else {
-          newFunction.params[index] = aux(param);
+          newFunction.params[j] = aux(newFunction.params[j] as FunctionCall);
         }
-      });
+      }
       return newFunction;
     };
 
