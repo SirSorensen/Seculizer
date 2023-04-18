@@ -107,12 +107,12 @@ export class Equal {
       if (typeof paramIndex === "number") return params[paramIndex];
 
       const funIndex = paramIndex[0];
-      if (!funIndex) throw new Error("Invalid paramIndexType");
+      if (funIndex === undefined) throw new Error("Invalid paramIndexType");
       if (typeof funIndex !== "number") throw new Error("Invalid paramIndexType");
       if (params[funIndex].type !== "function") throw new Error("Invalid funIndex");
 
       const newF = paramIndex[1];
-      if (!newF) throw new Error("Invalid paramIndexType");
+      if (newF === undefined) throw new Error("Invalid paramIndexType");
 
       return getParam((params[funIndex] as FunctionCall).params, newF);
     };
