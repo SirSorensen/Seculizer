@@ -500,11 +500,11 @@ test("Construct an EquationMap with functions with nested functions", () => {
   expect(result2_2).toBeFalsy();
   expect(result3_2).toBeTruthy();
 
-  expect(result1_3).toBeTruthy();
+  expect(result1_3).toBeFalsy();
   expect(result2_3).toBeFalsy();
   expect(result3_3).toBeTruthy();
 
-  expect(result1_4).toBeTruthy();
+  expect(result1_4).toBeFalsy();
   expect(result2_4).toBeFalsy();
-  expect(result3_4).toBeTruthy();
+  expect(result3_4).toBeFalsy();
 });
