@@ -51,6 +51,7 @@ export class EquationMap {
       }
 
       const tmpParamDepth = this.calcParamDepth(_f, current.paramDepth);
+      
       while (tmpParamDepth.length > 0) {
         for (const eq of this.equations[_f.id].eqs) {
           const _fParamEq = eq.generateEqual(this.getParamFunctionFromDepth(_f, current.paramDepth));
@@ -102,7 +103,7 @@ export class EquationMap {
   }
 
   cloneFunctionChangedParam(f: FunctionCall, paramDepth: number[], newParam: FunctionCall): FunctionCall {
-    const _f = structuredClone(f);
+    const _f: FunctionCall = { type: "function", id: structuredClone(f.id), params: structuredClone(f.params) };
     const _paramDepth = paramDepth.map((x) => x);
 
     const aux = (aux_f: FunctionCall) => {
@@ -132,7 +133,8 @@ export class EquationMap {
       else idParams += 1;
     }
 
-    return idParams;
+    if (idParams > 1) return idParams - 1;
+    else return idParams;
   }
 
   getEquations() {
