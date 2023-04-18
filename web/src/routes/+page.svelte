@@ -9,18 +9,19 @@
   let content = "";
   let error: string | undefined = undefined;
   let parsing = false;
-  function parseContent() {
+  async function parseContent() {
+    if(content.trim() === "") return;
     if(parsing) return;
     parsing = true;
     error = undefined;
     let ast;
-    if(content.trim() === "") return;
     try {
       ast = parse(content, false);
       $program = new Program(ast, false);
     } catch (errorMsg: any) {
       console.error(errorMsg);
       error = errorMsg.message;
+      parsing = false;
       return;
     }
     goto(`/prototype/${LZString.compressToEncodedURIComponent(content)}`);
