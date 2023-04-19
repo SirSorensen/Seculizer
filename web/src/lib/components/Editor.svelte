@@ -241,7 +241,7 @@ Protocol: {
     top: 0;
     left: 0;
     overflow: auto;
-    white-space: nowrap;
+    white-space: pre;
     color: var(--ecolor-comment);
   }
   .editor,

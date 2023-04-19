@@ -11,7 +11,6 @@
   import Frame from "$lib/components/Frame.svelte";
   import PrevButton from "$lib/components/navigation/PrevButton.svelte";
   import NextButton from "$lib/components/navigation/NextButton.svelte";
-  import Favicon from "$lib/assets/favicon.png";
   let error: string | undefined = undefined;
   let navigation: Navigation = {
     prev: null,
