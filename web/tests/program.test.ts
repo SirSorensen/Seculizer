@@ -587,3 +587,60 @@ test("Does equalityMap.doesParticipantKnow work with string values?", () => {
   expect(result).toBeTruthy();
   expect(result2).toBeFalsy();
 });
+
+test("Does participant know opaque function?", () => {
+  const init_param1: Type = { type: "id", value: "a" };
+  const init_param2: Type = { type: "id", value: "b" };
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
+  const init_func2: FunctionCall = { type: "function", id: "foo", params: [init_param2, init_param1] }; // foo(b,a)
+
+  const equalityMap = new EquationMap();
+  equalityMap.addEquation(init_func1, init_func2); // foo(a,b) => foo(b,a)
+  equalityMap.addOpaqueFunction("foo");
+
+  const param1: Type = { type: "id", value: "x" };
+  const param2: Type = { type: "id", value: "y" };
+
+  const func1: FunctionCall = { type: "function", id: "foo", params: [param1, param2] }; // foo(x,y)
+  const func1_modified: FunctionCall = { type: "function", id: "foo", params: [param2, param1] }; // foo(y,x)
+
+  const init_knowledge: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: func1,
+  };
+
+  const init_param_knowledge1: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: param1,
+  };
+  const init_param_knowledge2: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: param2,
+  };
+
+  const init_modified_knowledge: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: func1_modified,
+  };
+
+  // Alice knows foo(x,y)
+  const parti: Participant = new Participant("Alice");
+  parti.setKnowledge(init_knowledge);
+
+  // Alice2 knows x and y
+  const param_parti: Participant = new Participant("Alice2");
+  param_parti.setKnowledge(init_param_knowledge1);
+  param_parti.setKnowledge(init_param_knowledge2);
+
+  // Alice3 knows foo(y,x) 
+  const modified_parti: Participant = new Participant("Alice");
+  modified_parti.setKnowledge(init_modified_knowledge);
+
+  const result = equalityMap.doesParticipantKnow(parti, func1, undefined);
+  const result2 = equalityMap.doesParticipantKnow(param_parti, func1, undefined);
+  const result3 = equalityMap.doesParticipantKnow(modified_parti, func1, undefined);
+
+  expect(result).toBeTruthy();
+  expect(result2).toBeFalsy();
+  expect(result3).toBeTruthy();
+});

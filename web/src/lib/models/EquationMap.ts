@@ -17,7 +17,7 @@ type queueElement = {
 };
 
 export class EquationMap {
-  private functions: Id[] = [];
+  private opaqueFunctions: string[] = [];
   private equations: { [id: string]: equalResult } = {};
 
   // Adds an equality to the equation map and updates the maxDepth of the equalResult
@@ -30,19 +30,19 @@ export class EquationMap {
     if (this.equations[left.id].maxDepth > 1) this.equations[left.id].maxDepth -= 1;
   }
 
-  addOpaqueFunction(id: Id) {
-    if(!this.functions.includes(id)) this.functions.push(id);
+  addOpaqueFunction(id: string) {
+    if (!this.opaqueFunctions.includes(id)) this.opaqueFunctions.push(id);
   }
 
-  getOpaqueFunctions(): Id[] {
-    return this.functions;
+  getOpaqueFunctions(): string[] {
+    return this.opaqueFunctions;
   }
 
   // Returns whether a participant knows a function call (i.e. whether the participant knows the function call or any of its equalities)
   doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined): boolean {
     const history: Map<string, boolean> = new Map();
     const queue: queueElement[] = [];
-    if (!this.equations[f.id]) return Equal.checkIfInputisKnown(f, parti, val);
+    if (!this.equations[f.id]) return Equal.checkIfInputisKnown(f, parti, this.opaqueFunctions, val);
     const maxDepth = this.calcMaxDepth(f);
 
     queue.push({ f: f, searchDepth: 0, paramDepth: [] });
@@ -56,7 +56,7 @@ export class EquationMap {
       if (history.has(getStringFromType(_f))) continue;
       history.set(getStringFromType(_f), true);
 
-      if (Equal.checkIfInputisKnown(_f, parti, val)) return true;
+      if (Equal.checkIfInputisKnown(_f, parti, this.opaqueFunctions, val)) return true;
 
       
       if (this.equations[_f.id])

@@ -132,7 +132,7 @@ export class Program {
 
   constructFunctions(functions: FunctionsDef) {
     if (functions) {
-      functions.functions.forEach((func: Id) => this.equations.addOpaqueFunction(func));
+      functions.functions.forEach((func: Id) => this.equations.addOpaqueFunction(func.value));
       if (this.log) console.log("Functions created", this.equations.getOpaqueFunctions());
     } else if (this.log) console.log("No functions found");
   }

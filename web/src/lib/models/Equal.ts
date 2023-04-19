@@ -148,12 +148,12 @@ export class Equal {
     return this.right;
   }
 
-  static checkIfInputisKnown(input: Type, participant: Participant, val: Type | undefined = undefined): boolean {
+  static checkIfInputisKnown(input: Type, participant: Participant, opaqueFunctions : string[], val: Type | undefined = undefined): boolean {
     if (participant.doesTypeAndValueExist(input, val)) return true;
 
-    if (input.type === "function" && val == undefined) {
+    if (input.type === "function" && val == undefined && !opaqueFunctions.includes((input as FunctionCall).id)) {
       for (const param of input.params) {
-        if (!Equal.checkIfInputisKnown(param, participant)) return false;
+        if (!Equal.checkIfInputisKnown(param, participant, opaqueFunctions)) return false;
       }
       return true;
     }
