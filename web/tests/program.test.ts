@@ -543,7 +543,7 @@ test("Construct an EquationMap with functions with nested left functions", () =>
   expect(result).toBeTruthy();
 });
 
-test("Construct an EquationMap with functions with nested left functions", () => {
+test("Does equalityMap.doesParticipantKnow work with string values?", () => {
   const init_param1: Type = { type: "id", value: "a" };
   const init_param2: Type = { type: "id", value: "b" };
   const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
@@ -560,19 +560,30 @@ test("Construct an EquationMap with functions with nested left functions", () =>
   const modified_func1: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(x,y),y))
   const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(foo(x,y),y))
 
+  const init_knowledge_value : Type = {
+    type: "string",
+    value: "this_is_a_value",
+  }
   const init_knowledge: RawParticipantKnowledge = {
     type: "rawKnowledge",
     knowledge: modified_func1,
-    value: {
-      type: "string",
-      value: "this_is_a_value"
-    },
+    value: init_knowledge_value,
+  };
+
+  const init_knowledge2: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: modified_func1,
   };
 
   const parti: Participant = new Participant("Alice");
   parti.setKnowledge(init_knowledge);
 
-  const result = equalityMap.doesParticipantKnow(parti, modified_func2, undefined);
+  const parti2: Participant = new Participant("Alice2");
+  parti2.setKnowledge(init_knowledge2);
+
+  const result = equalityMap.doesParticipantKnow(parti, modified_func2, init_knowledge_value);
+  const result2 = equalityMap.doesParticipantKnow(parti2, modified_func2, init_knowledge_value);
 
   expect(result).toBeTruthy();
+  expect(result2).toBeFalsy();
 });
