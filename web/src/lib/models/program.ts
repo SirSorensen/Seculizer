@@ -278,7 +278,7 @@ export class Program {
     // Pipe ParticipantStatement
     if (stmnt.child.type == "newStatement") {
       const newStmnt = stmnt.child as NewStatement;
-      this.newStmnt(stmnt.id.value, newStmnt.id, last, newStmnt.comment);
+      this.newStmnt(stmnt.id.value, newStmnt.value, last, newStmnt.comment);
     } else if (stmnt.child.type == "setStatement") {
       const sendStmnt = stmnt.child as SetStatement;
       this.setStmnt(stmnt.id.value, sendStmnt.id, sendStmnt.value, last);

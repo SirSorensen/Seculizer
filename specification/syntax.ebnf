@@ -36,7 +36,7 @@ clear_stmt ::= "clear" ":" id ("," id)* ";"   /* Example: clear akey; */
 
 participant_stmt ::= id ": " (new_stmt | set_stmt) ";"  /* Example: Alice: new msgA; */
 
-new_stmt ::= "new " id      /* Example: Alice: new msgA; */
+new_stmt ::= "new " id | function      /* Example: Alice: new msgA; */
 set_stmt ::= id ":=" type   /* Example: TPM: pid := "1" ; */
 
 /* ---- Participants ---- */

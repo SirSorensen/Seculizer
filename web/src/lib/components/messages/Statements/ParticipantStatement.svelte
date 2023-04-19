@@ -51,15 +51,15 @@
     <p>Invalid participant statement</p>
   {:else if child.type === "newStatement"}
     {@const newStmnt = castToNewStatement(child)}
-    {@const id = newStmnt.id}
-    {@const icon = $program.getIcon(id.value)}
+    {@const value = newStmnt.value}
+    {@const icon = value.type === "id" ? $program.getIcon(value.value) : "gear"}
     <ActionBox title="new">
       {#if newStmnt.comment}
-        <Item emoji={icon} value={id}>
+        <Item emoji={icon} value={value}>
           <Comment comment={newStmnt.comment} slot="hover" />
         </Item>
       {:else}
-        <Item emoji={icon} value={id} />
+        <Item emoji={icon} value={value} />
       {/if}
     </ActionBox>
   {:else if child.type === "setStatement"}

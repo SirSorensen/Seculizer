@@ -801,11 +801,11 @@ exports[`should parse Envelope.sepo 1`] = `
                 "value": "Nonce",
               },
             },
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "n",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -826,11 +826,11 @@ exports[`should parse Envelope.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "esk",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -903,11 +903,11 @@ exports[`should parse Envelope.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "sid",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -1148,11 +1148,11 @@ exports[`should parse Envelope.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "k",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -1259,11 +1259,11 @@ exports[`should parse Envelope.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "v",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -1336,11 +1336,11 @@ exports[`should parse Envelope.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "esk",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -1413,11 +1413,11 @@ exports[`should parse Envelope.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "sid",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -2249,11 +2249,11 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
                 "value": "Alice nonce",
               },
             },
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "NA",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -2327,11 +2327,11 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
                 "value": "Shared key between Alice and Bob",
               },
             },
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "Kab",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -2495,11 +2495,11 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
                 "value": "Bob nonce",
               },
             },
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "NB",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -2867,11 +2867,11 @@ exports[`should parse TLS-1.3.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "clientRandomBytes",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -3021,11 +3021,11 @@ exports[`should parse TLS-1.3.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "cipserSuite",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -3040,11 +3040,11 @@ exports[`should parse TLS-1.3.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "serverRandomBytes",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -3059,11 +3059,11 @@ exports[`should parse TLS-1.3.sepo 1`] = `
         "child": {
           "child": {
             "comment": undefined,
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "extension",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -3144,11 +3144,11 @@ exports[`should parse TLS-1.3.sepo 1`] = `
                 "value": "Pre-master-key",
               },
             },
-            "id": {
+            "type": "newStatement",
+            "value": {
               "type": "id",
               "value": "pmk",
             },
-            "type": "newStatement",
           },
           "id": {
             "type": "id",
@@ -3451,6 +3451,73 @@ exports[`should parse key-relation.sepo 1`] = `
             "value": "Bob",
           },
           "type": "sendStatement",
+        },
+        "comment": undefined,
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse new_function.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": undefined,
+  "functions": {
+    "functions": [
+      {
+        "type": "id",
+        "value": "hash",
+      },
+    ],
+    "type": "functionsDef",
+  },
+  "icons": undefined,
+  "keyRelations": undefined,
+  "knowledge": undefined,
+  "participants": {
+    "participants": [
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participantItem",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "comment": undefined,
+            "type": "newStatement",
+            "value": {
+              "id": "hash",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "x",
+                },
+                {
+                  "type": "id",
+                  "value": "y",
+                },
+              ],
+              "type": "function",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
         },
         "comment": undefined,
         "type": "statement",

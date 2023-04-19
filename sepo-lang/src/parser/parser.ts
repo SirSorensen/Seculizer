@@ -281,7 +281,10 @@ export class SepoParser extends CstParser {
 
   private new = this.RULE("new", () => {
     this.CONSUME(New);
-    this.CONSUME(Id);
+    this.OR([
+      { ALT: () => this.SUBRULE(this.function) },
+      { ALT: () => this.CONSUME(Id) },
+    ])
     this.OPTION(() => {
       this.SUBRULE(this.stmtComment);
     });

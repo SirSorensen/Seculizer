@@ -445,21 +445,30 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         child: setStatement,
       };
     }
-    //TODO THROW ERROR HERE and remove possibility of null
     return throwSimpleParseError("Uknown participant statement", ctx[Object.keys(ctx)[0]][0], this.template);
   }
 
   new(ctx: NewCST): NewStatement {
-    const id: string = ctx.Id[0].image;
     const comment = ctx.stmtComment ? this.visit(ctx.stmtComment) : undefined;
-    return {
-      type: "newStatement",
-      id: {
-        type: "id",
-        value: id,
-      },
-      comment: comment,
-    };
+    if(ctx.Id && ctx.Id.length > 0){
+      const id: string = ctx.Id[0].image;
+      return {
+        type: "newStatement",
+        value: {
+          type: "id",
+          value: id,
+        },
+        comment: comment,
+      };
+    }else if(ctx.function){
+      const func = this.visit(ctx.function);
+      return {
+        type: "newStatement",
+        value: func,
+        comment: comment,
+      }
+    }
+    return throwSimpleParseError("Uknown new statement", ctx[Object.keys(ctx)[0]][0], this.template);
   }
 
   set(ctx: SetCST): SetStatement {

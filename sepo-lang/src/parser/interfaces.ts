@@ -147,7 +147,7 @@ export interface ParticipantStatementNode extends ASTNode {}
 
 export interface NewStatement extends ParticipantStatementNode {
   type: "newStatement";
-  id: Id;
+  value: Id | FunctionCall;
   comment?: StmtComment;
 }
 
@@ -323,8 +323,10 @@ export interface ParticipantStatementCST extends CstNode {
 }
 
 export interface NewCST extends CstNode {
-  Id: IToken[];
+  Id?: IToken[];
+  function?: FunctionCallCST;
   stmtComment?: StmtCommentCST;
+  [key: string]: any;
 }
 
 export interface SetCST extends CstNode {

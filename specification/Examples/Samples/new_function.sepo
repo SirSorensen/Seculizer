@@ -1,0 +1,5 @@
+Participants: Alice;
+Functions: hash;
+Protocol: {
+    Alice: new hash(x,y);
+};
