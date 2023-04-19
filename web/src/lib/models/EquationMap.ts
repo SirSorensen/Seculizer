@@ -17,15 +17,17 @@ type queueElement = {
 export class EquationMap {
   private equations: { [id: string]: equalResult } = {};
 
+  // Adds an equality to the equation map and updates the maxDepth of the equalResult
   addEquation(left: FunctionCall, right: FunctionCall) {
     if (!this.equations[left.id]) {
       this.equations[left.id] = { eqs: [], maxDepth: 0 };
     }
     this.equations[left.id].eqs.push(new Equal(left, right));
     this.equations[left.id].maxDepth += this.functionIdParameter(right);
-    if (this.equations[left.id].maxDepth > 1) this.equations[left.id].maxDepth -= 1; 
+    if (this.equations[left.id].maxDepth > 1) this.equations[left.id].maxDepth -= 1;
   }
 
+  // Returns whether a participant knows a function call (i.e. whether the participant knows the function call or any of its equalities)
   doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined = undefined): boolean {
     const history: Map<string, boolean> = new Map();
     const queue: queueElement[] = [];
@@ -34,7 +36,6 @@ export class EquationMap {
 
     queue.push({ f: f, searchDepth: 0, paramDepth: [] });
 
-    //TODO: generateEquals for inner functions
     while (queue.length > 0) {
       const current = queue.shift();
       if (!current) continue;
@@ -51,9 +52,12 @@ export class EquationMap {
         queue.push({ f: _fEq, searchDepth: current.searchDepth + 1, paramDepth: current.paramDepth });
       }
 
+      //Queue
       const tmpParamDepth = this.calcParamDepth(_f, current.paramDepth);
-      
+
       while (tmpParamDepth.length > 0) {
+        if (!this.equations[_f.id]) break;
+
         for (const eq of this.equations[_f.id].eqs) {
           const _fParamEq = eq.generateEqual(this.getParamFunctionFromDepth(_f, current.paramDepth));
 
@@ -69,6 +73,7 @@ export class EquationMap {
     return false;
   }
 
+  // Given a function, calculates and returns the maxDepth of the function for searching for equalities
   private calcMaxDepth(f: FunctionCall): number {
     let maxDepth = 0;
     maxDepth += this.equations[f.id].maxDepth;
@@ -81,6 +86,10 @@ export class EquationMap {
     return maxDepth;
   }
 
+  // Given a function and a paramDepth, returns the index of the next inner functions
+  // For example if f = f(a, g(b, c), e) and paramDepth = [], it returns [1]
+  // For example if f = f(a, g(h(b, c), k(d, e)), f) and paramDepth = [1], it returns [0, 1]
+  // For example if f = f(a, b) and paramDepth = [], it returns []
   private calcParamDepth(f: FunctionCall, paramDepth: number[]): number[] {
     // Arrange variables
     const _f: FunctionCall = this.getParamFunctionFromDepth(f, paramDepth);
@@ -94,6 +103,9 @@ export class EquationMap {
     return index;
   }
 
+  // Given a function and a paramDepth, returns the inner function from the paramDepth
+  // For example if f = f(a, g(b, c), e) and paramDepth = [], it returns f
+  // For example if f = f(a, g(h(b, c), k(d, e)), f) and paramDepth = [1], it returns g
   private getParamFunctionFromDepth(f: FunctionCall, paramDepth: number[]): FunctionCall {
     let _f: FunctionCall = f;
     for (const depth of paramDepth) {
@@ -103,6 +115,8 @@ export class EquationMap {
     return _f;
   }
 
+  // Given a function, a paramDepth and a new parameter-function, returns a new function with the new parameter-function in the paramDepth
+  // For example if f = f(a, g(b, c), d), paramDepth = [1], and newParam = h(e, f), it returns f(a, h(e, f), d)
   cloneFunctionChangedParam(f: FunctionCall, paramDepth: number[], newParam: FunctionCall): FunctionCall {
     const _f: FunctionCall = { type: "function", id: structuredClone(f.id), params: structuredClone(f.params) };
     const _paramDepth = paramDepth.map((x) => x);
@@ -126,6 +140,7 @@ export class EquationMap {
     return aux(_f);
   }
 
+  // Given a function, returns the number of parameters that are not functionCalls
   private functionIdParameter(f: FunctionCall): number {
     let idParams = 0;
 
@@ -137,6 +152,7 @@ export class EquationMap {
     return idParams;
   }
 
+  // Returns equations
   getEquations() {
     return this.equations;
   }
