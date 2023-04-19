@@ -19,7 +19,7 @@
   }
 </script>
 
-<div class="container">
+<div class="container" id="commonKnowledgeContainer">
   <p class="header">Common knowledge</p>
   <div class="knowledges">
     {#if knowledges.length === 0}
