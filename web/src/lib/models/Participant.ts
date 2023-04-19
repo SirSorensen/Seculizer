@@ -1,5 +1,6 @@
 import type { StmtComment, Type } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
+import { KnowledgeHandler } from "./KnowledgeHandler";
 
 export class Participant {
   private name: string;
@@ -17,7 +18,7 @@ export class Participant {
     });
   }
 
-  setKnowledge(knowledge: ParticipantKnowledge) {
+setKnowledge(knowledge: ParticipantKnowledge) {
     const index = this.findKnowledgeIndex(knowledge);
 
     if (index >= 0) {
@@ -32,7 +33,7 @@ export class Participant {
   }
 
   findKnowledgeIndex(element: ParticipantKnowledge, strict = false): number {
-    return this.knowledge.findIndex(({ item }) => this.isKnowledgeEqual(item, element, strict));
+    return this.knowledge.findIndex(({ item }) => KnowledgeHandler.isKnowledgeEqual(item, element, strict));
   }
 
   doesKnowledgeExist(element: ParticipantKnowledge, strict = false): boolean {
@@ -52,9 +53,9 @@ export class Participant {
 
   //TODO : Test this
   getValueOfKnowledge(knowledge: Type): Type | undefined {
-    const partiKnowledge : RawParticipantKnowledge = {
+    const partiKnowledge: RawParticipantKnowledge = {
       type: "rawKnowledge",
-      knowledge: knowledge
+      knowledge: knowledge,
     };
     const result = this.getKnowledge(partiKnowledge, false);
 
@@ -63,11 +64,11 @@ export class Participant {
   }
 
   clearKnowledgeElement(elem: ParticipantKnowledge) {
-    this.knowledge = this.knowledge.filter(({ item }) => !this.isKnowledgeEqual(item, elem));
+    this.knowledge = this.knowledge.filter(({ item }) => !KnowledgeHandler.isKnowledgeEqual(item, elem));
   }
 
   getKnowledge(knowledge: ParticipantKnowledge, strict = false): ParticipantKnowledge | undefined {
-    const result = this.knowledge.find(({ item }) => this.isKnowledgeEqual(item, knowledge, strict));
+    const result = this.knowledge.find(({ item }) => KnowledgeHandler.isKnowledgeEqual(item, knowledge, strict));
     return result?.item;
   }
 
@@ -83,27 +84,13 @@ export class Participant {
     return this.name;
   }
 
-  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
-    if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
-      const strA = JSON.stringify(knowledgeA.knowledge);
-      const strB = JSON.stringify(knowledgeB.knowledge);
-      return (
-        JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge) && // check if knowledge is the same
-        (!strict || JSON.stringify(knowledgeA.value) === JSON.stringify(knowledgeB.value)) // if strict is true, then we need to check the value as well
-      );
-    } else if (knowledgeA.type === "encryptedKnowledge" && knowledgeB.type === "encryptedKnowledge") {
-      if (JSON.stringify(knowledgeA.encryption) !== JSON.stringify(knowledgeB.encryption)) return false;
-      if (knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
-      const tmp = structuredClone(knowledgeB.knowledge);
-      for (let i = 0; i < knowledgeA.knowledge.length; i++) {
-        const knowledge = knowledgeA.knowledge[i];
-        const index = tmp.findIndex((item) => this.isKnowledgeEqual(item, knowledge));
-        if (index < 0) return false;
-        tmp.splice(index, 1);
-      }
-      return tmp.length === 0;
-    }
-    return false;
+  setKnowledgeList(knowledge: { item: ParticipantKnowledge; id: number }[]) {
+    this.knowledge = knowledge;
+  }
+
+  addKnowledge(knowledge: ParticipantKnowledge, index: number | undefined = undefined) {
+    if (index === undefined) this.knowledge.push({ item: knowledge, id: this.currentKnowledgeId++ });
+    else this.knowledge[index] = { item: knowledge, id: this.currentKnowledgeId++ };
   }
 
   getComment(): StmtComment | undefined {

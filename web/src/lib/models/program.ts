@@ -30,13 +30,13 @@ import type {
   Id,
 } from "$lang/types/parser/interfaces";
 import { getSimpleStringFromExpression, getStringFromType } from "$lib/utils/stringUtil";
-import { EquationMap } from "./EquationMap";
 import HistoryTemplates from "$lib/utils/HistoryEnum";
 import { Frame } from "./Frame";
 import { LatexMap } from "./LatexMap";
 import { ParticipantMap } from "./ParticipantMap";
 import { z } from "zod";
 import type { ParticipantKnowledge } from "src/types/participant";
+import { KnowledgeHandler } from './KnowledgeHandler';
 
 export class Program {
   init_participants: ParticipantMap = new ParticipantMap();
@@ -45,7 +45,7 @@ export class Program {
 
   keyRelations: { [id: string]: string } = {};
   formats: LatexMap = new LatexMap();
-  equations: EquationMap = new EquationMap();
+  knowledgeHandler = new KnowledgeHandler();
   icons: Map<string, string> = new Map();
   log = false;
 
@@ -111,7 +111,11 @@ export class Program {
     if (knowledge) {
       knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
         knowledge.children.forEach((child: {value: Type, comment?: StmtComment}) => {
-          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, { type: "rawKnowledge", knowledge: child.value, comment: child.comment });
+          this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, {
+            type: "rawKnowledge",
+            knowledge: child.value,
+            comment: child.comment,
+          });
         });
       });
       if (this.log) console.log("Knowledge added to participants", this.init_participants);
@@ -132,15 +136,15 @@ export class Program {
 
   constructFunctions(functions: FunctionsDef) {
     if (functions) {
-      functions.functions.forEach((func: Id) => this.equations.addOpaqueFunction(func.value));
-      if (this.log) console.log("Functions created", this.equations.getOpaqueFunctions());
+      functions.functions.forEach((func: Id) => this.knowledgeHandler.addOpaqueFunction(func.value));
+      if (this.log) console.log("Functions created", this.knowledgeHandler.getOpaqueFunctions());
     } else if (this.log) console.log("No functions found");
   }
 
   constructEquations(equations: Equations) {
     if (equations) {
-      equations.equations.forEach((eq: Equation) => this.equations.addEquation(eq.left, eq.right));
-      if (this.log) console.log("Equations created", this.equations.getEquations());
+      equations.equations.forEach((eq: Equation) => this.knowledgeHandler.getEquations().addEquation(eq.left, eq.right));
+      if (this.log) console.log("Equations created", this.knowledgeHandler.getEquations().getEquations());
     } else if (this.log) console.log("No Equations found");
   }
 
@@ -289,13 +293,19 @@ export class Program {
 
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame, comment?: StmtComment) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
+    last
+      .getParticipantMap()
+      .setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
     last.addToHistory(HistoryTemplates.new(participant, newKnowledge, this), `Note over ${participant}: New ${getStringFromType(newKnowledge)}`);
   }
 
   // Set Statement
   setStmnt(participant: string, knowledge: Type, value: Type, last: Frame) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: knowledge, value: value});
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, {
+      type: "rawKnowledge",
+      knowledge: knowledge,
+      value: value,
+    });
     last.addToHistory(HistoryTemplates.set(participant, knowledge, value, this), `Note over ${participant}: ${getStringFromType(knowledge)} = ${getStringFromType(value)}`);
   }
 
@@ -315,7 +325,7 @@ export class Program {
       last.addToHistory(HistoryTemplates.send(senderId, receiverId, expression, this), `${senderId} ->> ${receiverId}: ${getSimpleStringFromExpression(expression)}`);
       const sentKnowledge = this.generateKnowledgeElement(expression, receiverId, last, canDescrypt);
       sentKnowledge.forEach((knowledge) => {
-        last.getParticipantMap().transferKnowledge(senderId, receiverId, knowledge);
+        this.knowledgeHandler.transferKnowledge(last.getParticipantMap(), senderId, receiverId, knowledge);
       });
     });
   }
@@ -352,7 +362,7 @@ export class Program {
     const keyVal = receiver.getValueOfKnowledge(key);
     
     if (key.type != "function") canDecrypt = canDecrypt && receiver.doesTypeAndValueExist(key, keyVal);
-    else canDecrypt = canDecrypt && this.equations.doesParticipantKnow(receiver, key, keyVal);
+    else canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnow(receiver, key, keyVal);
 
     const knowledges: ParticipantKnowledge[] = [];
     inner.forEach((expression) => {

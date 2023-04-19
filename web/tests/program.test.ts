@@ -9,10 +9,10 @@ import { Latex } from "../src/lib/models/Latex";
 import { fileURLToPath } from "url";
 import { LatexMap } from "$lib/models/LatexMap";
 import { Equal } from "$lib/models/Equal";
-import { EquationMap } from "$lib/models/EquationMap";
 import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { Participant } from "$lib/models/Participant";
 import { getStringFromType } from "$lib/utils/stringUtil";
+import { KnowledgeHandler } from '../src/lib/models/KnowledgeHandler';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,13 +41,13 @@ test("web/program with simple.sepo", () => {
   expect(program.keyRelations).toBeDefined();
   expect(Object.keys(program.keyRelations).length).toBeGreaterThan(0);
 
-  expect(program.equations.getOpaqueFunctions()).toBeDefined();
-  expect(program.equations.getOpaqueFunctions().length).toBeGreaterThan(0);
+  expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
+  expect(program.knowledgeHandler.getOpaqueFunctions().length).toBeGreaterThan(0);
 
   expect(program.formats).toBeDefined();
   expect(Object.keys(program.formats).length).toBeGreaterThan(0);
 
-  expect(Object.keys(program.equations).length).toBeGreaterThan(0);
+  expect(Object.keys(program.knowledgeHandler.equations).length).toBeGreaterThan(0);
 
   expect(program.icons.size).toBe(0);
 });
@@ -69,14 +69,14 @@ test("web/program with DF.sepo", () => {
   expect(program.keyRelations).toBeDefined();
   expect(Object.keys(program.keyRelations).length).toBe(0);
 
-  expect(program.equations.getOpaqueFunctions()).toBeDefined();
-  expect(program.equations.getOpaqueFunctions().length).toBe(0);
+  expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
+  expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
 
   expect(program.formats).toBeDefined();
   expect(Object.keys(program.formats).length).toBeGreaterThan(0);
 
-  expect(program.equations).toBeDefined();
-  expect(Object.keys(program.equations.getEquations()).length).toBe(1);
+  expect(program.knowledgeHandler.getEquations()).toBeDefined();
+  expect(Object.keys(program.knowledgeHandler.getEquations().getEquations()).length).toBe(1);
 
   expect(program.icons).toBeDefined();
   expect(program.icons.size).toBe(7);
@@ -89,14 +89,14 @@ test("web/program with send-with-sign.sepo", () => {
   expect(program.keyRelations).toBeDefined();
   expect(Object.keys(program.keyRelations).length).toBe(0);
 
-  expect(program.equations.getOpaqueFunctions()).toBeDefined();
-  expect(program.equations.getOpaqueFunctions().length).toBe(0);
+  expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
+  expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
 
   expect(program.formats).toBeDefined();
   expect(Object.keys(program.formats.latexMap).length).toBe(0);
 
-  expect(program.equations).toBeDefined();
-  expect(Object.keys(program.equations.getEquations()).length).toBe(0);
+  expect(program.knowledgeHandler.getEquations()).toBeDefined();
+  expect(Object.keys(program.knowledgeHandler.getEquations().getEquations()).length).toBe(0);
 
   expect(program.icons).toBeDefined();
   expect(program.icons.size).toBe(0);
@@ -155,14 +155,14 @@ test("web/program with send-with-enc.sepo", () => {
   expect(program.keyRelations).toBeDefined();
   expect(Object.keys(program.keyRelations).length).toBe(0);
 
-  expect(program.equations.getOpaqueFunctions()).toBeDefined();
-  expect(program.equations.getOpaqueFunctions().length).toBe(0);
+  expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
+  expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
 
   expect(program.formats).toBeDefined();
   expect(Object.keys(program.formats.latexMap).length).toBe(0);
 
-  expect(program.equations).toBeDefined();
-  expect(Object.keys(program.equations.getEquations()).length).toBe(0);
+  expect(program.knowledgeHandler.getEquations()).toBeDefined();
+  expect(Object.keys(program.knowledgeHandler.getEquations().getEquations()).length).toBe(0);
 
   expect(program.icons).toBeDefined();
   expect(program.icons.size).toBe(0);
@@ -383,9 +383,9 @@ test("Construct an EquationMap and check if Participant knows", () => {
   const init_func3: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] }; // Base(x,y)
   const init_func4: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] }; // Base(y,x)
 
-  const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func2); // Hash(x,y) => Hash(y,x)
-  equalityMap.addEquation(init_func3, init_func4); // Base(x,y) => Base(y,x)
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // Hash(x,y) => Hash(y,x)
+  knowledgeHandler.getEquations().addEquation(init_func3, init_func4); // Base(x,y) => Base(y,x)
 
   const param1: Type = { type: "id", value: "z" };
   const param2: Type = { type: "id", value: "v" };
@@ -402,9 +402,9 @@ test("Construct an EquationMap and check if Participant knows", () => {
   const parti: Participant = new Participant("Alice");
   parti.setKnowledge(init_knowledge);
 
-  const result1 = equalityMap.doesParticipantKnow(parti, func, undefined);
-  const result2 = equalityMap.doesParticipantKnow(parti, modified_func, undefined);
-  const result3 = equalityMap.doesParticipantKnow(parti, base_func, undefined);
+  const result1 = knowledgeHandler.doesParticipantKnow(parti, func, undefined);
+  const result2 = knowledgeHandler.doesParticipantKnow(parti, modified_func, undefined);
+  const result3 = knowledgeHandler.doesParticipantKnow(parti, base_func, undefined);
 
   expect(result1).toBeTruthy();
   expect(result2).toBeTruthy();
@@ -420,9 +420,9 @@ test("Does cloneFunctionChangedParams work", () => {
 
   const param_depth = [1];
 
-  const equalityMap = new EquationMap();
+  const knowledgeHandler = new KnowledgeHandler();
 
-  const f = equalityMap.cloneFunctionChangedParam(init_func2, param_depth, init_func3);
+  const f = knowledgeHandler.cloneFunctionChangedParam(init_func2, param_depth, init_func3);
   const expectedF: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_func3] }; // Base(y,shesh(x,y))
 
   expect(getStringFromType(expectedF)).toBe(getStringFromType(f));
@@ -435,8 +435,8 @@ test("Construct an EquationMap with functions with nested right functions", () =
   const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
   const init_func3: FunctionCall = { type: "function", id: "foo", params: [init_func2, init_param2] }; // foo(lee(a,b),b)
 
-  const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func3); // foo(a,b) => foo(lee(a,b),b)
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func3); // foo(a,b) => foo(lee(a,b),b)
 
   const param1: Type = { type: "id", value: "x" };
   const param2: Type = { type: "id", value: "y" };
@@ -480,21 +480,21 @@ test("Construct an EquationMap with functions with nested right functions", () =
   const parti4: Participant = new Participant("Alice4");
   parti3.setKnowledge(init_knowledge4);
 
-  const result1 = equalityMap.doesParticipantKnow(parti, func, undefined);
-  const result2 = equalityMap.doesParticipantKnow(parti, help_func1, undefined);
-  const result3 = equalityMap.doesParticipantKnow(parti, modified_func1, undefined);
+  const result1 = knowledgeHandler.doesParticipantKnow(parti, func, undefined);
+  const result2 = knowledgeHandler.doesParticipantKnow(parti, help_func1, undefined);
+  const result3 = knowledgeHandler.doesParticipantKnow(parti, modified_func1, undefined);
 
-  const result1_2 = equalityMap.doesParticipantKnow(parti2, func, undefined);
-  const result2_2 = equalityMap.doesParticipantKnow(parti2, help_func1, undefined);
-  const result3_2 = equalityMap.doesParticipantKnow(parti2, modified_func1, undefined);
+  const result1_2 = knowledgeHandler.doesParticipantKnow(parti2, func, undefined);
+  const result2_2 = knowledgeHandler.doesParticipantKnow(parti2, help_func1, undefined);
+  const result3_2 = knowledgeHandler.doesParticipantKnow(parti2, modified_func1, undefined);
 
-  const result1_3 = equalityMap.doesParticipantKnow(parti3, func, undefined);
-  const result2_3 = equalityMap.doesParticipantKnow(parti3, help_func1, undefined);
-  const result3_3 = equalityMap.doesParticipantKnow(parti3, modified_func1, undefined);
+  const result1_3 = knowledgeHandler.doesParticipantKnow(parti3, func, undefined);
+  const result2_3 = knowledgeHandler.doesParticipantKnow(parti3, help_func1, undefined);
+  const result3_3 = knowledgeHandler.doesParticipantKnow(parti3, modified_func1, undefined);
 
-  const result1_4 = equalityMap.doesParticipantKnow(parti4, func, undefined);
-  const result2_4 = equalityMap.doesParticipantKnow(parti4, help_func1, undefined);
-  const result3_4 = equalityMap.doesParticipantKnow(parti4, modified_func1, undefined);
+  const result1_4 = knowledgeHandler.doesParticipantKnow(parti4, func, undefined);
+  const result2_4 = knowledgeHandler.doesParticipantKnow(parti4, help_func1, undefined);
+  const result3_4 = knowledgeHandler.doesParticipantKnow(parti4, modified_func1, undefined);
 
   expect(result1).toBeTruthy();
   expect(result2).toBeFalsy();
@@ -519,8 +519,8 @@ test("Construct an EquationMap with functions with nested left functions", () =>
   const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
   const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
 
-  const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
 
   const param1: Type = { type: "id", value: "x" };
   const param2: Type = { type: "id", value: "y" };
@@ -538,7 +538,7 @@ test("Construct an EquationMap with functions with nested left functions", () =>
   const parti: Participant = new Participant("Alice");
   parti.setKnowledge(init_knowledge);
 
-  const result = equalityMap.doesParticipantKnow(parti, modified_func2, undefined);
+  const result = knowledgeHandler.doesParticipantKnow(parti, modified_func2, undefined);
 
   expect(result).toBeTruthy();
 });
@@ -549,8 +549,8 @@ test("Does equalityMap.doesParticipantKnow work with string values?", () => {
   const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
   const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
 
-  const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
 
   const param1: Type = { type: "id", value: "x" };
   const param2: Type = { type: "id", value: "y" };
@@ -581,8 +581,8 @@ test("Does equalityMap.doesParticipantKnow work with string values?", () => {
   const parti2: Participant = new Participant("Alice2");
   parti2.setKnowledge(init_knowledge2);
 
-  const result = equalityMap.doesParticipantKnow(parti, modified_func2, init_knowledge_value);
-  const result2 = equalityMap.doesParticipantKnow(parti2, modified_func2, init_knowledge_value);
+  const result = knowledgeHandler.doesParticipantKnow(parti, modified_func2, init_knowledge_value);
+  const result2 = knowledgeHandler.doesParticipantKnow(parti2, modified_func2, init_knowledge_value);
 
   expect(result).toBeTruthy();
   expect(result2).toBeFalsy();
@@ -594,9 +594,10 @@ test("Does participant know opaque function?", () => {
   const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
   const init_func2: FunctionCall = { type: "function", id: "foo", params: [init_param2, init_param1] }; // foo(b,a)
 
-  const equalityMap = new EquationMap();
-  equalityMap.addEquation(init_func1, init_func2); // foo(a,b) => foo(b,a)
-  equalityMap.addOpaqueFunction("foo");
+
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => foo(b,a)
+  knowledgeHandler.addOpaqueFunction("foo");
 
   const param1: Type = { type: "id", value: "x" };
   const param2: Type = { type: "id", value: "y" };
@@ -636,9 +637,9 @@ test("Does participant know opaque function?", () => {
   const modified_parti: Participant = new Participant("Alice");
   modified_parti.setKnowledge(init_modified_knowledge);
 
-  const result = equalityMap.doesParticipantKnow(parti, func1, undefined);
-  const result2 = equalityMap.doesParticipantKnow(param_parti, func1, undefined);
-  const result3 = equalityMap.doesParticipantKnow(modified_parti, func1, undefined);
+  const result = knowledgeHandler.doesParticipantKnow(parti, func1, undefined);
+  const result2 = knowledgeHandler.doesParticipantKnow(param_parti, func1, undefined);
+  const result3 = knowledgeHandler.doesParticipantKnow(modified_parti, func1, undefined);
 
   expect(result).toBeTruthy();
   expect(result2).toBeFalsy();

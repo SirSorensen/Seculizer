@@ -147,16 +147,4 @@ export class Equal {
   getRight(): FunctionCall {
     return this.right;
   }
-
-  static checkIfInputisKnown(input: Type, participant: Participant, opaqueFunctions : string[], val: Type | undefined = undefined): boolean {
-    if (participant.doesTypeAndValueExist(input, val)) return true;
-
-    if (input.type === "function" && val == undefined && !opaqueFunctions.includes((input as FunctionCall).id)) {
-      for (const param of input.params) {
-        if (!Equal.checkIfInputisKnown(param, participant, opaqueFunctions)) return false;
-      }
-      return true;
-    }
-    return false;
-  }
 }
