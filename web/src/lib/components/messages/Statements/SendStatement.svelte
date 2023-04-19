@@ -122,6 +122,7 @@
     border-radius: 3px;
     background: var(--line-color);
     position: absolute;
+    z-index: 100;
     transform-origin: left;
     display: flex;
     justify-content: center;
