@@ -56,16 +56,6 @@ export class Equal {
     return paramArray;
   }
 
-  private constructCallParamArray(call: FunctionCall): Type[] {
-    const paramArray: Type[] = [];
-
-    for (const param of call.params) {
-      continue;
-    }
-
-    return paramArray;
-  }
-
   constructParamIndex(leftParams: leftParamType[], rightParams: rightParamType[]): paramIndexType[] {
     let paramIndex: paramIndexType[] = [];
 
