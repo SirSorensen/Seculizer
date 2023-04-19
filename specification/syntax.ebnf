@@ -52,8 +52,7 @@ keyRelations ::= keyRelation ("," keyRelation)*                                 
 keyRelation ::= "(" ("pk" ":" id "," "sk" ":" id)|("sk" ":" id "," "pk" ":" id) ")" /* Example: (sk:tmp_sk, pk:tpm_pk) */
 
 /* ---- Functions ---- */
-functions_def ::= function_def ("," function_def)*  /* Example: f/1, g/2 */
-function_def ::= id "/" number                      /* Example: f/1 */
+functions_def ::= id ("," id)*  /* Example: f, g/ */
 
 /* ---- Equations ---- */
 equations ::= equations_element ("," equations_element)*    /* Example: f(x) = x + 1, g(x, y) = x + y */

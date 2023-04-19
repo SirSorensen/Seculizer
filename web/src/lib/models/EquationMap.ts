@@ -1,4 +1,4 @@
-import type { FunctionCall, Type } from "$lang/types/parser/interfaces";
+import type { FunctionCall, Id, Type } from "$lang/types/parser/interfaces";
 import type { Participant } from "./Participant";
 import { Equal } from "./Equal";
 import { getStringFromType } from "$lib/utils/stringUtil";
@@ -17,6 +17,7 @@ type queueElement = {
 };
 
 export class EquationMap {
+  private functions: Id[] = [];
   private equations: { [id: string]: equalResult } = {};
 
   // Adds an equality to the equation map and updates the maxDepth of the equalResult
@@ -27,6 +28,14 @@ export class EquationMap {
     this.equations[left.id].eqs.push(new Equal(left, right));
     this.equations[left.id].maxDepth += this.functionIdParameter(right);
     if (this.equations[left.id].maxDepth > 1) this.equations[left.id].maxDepth -= 1;
+  }
+
+  addOpaqueFunction(id: Id) {
+    if(!this.functions.includes(id)) this.functions.push(id);
+  }
+
+  getOpaqueFunctions(): Id[] {
+    return this.functions;
   }
 
   // Returns whether a participant knows a function call (i.e. whether the participant knows the function call or any of its equalities)

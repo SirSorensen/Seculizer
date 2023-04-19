@@ -4,7 +4,7 @@ Knowledge: {
     Shared: tpm_pk;
 };
 KeyRelations: (sk:tmp_sk, pk:tpm_pk);
-Functions: hash/2;
+Functions: hash, test;
 Format: hash(x,y) = $H(x||y)$;
 Icons: {
     "woman": Alice;

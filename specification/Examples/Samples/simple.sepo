@@ -4,7 +4,7 @@ Knowledge: {
     Shared: tpm_pk;
 };
 KeyRelations: (sk:tmp_sk, pk:tpm_pk);
-Functions: hash/2, add/2;
+Functions: hash;
 Equations: add(a,b) => add(b,a);
 Format: hash(x,y) = $Hash(x||y)$, exp(g,y) = $g^{y}$, fun(x,y) = $function(x,y,x)$;
 

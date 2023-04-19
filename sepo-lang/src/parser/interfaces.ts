@@ -68,13 +68,7 @@ export interface KeyRelation extends ASTNode {
 
 export interface FunctionsDef extends ASTNode {
   type: "functionsDef";
-  functions: FunctionDefItem[];
-}
-
-export interface FunctionDefItem extends ASTNode {
-  type: "functionDef";
-  id: Id;
-  params: number;
+  functions: Id[];
 }
 
 export interface Equations extends ASTNode {
@@ -274,14 +268,8 @@ export interface PublicKeyRelationCST extends CstNode {
 }
 
 export interface FunctionsDefCST extends CstNode {
-  functionItem: FunctionItemCST[];
-}
-
-export interface FunctionItemCST extends CstNode {
   Id: IToken[];
-  NumberLiteral: IToken[];
 }
-
 export interface EquationCST extends CstNode {
   equationElement: EquationElementCST[];
 }
