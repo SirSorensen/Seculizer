@@ -5,7 +5,7 @@
   import ActionBox from "../ActionBox.svelte";
 
   import { program } from "$lib/stores/programStore.js";
-    import { onMount } from "svelte";
+  import { onMount } from "svelte";
   export let stmnt: ClearStatement;
 
   const id = stmnt.id;
@@ -14,12 +14,12 @@
 
   onMount(() => {
     const commonKnowledge = document.getElementById("commonKnowledgeContainer");
-    if(!commonKnowledge) return;
-    top = (commonKnowledge.offsetTop + commonKnowledge.offsetHeight + 10) + "px";
-  })
+    if (!commonKnowledge) return;
+    top = commonKnowledge.offsetTop + commonKnowledge.offsetHeight + 10 + "px";
+  });
 </script>
 
-<div class="statement" style:top={top}>
+<div class="statement" style:top>
   <ActionBox title="clear"><Item emoji={icon} value={id} /></ActionBox>
 </div>
 
@@ -32,7 +32,7 @@
     z-index: 100;
   }
 
-  .statement :global(.message){
+  .statement :global(.message) {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   }
 </style>
