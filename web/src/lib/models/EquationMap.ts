@@ -3,11 +3,13 @@ import type { Participant } from "./Participant";
 import { Equal } from "./Equal";
 import { getStringFromType } from "$lib/utils/stringUtil";
 
+// This type is used to store the equalities of a function call in equations
 type equalResult = {
   eqs: Equal[];
   maxDepth: number;
 };
 
+// This type is used to store the function calls that are currently being searched for in the doesParticipantKnow function
 type queueElement = {
   f: FunctionCall;
   searchDepth: number;
