@@ -49,26 +49,33 @@ export class EquationMap {
 
       if (Equal.checkIfInputisKnown(_f, parti)) return true;
 
-      for (const eq of this.equations[_f.id].eqs) {
-        const _fEq = eq.generateEqual(_f);
-        queue.push({ f: _fEq, searchDepth: current.searchDepth + 1, paramDepth: current.paramDepth });
-      }
+      
+      if (this.equations[_f.id])
+        for (const eq of this.equations[_f.id].eqs) {
+          const _fEq = eq.generateEqual(_f);
+          queue.push({ f: _fEq, searchDepth: current.searchDepth + 1, paramDepth: current.paramDepth });
+        }
 
-      //Queue
+      // Enqueue inner functions
       const tmpParamDepth = this.calcParamDepth(_f, current.paramDepth);
 
       while (tmpParamDepth.length > 0) {
-        if (!this.equations[_f.id]) break;
+        const tmpDepth = tmpParamDepth.shift();
+        if (tmpDepth === undefined) continue;
+        
+        const _paramDepth = current.paramDepth.concat(tmpDepth);
+        const _fParam = this.getParamFunctionFromDepth(_f, _paramDepth);
 
-        for (const eq of this.equations[_f.id].eqs) {
-          const _fParamEq = eq.generateEqual(this.getParamFunctionFromDepth(_f, current.paramDepth));
+        if (this.equations[_fParam.id])
+          for (const _fParamEq of this.equations[_fParam.id].eqs) {
+            const _fParamGenEq = _fParamEq.generateEqual(_fParam);
 
-          queue.push({
-            f: this.cloneFunctionChangedParam(_f, current.paramDepth, _fParamEq),
-            searchDepth: current.searchDepth + 1,
-            paramDepth: current.paramDepth.concat([tmpParamDepth.shift() as number]),
-          });
-        }
+            queue.push({
+              f: this.cloneFunctionChangedParam(_f, current.paramDepth, _fParamGenEq),
+              searchDepth: current.searchDepth + 1,
+              paramDepth: _paramDepth,
+            });
+          }
       }
     }
 
@@ -111,7 +118,7 @@ export class EquationMap {
   private getParamFunctionFromDepth(f: FunctionCall, paramDepth: number[]): FunctionCall {
     let _f: FunctionCall = f;
     for (const depth of paramDepth) {
-      if (!_f.params[depth] || _f.params[depth].type != "function") throw new Error("paramDepth is not correct");
+      if (!_f.params[depth] || _f.params[depth].type != "function") throw new Error("paramDepth is not correct " + getStringFromType(_f.params[depth]));
       _f = _f.params[depth] as FunctionCall;
     }
     return _f;
