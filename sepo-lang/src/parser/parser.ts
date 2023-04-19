@@ -179,17 +179,10 @@ export class SepoParser extends CstParser {
   private functionsDef = this.RULE("functionsDef", () => {
     this.MANY_SEP({
       SEP: Comma,
-      DEF: () => this.SUBRULE(this.functionItem),
+      DEF: () => this.CONSUME(Id),
     });
     this.CONSUME(Semicolon);
   });
-
-  private functionItem = this.RULE("functionItem", () => {
-    this.CONSUME(Id);
-    this.CONSUME(Slash);
-    this.CONSUME(NumberLiteral);
-  });
-
   private equation = this.RULE("equation", () => {
     this.MANY_SEP({
       SEP: Comma,

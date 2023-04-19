@@ -7,7 +7,7 @@ Knowledge: {
     Shared: serverPk ? "Server public key";
 };
 KeyRelations: (sk:serverSk, pk:serverPk);
-Functions: hash/2, add/2;
+Functions: hash;
 Equations: add(a,b) => add(b,a);
 Format: hash(x,y) = $Hash(x||y)$, add(a,b) = ${a + b}$, clientRandomBytes = $\text{random bytes}_{client}$;
 Icons: {

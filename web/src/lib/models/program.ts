@@ -5,7 +5,6 @@ import type {
   MatchStatement,
   KnowledgeItem,
   Type,
-  FunctionDefItem,
   FormatItem,
   Expression,
   MatchCase,
@@ -28,6 +27,7 @@ import type {
   Equation,
   StmtComment,
   ParticipantItem,
+  Id,
 } from "$lang/types/parser/interfaces";
 import { getSimpleStringFromExpression, getStringFromType } from "$lib/utils/stringUtil";
 import { EquationMap } from "./EquationMap";
@@ -44,7 +44,6 @@ export class Program {
   first: Frame | null = null;
 
   keyRelations: { [id: string]: string } = {};
-  functions: { [id: string]: number } = {};
   formats: LatexMap = new LatexMap();
   equations: EquationMap = new EquationMap();
   icons: Map<string, string> = new Map();
@@ -133,15 +132,15 @@ export class Program {
 
   constructFunctions(functions: FunctionsDef) {
     if (functions) {
-      functions.functions.forEach((func: FunctionDefItem) => (this.functions[func.id.value] = func.params));
-      if (this.log) console.log("Functions created", this.functions);
+      functions.functions.forEach((func: Id) => this.equations.addOpaqueFunction(func));
+      if (this.log) console.log("Functions created", this.equations.getOpaqueFunctions());
     } else if (this.log) console.log("No functions found");
   }
 
   constructEquations(equations: Equations) {
     if (equations) {
       equations.equations.forEach((eq: Equation) => this.equations.addEquation(eq.left, eq.right));
-      if (this.log) console.log("Equations created", this.functions);
+      if (this.log) console.log("Equations created", this.equations.getEquations());
     } else if (this.log) console.log("No Equations found");
   }
 

@@ -4,7 +4,6 @@ Knowledge: {
             Bob: Y ? "This is a random number", msgB ? "This is Bob's message";
             Shared: g ? "This is a generator";
         };
-Functions: exp/2;
 Equations: exp(exp(g,Y),X) => exp(exp(g,X),Y);
 Format: exp(x,y) = $x^y$;
 Icons: {

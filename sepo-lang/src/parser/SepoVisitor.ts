@@ -17,8 +17,6 @@ import {
   FormatItem,
   FunctionCall,
   FunctionCallCST,
-  FunctionDefItem,
-  FunctionItemCST,
   FunctionsDef,
   FunctionsDefCST,
   Icons,
@@ -240,23 +238,13 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   functionsDef(ctx: FunctionsDefCST): FunctionsDef {
-    const functions = ctx.functionItem.map((f: FunctionItemCST) => this.visit(f));
+    const functions:Id[] = ctx.Id.map((id: IToken) => {return {
+      type: "id",
+      value: id.image,
+    }});
     return {
       type: "functionsDef",
       functions: functions,
-    };
-  }
-
-  functionItem(ctx: FunctionItemCST): FunctionDefItem {
-    const id: string = ctx.Id[0].image;
-    const params = parseInt(ctx.NumberLiteral[0].image);
-    return {
-      type: "functionDef",
-      id: {
-        type: "id",
-        value: id,
-      },
-      params: params,
     };
   }
 
