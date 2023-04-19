@@ -144,9 +144,9 @@
   }
   div.participantInnerContainer,
   .knowledges {
-    background-color: #fff3d3;
+    background-color: var(--message-bg);
     text-align: center;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--shadow);
   }
   div.participantInnerContainer {
     align-items: center;
@@ -179,6 +179,6 @@
   .emptyText {
     font-size: 1rem;
     font-style: italic;
-    color: gray;
+    color: var(--knowledge-empty-color);
   }
 </style>

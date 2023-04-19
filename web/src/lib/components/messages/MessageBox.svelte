@@ -20,7 +20,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background: #fff3d3;
+    background: var(--message-bg);
     width: fit-content;
     padding: 0rem 2rem;
     font-size: 1.2rem;
@@ -36,6 +36,6 @@
   }
 
   .message :global(.subMessage){
-    border: 1px dashed black;;
+    border: 1px dashed var(--sub-message-border-color);
   }
 </style>

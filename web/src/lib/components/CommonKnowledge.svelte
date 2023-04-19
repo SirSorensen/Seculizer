@@ -46,11 +46,11 @@
 
 <style>
   .container {
-    background: #fff3d3;
+    background: var(--message-bg);
     width: fit-content;
     padding: 1rem 1.5rem;
     margin: 0.5rem auto;
-    box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: inset var(--shadow);
     font-size: 1.2rem;
     border-radius: 15px;
   }
@@ -74,6 +74,6 @@
     margin: 0;
     font-size: 0.8rem;
     font-style: italic;
-    color: gray;
+    color: var(--knowledge-empty-color);
   }
 </style>

@@ -64,25 +64,25 @@
     max-height: calc(100% - 75px);
     overflow-y: auto;
     margin: 1rem;
-    background: white;
-    box-shadow: 0 0 4px rgb(0 0 0 / 25%);
+    background: var(--sequence-bg);
+    box-shadow: var(--shadow);
     padding: 1rem;
   }
   pre :global(#graphDiv .actor) {
-    stroke: #ccccff;
-    fill: #fff3d3;
+    stroke: var(--sequence-note-stroke);
+    fill: var(--message-bg);
   }
   pre :global(#graphDiv text.actor) {
     font-weight: bold !important;
   }
 
   pre :global(#graphDiv .note) {
-    stroke: #ccccff;
-    fill: #ffcc30;
+    stroke: var(--sequence-note-stroke);
+    fill: var(--action-header-bg);
   }
 
   pre :global(#graphDiv .noteText),
   pre :global(#graphDiv .noteText > tspan) {
-    fill: black;
+    fill: var(--sequence-text);
   }
 </style>

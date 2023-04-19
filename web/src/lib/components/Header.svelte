@@ -13,7 +13,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #eeeeee;
+    background: var(--header-bg);
   }
 
   a {

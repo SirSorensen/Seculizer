@@ -65,9 +65,9 @@
     text-align: center;
     width: max-content;
     max-width: 300px;
-    background-color: #fff3d3;
+    background-color: var(--message-bg);
     text-align: center;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--shadow);
     padding: 0.5rem;
     z-index: 10;
     font-size: 1rem;

@@ -83,8 +83,8 @@
     margin: 1rem;
     display: flex;
     flex-direction: column;
-    background: #fff3d3;
-    box-shadow: 0 0 4px rgb(0 0 0 / 25%);
+    background: var(--message-bg);
+    box-shadow: var(--shadow);
     padding: 1rem 2rem;
   }
   .option {
@@ -107,7 +107,7 @@
     height: 3rem;
     padding: 0;
     border-radius: 6rem;
-    box-shadow: 0 0 4px rgb(0 0 0 / 25%);
+    box-shadow: var(--shadow);
   }
   .historyContainer.showHistory .roundButton .oma-hourglass-not-done {
     transform: rotate(180deg);

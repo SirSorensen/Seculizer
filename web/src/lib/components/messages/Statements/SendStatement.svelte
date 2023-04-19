@@ -120,7 +120,7 @@
     width: 5px;
     height: 3px;
     border-radius: 3px;
-    background: black;
+    background: var(--line-color);
     position: absolute;
     transform-origin: left;
     display: flex;
@@ -135,7 +135,7 @@
     width: 30px;
     height: 3px;
     border-radius: 3px;
-    background-color: black;
+    background-color: var(--line-color);
     right: 0;
     transform: rotate(45deg) translate(3px, -50%);
     transform-origin: right;
@@ -155,8 +155,8 @@
 
   .message.multiMessage {
     padding: 1rem;
-    border: 2px dashed gray;
+    border: 2px dashed var(--multi-message-border);
     border-radius: 15px;
-    background-color: rgba(255, 255, 255, 0.699);
+    background-color: var(--multi-message-bg);
   }
 </style>

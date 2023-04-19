@@ -12,7 +12,7 @@
 <style>
   .message {
     position: relative;
-    background: #fff3d3;
+    background: var(--message-bg);
     width: fit-content;
     margin: 0.5rem auto;
     font-size: 1.2rem;
@@ -30,6 +30,6 @@
     font-weight: bold;
     padding: 0.5rem;
     border-radius: 15px 15px 0 0;
-    background: #ffcc30;
+    background: var(--action-header-bg);
   }
 </style>
