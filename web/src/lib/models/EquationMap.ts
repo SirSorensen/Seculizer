@@ -30,10 +30,10 @@ export class EquationMap {
   }
 
   // Returns whether a participant knows a function call (i.e. whether the participant knows the function call or any of its equalities)
-  doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined = undefined): boolean {
+  doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined): boolean {
     const history: Map<string, boolean> = new Map();
     const queue: queueElement[] = [];
-    if (!this.equations[f.id]) return Equal.checkIfInputisKnown(f, parti);
+    if (!this.equations[f.id]) return Equal.checkIfInputisKnown(f, parti, val);
     const maxDepth = this.calcMaxDepth(f);
 
     queue.push({ f: f, searchDepth: 0, paramDepth: [] });
@@ -47,12 +47,13 @@ export class EquationMap {
       if (history.has(getStringFromType(_f))) continue;
       history.set(getStringFromType(_f), true);
 
-      if (Equal.checkIfInputisKnown(_f, parti)) return true;
+      if (Equal.checkIfInputisKnown(_f, parti, val)) return true;
 
       
       if (this.equations[_f.id])
         for (const eq of this.equations[_f.id].eqs) {
           const _fEq = eq.generateEqual(_f);
+          if (_fEq === undefined) continue
           queue.push({ f: _fEq, searchDepth: current.searchDepth + 1, paramDepth: current.paramDepth });
         }
 
@@ -69,9 +70,10 @@ export class EquationMap {
         if (this.equations[_fParam.id])
           for (const _fParamEq of this.equations[_fParam.id].eqs) {
             const _fParamGenEq = _fParamEq.generateEqual(_fParam);
+            if (_fParamGenEq === undefined) continue
 
             queue.push({
-              f: this.cloneFunctionChangedParam(_f, current.paramDepth, _fParamGenEq),
+              f: this.cloneFunctionChangedParam(_f, _paramDepth, _fParamGenEq),
               searchDepth: current.searchDepth + 1,
               paramDepth: _paramDepth,
             });
@@ -127,18 +129,19 @@ export class EquationMap {
   // Given a function, a paramDepth and a new parameter-function, returns a new function with the new parameter-function in the paramDepth
   // For example if f = f(a, g(b, c), d), paramDepth = [1], and newParam = h(e, f), it returns f(a, h(e, f), d)
   cloneFunctionChangedParam(f: FunctionCall, paramDepth: number[], newParam: FunctionCall): FunctionCall {
+    
     const _f: FunctionCall = { type: "function", id: structuredClone(f.id), params: structuredClone(f.params) };
-    const _paramDepth = paramDepth.map((x) => x);
+    const paramDepthClone = paramDepth.concat(); // Clone paramDepth
 
     const aux = (aux_f: FunctionCall) => {
       // If _paramDepth is empty, we are at the function we want to change
-      if (_paramDepth.length === 0) return newParam;
+      if (paramDepthClone.length === 0) return newParam;
 
       // Get the index of the next function
-      const i = _paramDepth.shift();
+      const i = paramDepthClone.shift();
 
       //Check if i and aux_f.params[i] are valid
-      if (!i) throw new Error("paramDepth is not defined correctly");
+      if (i === undefined) throw new Error("paramDepth is not defined correctly");
       if (!aux_f.params[i] || aux_f.params[i].type != "function") throw new Error("paramDepth is not correct");
 
       // Call aux with the next function and change the param[i]

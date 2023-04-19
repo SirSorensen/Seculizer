@@ -60,7 +60,6 @@ export class Equal {
     let paramIndex: paramIndexType[] = [];
 
     const findIndex = (leftSubParam: leftParamType[], rightParam: rightParamType): paramIndexType => {
-      
       const index = leftSubParam.findIndex((leftParam) => {
         if (!Array.isArray(leftParam)) return leftParam.value === rightParam.value;
       });
@@ -69,7 +68,7 @@ export class Equal {
         for (let i = 0; i < leftSubParam.length; i++) {
           if (Array.isArray(leftSubParam[i])) {
             const subIndex = findIndex(leftSubParam[i] as leftParamType[], rightParam);
-            
+
             if (subIndex !== -1) {
               return [i, subIndex];
             }
@@ -82,15 +81,16 @@ export class Equal {
 
     paramIndex = rightParams.map((rightParam) => {
       return findIndex(leftParams, rightParam);
-    })
+    });
 
     return paramIndex;
   }
 
   // Generate a new function call with the same parameters as the given function call, but with the parameters in the right function's call order
-  generateEqual(call: FunctionCall): FunctionCall {
+  generateEqual(call: FunctionCall): FunctionCall | undefined {
     // Construct the param array for the given call
-    
+    if (!this.checkIfApplicable(call, this.left)) return undefined;
+
     let i = 0;
 
     const getParam = (params: Type[], paramIndex: paramIndexType): Type => {
@@ -127,11 +127,14 @@ export class Equal {
   }
 
   // Check if the given function call is applicable to the equation, by comparing the parameters' types and amount thereof
-  checkIfApplicable(func: FunctionCall): boolean {
-    if (func.params.length != this.left.params.length) return false;
+  checkIfApplicable(call: FunctionCall, check: FunctionCall): boolean {
+    if (call.params.length != check.params.length) return false;
 
-    for (let i = 0; i < func.params.length; i++) {
-      if (this.left.params[i].type != "id" && func.params[i].type != this.left.params[i].type) return false;
+    for (let i = 0; i < call.params.length; i++) {
+      if (check.params[i].type === "id") continue;
+      if (call.params[i].type != check.params[i].type) return false;
+      if (call.params[i].type === "function" && !this.checkIfApplicable(call.params[i] as FunctionCall, check.params[i] as FunctionCall))
+        return false;
     }
 
     return true;

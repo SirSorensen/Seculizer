@@ -332,6 +332,8 @@ test("Construct an Equal and call generateEqual", () => {
   const result = equality.generateEqual(func);
   const expected: FunctionCall = { type: "function", id: "Base", params: [param2, param1] };
 
+  expect(result).toBeDefined();
+  if (result === undefined) throw new Error("result is undefined");
   expect(result.id).toBe(expected.id);
   expect(result.type).toBe(expected.type);
   expect(result.params[0]).toBe(expected.params[0]);
@@ -361,6 +363,8 @@ test("Construct an Equal and call generateEqual with embedded functions", () => 
   const tmp_expected: FunctionCall = { type: "function", id: "exp", params: [param3, param2] };
   const expected: FunctionCall = { type: "function", id: "exp", params: [param1, tmp_expected] };
 
+  expect(result).toBeDefined();
+  if (result === undefined) throw new Error("result is undefined");
   expect(result.id).toBe(expected.id);
   expect(result.type).toBe(expected.type);
   expect(result.params[0]).toBe(expected.params[0]);
@@ -398,9 +402,9 @@ test("Construct an EquationMap and check if Participant knows", () => {
   const parti: Participant = new Participant("Alice");
   parti.setKnowledge(init_knowledge);
 
-  const result1 = equalityMap.doesParticipantKnow(parti, func);
-  const result2 = equalityMap.doesParticipantKnow(parti, modified_func);
-  const result3 = equalityMap.doesParticipantKnow(parti, base_func);
+  const result1 = equalityMap.doesParticipantKnow(parti, func, undefined);
+  const result2 = equalityMap.doesParticipantKnow(parti, modified_func, undefined);
+  const result3 = equalityMap.doesParticipantKnow(parti, base_func, undefined);
 
   expect(result1).toBeTruthy();
   expect(result2).toBeTruthy();
@@ -476,21 +480,21 @@ test("Construct an EquationMap with functions with nested right functions", () =
   const parti4: Participant = new Participant("Alice4");
   parti3.setKnowledge(init_knowledge4);
 
-  const result1 = equalityMap.doesParticipantKnow(parti, func);
-  const result2 = equalityMap.doesParticipantKnow(parti, help_func1);
-  const result3 = equalityMap.doesParticipantKnow(parti, modified_func1);
+  const result1 = equalityMap.doesParticipantKnow(parti, func, undefined);
+  const result2 = equalityMap.doesParticipantKnow(parti, help_func1, undefined);
+  const result3 = equalityMap.doesParticipantKnow(parti, modified_func1, undefined);
 
-  const result1_2 = equalityMap.doesParticipantKnow(parti2, func);
-  const result2_2 = equalityMap.doesParticipantKnow(parti2, help_func1);
-  const result3_2 = equalityMap.doesParticipantKnow(parti2, modified_func1);
+  const result1_2 = equalityMap.doesParticipantKnow(parti2, func, undefined);
+  const result2_2 = equalityMap.doesParticipantKnow(parti2, help_func1, undefined);
+  const result3_2 = equalityMap.doesParticipantKnow(parti2, modified_func1, undefined);
 
-  const result1_3 = equalityMap.doesParticipantKnow(parti3, func);
-  const result2_3 = equalityMap.doesParticipantKnow(parti3, help_func1);
-  const result3_3 = equalityMap.doesParticipantKnow(parti3, modified_func1);
+  const result1_3 = equalityMap.doesParticipantKnow(parti3, func, undefined);
+  const result2_3 = equalityMap.doesParticipantKnow(parti3, help_func1, undefined);
+  const result3_3 = equalityMap.doesParticipantKnow(parti3, modified_func1, undefined);
 
-  const result1_4 = equalityMap.doesParticipantKnow(parti4, func);
-  const result2_4 = equalityMap.doesParticipantKnow(parti4, help_func1);
-  const result3_4 = equalityMap.doesParticipantKnow(parti4, modified_func1);
+  const result1_4 = equalityMap.doesParticipantKnow(parti4, func, undefined);
+  const result2_4 = equalityMap.doesParticipantKnow(parti4, help_func1, undefined);
+  const result3_4 = equalityMap.doesParticipantKnow(parti4, modified_func1, undefined);
 
   expect(result1).toBeTruthy();
   expect(result2).toBeFalsy();
@@ -534,7 +538,41 @@ test("Construct an EquationMap with functions with nested left functions", () =>
   const parti: Participant = new Participant("Alice");
   parti.setKnowledge(init_knowledge);
 
-  const result = equalityMap.doesParticipantKnow(parti, modified_func2);
+  const result = equalityMap.doesParticipantKnow(parti, modified_func2, undefined);
+
+  expect(result).toBeTruthy();
+});
+
+test("Construct an EquationMap with functions with nested left functions", () => {
+  const init_param1: Type = { type: "id", value: "a" };
+  const init_param2: Type = { type: "id", value: "b" };
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
+  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
+
+  const equalityMap = new EquationMap();
+  equalityMap.addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
+
+  const param1: Type = { type: "id", value: "x" };
+  const param2: Type = { type: "id", value: "y" };
+
+  const help_func1: FunctionCall = { type: "function", id: "foo", params: [param1, param2] }; // foo(x,y)
+  const help_func2: FunctionCall = { type: "function", id: "lee", params: [param1, param2] }; // lee(x,y)
+  const modified_func1: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(x,y),y))
+  const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(foo(x,y),y))
+
+  const init_knowledge: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: modified_func1,
+    value: {
+      type: "string",
+      value: "this_is_a_value"
+    },
+  };
+
+  const parti: Participant = new Participant("Alice");
+  parti.setKnowledge(init_knowledge);
+
+  const result = equalityMap.doesParticipantKnow(parti, modified_func2, undefined);
 
   expect(result).toBeTruthy();
 });
