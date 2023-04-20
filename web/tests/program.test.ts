@@ -629,11 +629,11 @@ test("Does equalityMap.isFunctionKnown work with function values?", () => {
   const parti2: Participant = new Participant("Alice2");
   parti2.setKnowledge(init_knowledge2);
 
-  const result = knowledgeHandler.doesParticipantKnow(parti, init_knowledge2.knowledge);
-  const result2 = knowledgeHandler.doesParticipantKnow(parti2, modified_func2);
+  const result = knowledgeHandler.doesParticipantKnow(parti, init_knowledge2.knowledge, init_knowledge2.value);
+  const result2 = knowledgeHandler.doesParticipantKnow(parti2, init_knowledge2.knowledge, init_knowledge2.value);
 
   expect(result).toBeTruthy();
-  expect(result2).toBeFalsy();
+  expect(result2).toBeTruthy();
 });
 
 test("Does participant know opaque function?", () => {

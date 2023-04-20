@@ -92,7 +92,7 @@ export class Program {
     // Add given participants
     if (participants) {
       if (this.log) console.log(participants.participants);
-      if(participants.participants.length > 8){
+      if (participants.participants.length > 8) {
         throw new Error("More than 8 participants are not supported");
       }
       participants.participants.forEach((participant: ParticipantItem) => {
@@ -110,7 +110,7 @@ export class Program {
     //Add given knowledge to participants
     if (knowledge) {
       knowledge.knowledge.forEach((knowledge: KnowledgeItem) => {
-        knowledge.children.forEach((child: {value: Type, comment?: StmtComment}) => {
+        knowledge.children.forEach((child: { value: Type; comment?: StmtComment }) => {
           this.init_participants.setKnowledgeOfParticipant(knowledge.id.value, {
             type: "rawKnowledge",
             knowledge: child.value,
@@ -207,11 +207,15 @@ export class Program {
       const firstStmnt = matchCase.children.shift();
       if (firstStmnt) {
         matchFrame.createNewMatchCase(firstStmnt, identifier);
-        matchFrame.getNextFrame(identifier).addToHistory(HistoryTemplates.matchCase(identifier), `${sender} ->> ${receiver}: ${identifier}`); //We need duplicate since the pipeStmnt will add the first statement to the history
+        matchFrame
+          .getNextFrame(identifier)
+          .addToHistory(HistoryTemplates.matchCase(identifier), `${sender} ->> ${receiver}: ${identifier}`); //We need duplicate since the pipeStmnt will add the first statement to the history
         this.pipeStmnt(firstStmnt, matchFrame.getNextFrame(identifier) as Frame);
       } else {
         matchFrame.createNewMatchCase(null, identifier);
-        matchFrame.getNextFrame(identifier).addToHistory(HistoryTemplates.matchCase(identifier), `${sender} ->> ${receiver}: ${identifier}`);
+        matchFrame
+          .getNextFrame(identifier)
+          .addToHistory(HistoryTemplates.matchCase(identifier), `${sender} ->> ${receiver}: ${identifier}`);
       }
       //Branch out for each case and concat the remaining statements on the case children
       this.parseStatements(matchCase.children.concat(stmntList), matchFrame.getNextFrame(identifier));
@@ -268,11 +272,15 @@ export class Program {
 
   clearStmnt(knowledge: Type, last: Frame) {
     last.getParticipantMap().clearKnowledgeElement({ type: "rawKnowledge", knowledge: knowledge });
-    const involvedParticipants = last.getParticipantMap().getParticipantsNames().filter(s => s !== "Shared")
+    const involvedParticipants = last
+      .getParticipantMap()
+      .getParticipantsNames()
+      .filter((s) => s !== "Shared");
     let mermaidMsg = "";
     const firstParticipant = involvedParticipants[0];
     const lastParticipant = involvedParticipants[involvedParticipants.length - 1];
-    if(involvedParticipants.length > 1) mermaidMsg = `Note over ${firstParticipant}, ${lastParticipant}: Clear ${getStringFromType(knowledge)}`;
+    if (involvedParticipants.length > 1)
+      mermaidMsg = `Note over ${firstParticipant}, ${lastParticipant}: Clear ${getStringFromType(knowledge)}`;
     else mermaidMsg = `Note over ${firstParticipant}: Clear ${getStringFromType(knowledge)}`;
     last.addToHistory(HistoryTemplates.clear(knowledge, this), mermaidMsg);
   }
@@ -293,10 +301,11 @@ export class Program {
 
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame, comment?: StmtComment) {
-    last
-      .getParticipantMap()
-      .setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
-    last.addToHistory(HistoryTemplates.new(participant, newKnowledge, this), `Note over ${participant}: New ${getStringFromType(newKnowledge)}`);
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
+    last.addToHistory(
+      HistoryTemplates.new(participant, newKnowledge, this),
+      `Note over ${participant}: New ${getStringFromType(newKnowledge)}`
+    );
   }
 
   // Set Statement
@@ -306,7 +315,10 @@ export class Program {
       knowledge: knowledge,
       value: value,
     });
-    last.addToHistory(HistoryTemplates.set(participant, knowledge, value, this), `Note over ${participant}: ${getStringFromType(knowledge)} = ${getStringFromType(value)}`);
+    last.addToHistory(
+      HistoryTemplates.set(participant, knowledge, value, this),
+      `Note over ${participant}: ${getStringFromType(knowledge)} = ${getStringFromType(value)}`
+    );
   }
 
   // Pipe SendStatement to messageSendStatement, or matchStatement
@@ -322,33 +334,37 @@ export class Program {
   // Pipe MessageSendStatement to encryptExpression, signExpression, or setStatement
   messageSendStmnt(senderId: string, receiverId: string, knowledge: Expression[], last: Frame, canDescrypt: boolean) {
     knowledge.forEach((expression) => {
-      last.addToHistory(HistoryTemplates.send(senderId, receiverId, expression, this), `${senderId} ->> ${receiverId}: ${getSimpleStringFromExpression(expression)}`);
-      const sentKnowledge = this.generateKnowledgeElement(expression, receiverId, last, canDescrypt);
+      last.addToHistory(
+        HistoryTemplates.send(senderId, receiverId, expression, this),
+        `${senderId} ->> ${receiverId}: ${getSimpleStringFromExpression(expression)}`
+      );
+      const sentKnowledge = this.generateKnowledgeElement(expression, senderId, receiverId, last, canDescrypt);
       sentKnowledge.forEach((knowledge) => {
         this.knowledgeHandler.transferKnowledge(last.getParticipantMap(), senderId, receiverId, knowledge);
       });
     });
   }
 
-  generateKnowledgeElement(expression: Expression, receiverId: string, last: Frame, canDescrypt = true): ParticipantKnowledge[] {
+  generateKnowledgeElement(expression: Expression, senderId: string, receiverId: string, last: Frame, canDescrypt = true): ParticipantKnowledge[] {
     if (expression.child.type == "encryptExpression") {
       const encryptedExpression = expression.child as EncryptExpression;
-      return this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt);
+      return this.generateEncryptedKnowledge(senderId, receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt);
     } else if (expression.child.type == "signExpression") {
       const signExpression = expression.child as SignExpression;
       let subKnowledge: ParticipantKnowledge[] = [];
       signExpression.inner.forEach((expression) => {
-        subKnowledge = subKnowledge.concat(this.generateKnowledgeElement(expression, receiverId, last, canDescrypt));
+        subKnowledge = subKnowledge.concat(this.generateKnowledgeElement(expression, senderId, receiverId, last, canDescrypt));
       });
       return subKnowledge;
     } else {
       const type = expression.child as Type;
-      return [{ type: "rawKnowledge", knowledge: type}];
+      return [{ type: "rawKnowledge", knowledge: type }];
     }
   }
 
   // Acoomodate encryption of knowledge in messages
   generateEncryptedKnowledge(
+    senderId: string,
     receiverId: string,
     inner: Expression[],
     outer: Type,
@@ -358,21 +374,25 @@ export class Program {
     // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
     // decryptable = true if receiver knows the key, it is therefore not encrypted
     const key = this.checkKeyRelation(outer);
+
+    const sender = last.getParticipantMap().getParticipant(senderId);
+    const keyVal = sender.getValueOfKnowledge(key);
+
     const receiver = last.getParticipantMap().getParticipant(receiverId);
-    
-    canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnow(receiver, key);
+
+    canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnow(receiver, key, keyVal);
 
     const knowledges: ParticipantKnowledge[] = [];
     inner.forEach((expression) => {
       if (expression.child.type == "encryptExpression") {
         const encryptedExpression = expression.child as EncryptExpression;
         knowledges.concat(
-          this.generateEncryptedKnowledge(receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDecrypt)
+          this.generateEncryptedKnowledge(senderId, receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDecrypt)
         );
       } else if (expression.child.type == "signExpression") {
         const signExpression = expression.child as SignExpression;
         signExpression.inner.forEach((expression) => {
-          knowledges.concat(this.generateKnowledgeElement(expression, receiverId, last, canDecrypt));
+          knowledges.concat(this.generateKnowledgeElement(expression, senderId, receiverId, last, canDecrypt));
         });
       } else {
         const type = expression.child as Type;

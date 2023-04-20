@@ -104,7 +104,7 @@ export class KnowledgeHandler {
           const tmpParti = new Participant("tmpParti");
           tmpParti.setKnowledge(tmpKnowledge);
 
-          return this.isFunctionKnown(tmpParti, knowledgeB.knowledge as FunctionCall, knowledgeB.value);
+          return this.isFunctionKnown(tmpParti, knowledgeB.value as FunctionCall, undefined);
         }
         
         // If the values aren't the same, and they aren't functions 
@@ -190,11 +190,10 @@ export class KnowledgeHandler {
     return false;
   }
 
-  doesParticipantKnow(parti : Participant, type : Type) : boolean {
-    const value = parti.getValueOfKnowledge(type);
-
-    if (type.type != "function") return this.isTypeAndValueKnown(parti, type, value);
-    else return this.isFunctionKnown(parti, type, value);
+  doesParticipantKnow(parti : Participant, type : Type, value : Type | undefined) : boolean {
+    if (type.type === "function") return this.isFunctionKnown(parti, type, value);
+    
+    return this.isTypeAndValueKnown(parti, type, value);
   }
 
   // Given a function and a paramDepth, returns the index of the next inner functions
