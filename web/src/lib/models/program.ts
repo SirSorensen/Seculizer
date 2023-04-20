@@ -302,6 +302,8 @@ export class Program {
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame, comment?: StmtComment) {
     last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
+    
+    this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant))
     last.addToHistory(
       HistoryTemplates.new(participant, newKnowledge, this),
       `Note over ${participant}: New ${getStringFromType(newKnowledge)}`
@@ -315,6 +317,7 @@ export class Program {
       knowledge: knowledge,
       value: value,
     });
+    this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant))
     last.addToHistory(
       HistoryTemplates.set(participant, knowledge, value, this),
       `Note over ${participant}: ${getStringFromType(knowledge)} = ${getStringFromType(value)}`

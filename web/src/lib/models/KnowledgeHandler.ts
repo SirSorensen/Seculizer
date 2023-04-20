@@ -28,12 +28,12 @@ export class KnowledgeHandler {
     return this.opaqueFunctions;
   }
 
-  checkIfInputisKnown(input: Type, participant: Participant, opaqueFunctions: string[], val: Type | undefined = undefined): boolean {
+  checkIfInputisKnown(input: Type, participant: Participant, val: Type | undefined = undefined): boolean {
     if (this.isTypeAndValueKnown(participant, input, val)) return true;
 
-    if (input.type === "function" && val == undefined && !opaqueFunctions.includes((input as FunctionCall).id)) {
+    if (input.type === "function" && val == undefined && !this.opaqueFunctions.includes((input as FunctionCall).id)) {
       for (const param of input.params) {
-        if (!this.checkIfInputisKnown(param, participant, opaqueFunctions)) return false;
+        if (!this.checkIfInputisKnown(param, participant)) return false;
       }
       return true;
     }
@@ -140,7 +140,7 @@ export class KnowledgeHandler {
   isFunctionKnown(parti: Participant, f: FunctionCall, val: Type | undefined): boolean {
     const history: Map<string, boolean> = new Map();
     const queue: queueElement[] = [];
-    if (!this.equations.getEquations()[f.id]) return this.checkIfInputisKnown(f, parti, this.opaqueFunctions, val);
+    if (!this.equations.getEquations()[f.id]) return this.checkIfInputisKnown(f, parti, val);
     const maxDepth = this.equations.calcMaxDepth(f);
 
     queue.push({ f: f, searchDepth: 0, paramDepth: [] });
@@ -154,7 +154,7 @@ export class KnowledgeHandler {
       if (history.has(getStringFromType(_f))) continue;
       history.set(getStringFromType(_f), true);
 
-      if (this.checkIfInputisKnown(_f, parti, this.opaqueFunctions, val)) return true;
+      if (this.checkIfInputisKnown(_f, parti, val)) return true;
 
       if (this.equations.getEquations()[_f.id])
         for (const eq of this.equations.getEquations()[_f.id].eqs) {
@@ -266,6 +266,7 @@ export class KnowledgeHandler {
       console.error("Knowledge not found!", partiMap.getParticipant(senderId).getName(), knowledge);
       receiver.setKnowledge(knowledge);
     }
+    this.recheckEncryptedKnowledge(receiver);
   }
 
   isSimpleKnowledge(knowledge: ParticipantKnowledge): boolean {
@@ -273,5 +274,23 @@ export class KnowledgeHandler {
       return knowledge.knowledge.type == "string" || knowledge.knowledge.type == "number";
     }
     return knowledge.knowledge.every((item) => this.isSimpleKnowledge(item));
+  }
+
+  recheckEncryptedKnowledge(parti: Participant){
+    const updated = false;
+    parti.getKnowledgeList().forEach((knowledge) => {
+      const type = knowledge.item.type
+      if(type !== "encryptedKnowledge") return;
+      const encryptedKnowledge = knowledge.item;
+      const encryption = encryptedKnowledge.encryption;
+      const shouldDecrypt = this.doesParticipantKnow(parti, encryption, undefined);
+      if(shouldDecrypt){
+        parti.removeKnowledge(encryptedKnowledge);
+        encryptedKnowledge.knowledge.forEach(element => {
+          parti.setKnowledge(element);
+        });
+      }
+    });
+    if(updated) this.recheckEncryptedKnowledge(parti); //This could be if something is encrypted with something encrypted
   }
 }

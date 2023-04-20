@@ -32,6 +32,14 @@ setKnowledge(knowledge: ParticipantKnowledge) {
     }
   }
 
+  removeKnowledge(knowledge: ParticipantKnowledge) {
+    const index = this.findKnowledgeIndex(knowledge);
+    if (index >= 0) {
+      this.knowledge.splice(index, 1);
+    }
+  }
+  
+
   findKnowledgeIndex(element: ParticipantKnowledge, strict = false): number {
     return this.knowledge.findIndex(({ item }) => KnowledgeHandler.compareKnowledge(item, element, strict));
   }
