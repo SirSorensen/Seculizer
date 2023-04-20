@@ -33,22 +33,11 @@ setKnowledge(knowledge: ParticipantKnowledge) {
   }
 
   findKnowledgeIndex(element: ParticipantKnowledge, strict = false): number {
-    return this.knowledge.findIndex(({ item }) => KnowledgeHandler.isKnowledgeEqual(item, element, strict));
+    return this.knowledge.findIndex(({ item }) => KnowledgeHandler.compareKnowledge(item, element, strict));
   }
 
   doesKnowledgeExist(element: ParticipantKnowledge, strict = false): boolean {
     return this.findKnowledgeIndex(element, strict) >= 0;
-  }
-
-  doesTypeAndValueExist(type: Type, val: Type | undefined = undefined): boolean {
-    return this.doesKnowledgeExist(
-      {
-        type: "rawKnowledge",
-        knowledge: type,
-        value: val,
-      },
-      true
-    );
   }
 
   //TODO : Test this
@@ -64,11 +53,11 @@ setKnowledge(knowledge: ParticipantKnowledge) {
   }
 
   clearKnowledgeElement(elem: ParticipantKnowledge) {
-    this.knowledge = this.knowledge.filter(({ item }) => !KnowledgeHandler.isKnowledgeEqual(item, elem));
+    this.knowledge = this.knowledge.filter(({ item }) => !KnowledgeHandler.compareKnowledge(item, elem));
   }
 
   getKnowledge(knowledge: ParticipantKnowledge, strict = false): ParticipantKnowledge | undefined {
-    const result = this.knowledge.find(({ item }) => KnowledgeHandler.isKnowledgeEqual(item, knowledge, strict));
+    const result = this.knowledge.find(({ item }) => KnowledgeHandler.compareKnowledge(item, knowledge, strict));
     return result?.item;
   }
 
@@ -86,11 +75,6 @@ setKnowledge(knowledge: ParticipantKnowledge) {
 
   setKnowledgeList(knowledge: { item: ParticipantKnowledge; id: number }[]) {
     this.knowledge = knowledge;
-  }
-
-  addKnowledge(knowledge: ParticipantKnowledge, index: number | undefined = undefined) {
-    if (index === undefined) this.knowledge.push({ item: knowledge, id: this.currentKnowledgeId++ });
-    else this.knowledge[index] = { item: knowledge, id: this.currentKnowledgeId++ };
   }
 
   getComment(): StmtComment | undefined {

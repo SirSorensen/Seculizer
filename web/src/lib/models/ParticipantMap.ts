@@ -42,11 +42,6 @@ export class ParticipantMap {
     this.participants[participant].setKnowledge(knowledge);
   }
 
-  // Check if participant has knowledge of given key
-  checkKeyKnowledge(participant: string, key: Type): boolean {
-    return this.participants[participant].doesKnowledgeExist({ type: "rawKnowledge", knowledge: key });
-  }
-
   clearKnowledgeElement(knowledge: ParticipantKnowledge) {
     Object.keys(this.participants).forEach((participant: string) => this.participants[participant].clearKnowledgeElement(knowledge));
   }
