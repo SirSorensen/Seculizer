@@ -396,7 +396,8 @@ export class Program {
         });
       } else {
         const type = expression.child as Type;
-        knowledges.push({ type: "rawKnowledge", knowledge: type });
+        const senderKnowledge = sender.getKnowledge({ type: "rawKnowledge", knowledge: type }) ?? { type: "rawKnowledge", knowledge: type }
+        knowledges.push(senderKnowledge);
       }
     });
     if (canDecrypt) return knowledges;
