@@ -2,10 +2,10 @@ import type { FunctionCall, Type } from "$lang/types/parser/interfaces";
 import { getStringFromType } from "$lib/utils/stringUtil";
 import type { ParticipantKnowledge } from "src/types/participant";
 import { EquationMap } from "./EquationMap";
-import type { Participant } from "./Participant";
+import { Participant } from "./Participant";
 import type { ParticipantMap } from "./ParticipantMap";
 
-// This type is used to store the function calls that are currently being searched for in the doesParticipantKnow function
+// This type is used to store the function calls that are currently being searched for in the isFunctionKnown function
 type queueElement = {
   f: FunctionCall;
   searchDepth: number;
@@ -29,7 +29,7 @@ export class KnowledgeHandler {
   }
 
   checkIfInputisKnown(input: Type, participant: Participant, opaqueFunctions: string[], val: Type | undefined = undefined): boolean {
-    if (participant.doesTypeAndValueExist(input, val)) return true;
+    if (this.isTypeAndValueKnown(participant, input, val)) return true;
 
     if (input.type === "function" && val == undefined && !opaqueFunctions.includes((input as FunctionCall).id)) {
       for (const param of input.params) {
@@ -40,12 +40,87 @@ export class KnowledgeHandler {
     return false;
   }
 
-  static isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
+  // Checks if the participant knows the given function call
+  isTypeAndValueKnown(parti : Participant, type: Type, val: Type | undefined): boolean {
+    // Construct a temporary knowledge object from the given parameter 'type' and 'value'
+    const tmpKnowledge : ParticipantKnowledge = {
+      type: "rawKnowledge",
+      knowledge: type,
+      value: val,
+    }
+
+    // Get the list of knowledges from the participant
+    const partiKnowledge = parti.getKnowledgeList();
+
+    // Check if the temporary knowledge object is in the list of knowledges
+    return partiKnowledge.some((knowledge) => {
+      return this.isKnowledgeEqual(knowledge.item, tmpKnowledge, true)
+    });
+  }
+
+  static compareKnowledge(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
     if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
       return (
         JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge) && // check if knowledge is the same
         (!strict || JSON.stringify(knowledgeA.value) === JSON.stringify(knowledgeB.value)) // if strict is true, then we need to check the value as well
       );
+    } else if (knowledgeA.type === "encryptedKnowledge" && knowledgeB.type === "encryptedKnowledge") {
+      if (JSON.stringify(knowledgeA.encryption) !== JSON.stringify(knowledgeB.encryption)) return false;
+      if (knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
+      const tmp = structuredClone(knowledgeB.knowledge);
+      for (let i = 0; i < knowledgeA.knowledge.length; i++) {
+        const knowledge = knowledgeA.knowledge[i];
+        const index = tmp.findIndex((item) => this.compareKnowledge(item, knowledge));
+        if (index < 0) return false;
+        tmp.splice(index, 1);
+      }
+      return tmp.length === 0;
+    }
+    return false;
+  }
+
+  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
+    if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
+      const isKnowledgeSame = JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge);
+      if (!isKnowledgeSame) return false;
+
+      if (strict) {
+        // If either are undefined check if both are undefined
+        if (!knowledgeA.value || !knowledgeB.value) return !knowledgeB.value && !knowledgeA.value;
+
+        // If the types are different, return false
+        if (knowledgeA.value.type !== knowledgeB.value.type) return false;
+
+        // If the types are the same, check if the values are the same, and if they are, return true
+        if (JSON.stringify(knowledgeA.value) === JSON.stringify(knowledgeB.value)) return true;
+
+        // If the values aren't the same, but they are functions, check equalities
+        if (knowledgeA.value.type === "function") {
+          // If the values are different, but the values are functions, then we need to check if the functions are equal
+          const tmpKnowledge: ParticipantKnowledge = {
+            type: "rawKnowledge",
+            knowledge: knowledgeA.value,
+          };
+          const tmpParti = new Participant("tmpParti");
+          tmpParti.setKnowledge(tmpKnowledge);
+
+          return this.isFunctionKnown(tmpParti, knowledgeB.knowledge as FunctionCall, knowledgeB.value);
+        }
+        
+        // If the values aren't the same, and they aren't functions 
+        // (and therefore have no equalities), then return false
+        return false;
+
+      } else {
+        // If strict is false, then we don't need to check the value,
+        // and we have already checked if the knowledges are not the same,
+        // therefore return true
+        return true;
+      }
+      //   return (
+      //     JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge) && // check if knowledge is the same
+      //     (!strict || JSON.stringify(knowledgeA.value) === JSON.stringify(knowledgeB.value)) // if strict is true, then we need to check the value as well
+      //   );
     } else if (knowledgeA.type === "encryptedKnowledge" && knowledgeB.type === "encryptedKnowledge") {
       if (JSON.stringify(knowledgeA.encryption) !== JSON.stringify(knowledgeB.encryption)) return false;
       if (knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
@@ -62,7 +137,7 @@ export class KnowledgeHandler {
   }
 
   // Returns whether a participant knows a function call (i.e. whether the participant knows the function call or any of its equalities)
-  doesParticipantKnow(parti: Participant, f: FunctionCall, val: Type | undefined): boolean {
+  isFunctionKnown(parti: Participant, f: FunctionCall, val: Type | undefined): boolean {
     const history: Map<string, boolean> = new Map();
     const queue: queueElement[] = [];
     if (!this.equations.getEquations()[f.id]) return this.checkIfInputisKnown(f, parti, this.opaqueFunctions, val);
@@ -113,6 +188,13 @@ export class KnowledgeHandler {
     }
 
     return false;
+  }
+
+  doesParticipantKnow(parti : Participant, type : Type) : boolean {
+    const value = parti.getValueOfKnowledge(type);
+
+    if (type.type != "function") return this.isTypeAndValueKnown(parti, type, value);
+    else return this.isFunctionKnown(parti, type, value);
   }
 
   // Given a function and a paramDepth, returns the index of the next inner functions
