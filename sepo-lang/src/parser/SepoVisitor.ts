@@ -67,7 +67,7 @@ import {
   TypeCST,
 } from "./interfaces.js";
 import { IToken } from "chevrotain";
-import { StmtComment, Participant } from './interfaces';
+import { StmtComment, Participant } from "./interfaces";
 const parserInstance = new SepoParser();
 
 const BaseSepoVisitor = parserInstance.getBaseCstVisitorConstructor();
@@ -141,7 +141,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  knowledge(ctx: KnowledgeCST): KnowledgeItem {    
+  knowledge(ctx: KnowledgeCST): KnowledgeItem {
     const id: string = ctx.Id[0].image;
     const children = ctx.knowledgeItem.map((k: KnowledgeItemCST) => this.visit(k));
     return {
@@ -154,9 +154,9 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
     };
   }
 
-  knowledgeItem(ctx:KnowledgeItemCST):{value: Type, comment?: StmtComment}{
-    const type:Type = this.visit(ctx.type);
-    const comment:(StmtComment | undefined) = ctx.stmtComment ? this.visit(ctx.stmtComment) : undefined;
+  knowledgeItem(ctx: KnowledgeItemCST): { value: Type; comment?: StmtComment } {
+    const type: Type = this.visit(ctx.type);
+    const comment: StmtComment | undefined = ctx.stmtComment ? this.visit(ctx.stmtComment) : undefined;
     return {
       value: type,
       comment: comment,
@@ -238,10 +238,12 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   functionsDef(ctx: FunctionsDefCST): FunctionsDef {
-    const functions:Id[] = ctx.Id.map((id: IToken) => {return {
-      type: "id",
-      value: id.image,
-    }});
+    const functions: Id[] = ctx.Id.map((id: IToken) => {
+      return {
+        type: "id",
+        value: id.image,
+      };
+    });
     return {
       type: "functionsDef",
       functions: functions,
@@ -450,7 +452,7 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
 
   new(ctx: NewCST): NewStatement {
     const comment = ctx.stmtComment ? this.visit(ctx.stmtComment) : undefined;
-    if(ctx.Id && ctx.Id.length > 0){
+    if (ctx.Id && ctx.Id.length > 0) {
       const id: string = ctx.Id[0].image;
       return {
         type: "newStatement",
@@ -460,13 +462,13 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         },
         comment: comment,
       };
-    }else if(ctx.function){
+    } else if (ctx.function) {
       const func = this.visit(ctx.function);
       return {
         type: "newStatement",
         value: func,
         comment: comment,
-      }
+      };
     }
     return throwSimpleParseError("Uknown new statement", ctx[Object.keys(ctx)[0]][0], this.template);
   }

@@ -1,4 +1,4 @@
-export function getEmoji(input: string): { type: "class" | "background"; value: string }{
+export function getEmoji(input: string): { type: "class" | "background"; value: string } {
   if (containsLatinCodepoints(input)) {
     return { type: "class", value: input };
   } else {

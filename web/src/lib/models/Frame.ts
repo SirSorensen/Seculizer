@@ -7,9 +7,14 @@ export class Frame {
   private prev: Frame | null;
   private participantMap: ParticipantMap;
   private presentation: Statement | null;
-  private history: {string: string, mermaid: string}[];
+  private history: { string: string; mermaid: string }[];
 
-  constructor(stmnt: Statement | null, prev: Frame | null, participantMap: ParticipantMap | { [id: string]: Participant }, history: {string: string, mermaid: string}[]) {
+  constructor(
+    stmnt: Statement | null,
+    prev: Frame | null,
+    participantMap: ParticipantMap | { [id: string]: Participant },
+    history: { string: string; mermaid: string }[]
+  ) {
     this.next = null;
     this.prev = prev;
 
@@ -77,7 +82,7 @@ export class Frame {
     }
   }
 
-  createNewMatchCase(stmnt:Statement | null, caseIndex: string) {
+  createNewMatchCase(stmnt: Statement | null, caseIndex: string) {
     if (this.next === null || this.next instanceof Frame) {
       this.next = {};
     }
@@ -108,19 +113,19 @@ export class Frame {
     return this.presentation;
   }
 
-  getHistory(): {string: string, mermaid: string}[] {
+  getHistory(): { string: string; mermaid: string }[] {
     return this.history;
   }
 
   addToHistory(history: string, mermaid: string) {
-    this.history.push({string: history, mermaid: mermaid});
+    this.history.push({ string: history, mermaid: mermaid });
   }
 
-  getParticipantKnowledgeComment(participantId:string, id:Id): StmtComment | undefined {
-    let knowledge = this.participantMap.getParticipant(participantId).getKnowledge({type: "rawKnowledge", knowledge: id});
+  getParticipantKnowledgeComment(participantId: string, id: Id): StmtComment | undefined {
+    let knowledge = this.participantMap.getParticipant(participantId).getKnowledge({ type: "rawKnowledge", knowledge: id });
     if (knowledge && knowledge.type == "rawKnowledge") return knowledge.comment;
     //Check shared
-    knowledge = this.participantMap.getParticipant("Shared").getKnowledge({type: "rawKnowledge", knowledge: id});
+    knowledge = this.participantMap.getParticipant("Shared").getKnowledge({ type: "rawKnowledge", knowledge: id });
     if (knowledge && knowledge.type == "rawKnowledge") return knowledge.comment;
     return undefined;
   }

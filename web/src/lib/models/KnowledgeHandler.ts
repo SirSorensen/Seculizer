@@ -41,20 +41,20 @@ export class KnowledgeHandler {
   }
 
   // Checks if the participant knows the given function call
-  isTypeAndValueKnown(parti : Participant, type: Type, val: Type | undefined): boolean {
+  isTypeAndValueKnown(parti: Participant, type: Type, val: Type | undefined): boolean {
     // Construct a temporary knowledge object from the given parameter 'type' and 'value'
-    const tmpKnowledge : ParticipantKnowledge = {
+    const tmpKnowledge: ParticipantKnowledge = {
       type: "rawKnowledge",
       knowledge: type,
       value: val,
-    }
+    };
 
     // Get the list of knowledges from the participant
     const partiKnowledge = parti.getKnowledgeList();
 
     // Check if the temporary knowledge object is in the list of knowledges
     return partiKnowledge.some((knowledge) => {
-      return this.isKnowledgeEqual(knowledge.item, tmpKnowledge, true)
+      return this.isKnowledgeEqual(knowledge.item, tmpKnowledge, true);
     });
   }
 
@@ -106,11 +106,10 @@ export class KnowledgeHandler {
 
           return this.isFunctionKnown(tmpParti, knowledgeB.value as FunctionCall, undefined);
         }
-        
-        // If the values aren't the same, and they aren't functions 
+
+        // If the values aren't the same, and they aren't functions
         // (and therefore have no equalities), then return false
         return false;
-
       } else {
         // If strict is false, then we don't need to check the value,
         // and we have already checked if the knowledges are not the same,
@@ -190,9 +189,9 @@ export class KnowledgeHandler {
     return false;
   }
 
-  doesParticipantKnow(parti : Participant, type : Type, value : Type | undefined) : boolean {
+  doesParticipantKnow(parti: Participant, type: Type, value: Type | undefined): boolean {
     if (type.type === "function") return this.isFunctionKnown(parti, type, value);
-    
+
     return this.isTypeAndValueKnown(parti, type, value);
   }
 
@@ -276,21 +275,21 @@ export class KnowledgeHandler {
     return knowledge.knowledge.every((item) => this.isSimpleKnowledge(item));
   }
 
-  recheckEncryptedKnowledge(parti: Participant){
+  recheckEncryptedKnowledge(parti: Participant) {
     const updated = false;
     parti.getKnowledgeList().forEach((knowledge) => {
-      const type = knowledge.item.type
-      if(type !== "encryptedKnowledge") return;
+      const type = knowledge.item.type;
+      if (type !== "encryptedKnowledge") return;
       const encryptedKnowledge = knowledge.item;
       const encryption = encryptedKnowledge.encryption;
       const shouldDecrypt = this.doesParticipantKnow(parti, encryption, undefined);
-      if(shouldDecrypt){
+      if (shouldDecrypt) {
         parti.removeKnowledge(encryptedKnowledge);
-        encryptedKnowledge.knowledge.forEach(element => {
+        encryptedKnowledge.knowledge.forEach((element) => {
           parti.setKnowledge(element);
         });
       }
     });
-    if(updated) this.recheckEncryptedKnowledge(parti); //This could be if something is encrypted with something encrypted
+    if (updated) this.recheckEncryptedKnowledge(parti); //This could be if something is encrypted with something encrypted
   }
 }

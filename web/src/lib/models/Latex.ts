@@ -54,7 +54,7 @@ export class Latex {
       .flat();
 
     // stringArray = array of strings, each string is a part of the latex string, where the seperations is to be filled by the parameters of call
-    for (let index=0; index < latexArray.length; index++) {
+    for (let index = 0; index < latexArray.length; index++) {
       const val = latexArray[index];
       if (!val) continue;
       const indexOf = paramsIndexArrFlat.indexOf(index);

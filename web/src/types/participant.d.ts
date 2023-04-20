@@ -4,7 +4,7 @@ interface ParticipantElements {
   elements: { [key: string]: HTMLElement };
 }
 
-type VisualKnowledge = { knowledge: ParticipantKnowledge, emoji: string };
+type VisualKnowledge = { knowledge: ParticipantKnowledge; emoji: string };
 
 type ParticipantKnowledge = RawParticipantKnowledge | EncryptedParticipantKnowledge;
 

@@ -36,7 +36,7 @@ import { LatexMap } from "./LatexMap";
 import { ParticipantMap } from "./ParticipantMap";
 import { z } from "zod";
 import type { ParticipantKnowledge } from "src/types/participant";
-import { KnowledgeHandler } from './KnowledgeHandler';
+import { KnowledgeHandler } from "./KnowledgeHandler";
 
 export class Program {
   init_participants: ParticipantMap = new ParticipantMap();
@@ -302,8 +302,8 @@ export class Program {
   // New Statement
   newStmnt(participant: string, newKnowledge: Type, last: Frame, comment?: StmtComment) {
     last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
-    
-    this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant))
+
+    this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant));
     last.addToHistory(
       HistoryTemplates.new(participant, newKnowledge, this),
       `Note over ${participant}: New ${getStringFromType(newKnowledge)}`
@@ -317,7 +317,7 @@ export class Program {
       knowledge: knowledge,
       value: value,
     });
-    this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant))
+    this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant));
     last.addToHistory(
       HistoryTemplates.set(participant, knowledge, value, this),
       `Note over ${participant}: ${getStringFromType(knowledge)} = ${getStringFromType(value)}`
@@ -348,7 +348,13 @@ export class Program {
     });
   }
 
-  generateKnowledgeElement(expression: Expression, senderId: string, receiverId: string, last: Frame, canDescrypt = true): ParticipantKnowledge[] {
+  generateKnowledgeElement(
+    expression: Expression,
+    senderId: string,
+    receiverId: string,
+    last: Frame,
+    canDescrypt = true
+  ): ParticipantKnowledge[] {
     if (expression.child.type == "encryptExpression") {
       const encryptedExpression = expression.child as EncryptExpression;
       return this.generateEncryptedKnowledge(senderId, receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt);
@@ -399,7 +405,7 @@ export class Program {
         });
       } else {
         const type = expression.child as Type;
-        const senderKnowledge = sender.getKnowledge({ type: "rawKnowledge", knowledge: type }) ?? { type: "rawKnowledge", knowledge: type }
+        const senderKnowledge = sender.getKnowledge({ type: "rawKnowledge", knowledge: type }) ?? { type: "rawKnowledge", knowledge: type };
         knowledges.push(senderKnowledge);
       }
     });

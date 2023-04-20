@@ -18,7 +18,7 @@ export class Participant {
     });
   }
 
-setKnowledge(knowledge: ParticipantKnowledge) {
+  setKnowledge(knowledge: ParticipantKnowledge) {
     const index = this.findKnowledgeIndex(knowledge);
 
     if (index >= 0) {
@@ -38,7 +38,6 @@ setKnowledge(knowledge: ParticipantKnowledge) {
       this.knowledge.splice(index, 1);
     }
   }
-  
 
   findKnowledgeIndex(element: ParticipantKnowledge, strict = false): number {
     return this.knowledge.findIndex(({ item }) => KnowledgeHandler.compareKnowledge(item, element, strict));

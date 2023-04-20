@@ -1,4 +1,4 @@
-import type { StmtComment, Type } from "$lang/types/parser/interfaces";
+import type { StmtComment } from "$lang/types/parser/interfaces";
 import type { ParticipantKnowledge } from "src/types/participant";
 import { Participant } from "./Participant";
 

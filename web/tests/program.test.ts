@@ -12,7 +12,7 @@ import { Equal } from "$lib/models/Equal";
 import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { Participant } from "$lib/models/Participant";
 import { getStringFromType } from "$lib/utils/stringUtil";
-import { KnowledgeHandler } from '../src/lib/models/KnowledgeHandler';
+import { KnowledgeHandler } from "../src/lib/models/KnowledgeHandler";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -560,10 +560,10 @@ test("Does equalityMap.isFunctionKnown work with string values?", () => {
   const modified_func1: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(x,y),y))
   const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(foo(x,y),y))
 
-  const init_knowledge_value : Type = {
+  const init_knowledge_value: Type = {
     type: "string",
     value: "this_is_a_value",
-  }
+  };
   const init_knowledge: RawParticipantKnowledge = {
     type: "rawKnowledge",
     knowledge: modified_func1,
@@ -605,8 +605,6 @@ test("Does equalityMap.isFunctionKnown work with function values?", () => {
   const modified_func1: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(x,y),y))
   const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(foo(x,y),y))
 
-
-
   const init_knowledge_knowledge: Id = {
     type: "id",
     value: "this_is_a_value",
@@ -641,7 +639,6 @@ test("Does participant know opaque function?", () => {
   const init_param2: Type = { type: "id", value: "b" };
   const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
   const init_func2: FunctionCall = { type: "function", id: "foo", params: [init_param2, init_param1] }; // foo(b,a)
-
 
   const knowledgeHandler = new KnowledgeHandler();
   knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => foo(b,a)
@@ -681,7 +678,7 @@ test("Does participant know opaque function?", () => {
   param_parti.setKnowledge(init_param_knowledge1);
   param_parti.setKnowledge(init_param_knowledge2);
 
-  // Alice3 knows foo(y,x) 
+  // Alice3 knows foo(y,x)
   const modified_parti: Participant = new Participant("Alice");
   modified_parti.setKnowledge(init_modified_knowledge);
 

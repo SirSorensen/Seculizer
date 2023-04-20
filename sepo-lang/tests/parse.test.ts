@@ -1,4 +1,4 @@
-import {parse} from "../dist/index.js";
+import { parse } from "../dist/index.js";
 import fs from "fs";
 import { expect, it } from "vitest";
 import path from "path";
@@ -13,9 +13,9 @@ fs.readdirSync(caseFolder).forEach(function (file) {
   createTest(file, caseFolder);
 });
 
-function createTest(file: string, relativePath: string){
+function createTest(file: string, relativePath: string) {
   const path = relativePath + "/" + file;
-  const isDir = fs.lstatSync(path).isDirectory() 
+  const isDir = fs.lstatSync(path).isDirectory();
   if (isDir) {
     fs.readdirSync(path).forEach(function (file) {
       createTest(file, path);

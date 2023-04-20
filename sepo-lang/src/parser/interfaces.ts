@@ -111,7 +111,7 @@ export interface Knowledge extends ASTNode {
 export interface KnowledgeItem extends ASTNode {
   type: "knowledgeItem";
   id: Id;
-  children: {value: Type, comment?: StmtComment}[];
+  children: { value: Type; comment?: StmtComment }[];
 }
 
 export interface Protocol extends ASTNode {

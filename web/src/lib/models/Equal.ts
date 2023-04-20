@@ -1,5 +1,4 @@
 import type { FunctionCall, StringLiteral, NumberLiteral, Id, Type } from "$lang/types/parser/interfaces";
-import type { Participant } from "./Participant";
 
 type rightParamType = StringLiteral | NumberLiteral | Id;
 type leftParamType = rightParamType | leftParamType[];

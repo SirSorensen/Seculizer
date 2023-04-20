@@ -4,7 +4,7 @@ import { SepoLexer } from "./parser/lexer.js";
 import { SepoParser } from "./parser/parser.js";
 
 export * from "./parser/lexer.js";
-export {ParseError} from "./parser/ParseError.js";
+export { ParseError } from "./parser/ParseError.js";
 export function parse(input: string, includeCST: boolean) {
   //return {ast: null, cst: null};
   const lexResult = SepoLexer.tokenize(input.toString() + "eof");

@@ -8,10 +8,13 @@ const HistoryTemplates = {
     return `Cleared ${getFormattedTypeAsHTML(knowledge, program)} from knowledge`;
   },
   new: (participant: string, knowledge: Type, program: Program) => {
-    return `${formatId(participant,program)} created ${getFormattedTypeAsHTML(knowledge, program)}`;
+    return `${formatId(participant, program)} created ${getFormattedTypeAsHTML(knowledge, program)}`;
   },
   set: (participant: string, knowledge: Type, value: Type, program: Program) => {
-    return `${formatId(participant,program)} set ${getFormattedTypeAsHTML(knowledge, program)} to ${getFormattedTypeAsHTML(value, program)}`;
+    return `${formatId(participant, program)} set ${getFormattedTypeAsHTML(knowledge, program)} to ${getFormattedTypeAsHTML(
+      value,
+      program
+    )}`;
   },
   send: (sender: string, reciever: string, expression: Expression, program: Program) => {
     return `${formatId(sender, program)} sent ${getStringFromExpression(expression, program)} to ${formatId(reciever, program)}`;
@@ -21,14 +24,14 @@ const HistoryTemplates = {
   },
 };
 
-function formatId(id: string, program: Program):string {
+function formatId(id: string, program: Program): string {
   const icon = program.getIcons().get(id);
   if (icon) {
     const omaEmoji = getEmoji(icon);
     let s = "";
-    if(omaEmoji.type === "class"){
+    if (omaEmoji.type === "class") {
       s += `<i class="oma oma-${omaEmoji.value}"></i>`;
-    }else if (omaEmoji.type === "background"){
+    } else if (omaEmoji.type === "background") {
       s += `<i class="oma" style="background-image: url(${omaEmoji.value})" ></i>`;
     }
     return s + " " + id;

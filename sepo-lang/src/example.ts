@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import {parse} from "./index.js";
+import { parse } from "./index.js";
 const lexerTest = async (): Promise<void> => {
   await fs.readFile("./examples/test.sepo", (err: NodeJS.ErrnoException | null, data: any) => {
     if (err !== null) {

@@ -1,7 +1,6 @@
 import type { Type } from "$lang/types/parser/interfaces";
 import { Latex } from "./Latex";
 
-
 export class LatexMap {
   latexMap: { [id: string]: Latex } = {};
 
