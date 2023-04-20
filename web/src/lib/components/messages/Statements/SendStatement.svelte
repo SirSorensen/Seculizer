@@ -5,6 +5,8 @@
   import { onMount } from "svelte";
   import type { NextFrameNavigation } from "src/types/app";
   import type { ParticipantElements } from "src/types/participant";
+    import { crossfade } from "svelte/transition";
+    import { quintOut } from "svelte/easing";
 
   export let stmnt: SendStatement;
   export let participantElements: ParticipantElements = {
@@ -88,10 +90,24 @@
       if (container) resizeObserver.unobserve(container);
     };
   });
+  const [send, receive] = crossfade({
+		fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 300,
+				easing: quintOut,
+				css: t => `
+					opacity: ${t}
+				`
+			};
+		}
+	});
 </script>
 
 <svelte:window on:resize={update} />
-<div class="line" bind:this={sendLine}>
+<div class="line" bind:this={sendLine} in:receive={{key: JSON.stringify(child)}} out:send={{key: JSON.stringify(child)}}>
   {#if !child}
     <p>Invalid statement</p>
   {:else if child.type === "messageSendStatement"}

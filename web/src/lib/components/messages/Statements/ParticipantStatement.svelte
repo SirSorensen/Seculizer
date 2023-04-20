@@ -8,6 +8,7 @@
 
   import { currentFrame, program } from "$lib/stores/programStore.js";
   import Comment from "$lib/components/Comment.svelte";
+    import { fade } from "svelte/transition";
 
   export let stmnt: ParticipantStatement;
   export let participantElements: ParticipantElements = {
@@ -46,7 +47,7 @@
   const castToSetStatement = (x: ParticipantStatementNode) => x as SetStatement;
 </script>
 
-<div class="statement" bind:this={statement}>
+<div class="statement" transition:fade bind:this={statement}>
   {#if !child}
     <p>Invalid participant statement</p>
   {:else if child.type === "newStatement"}

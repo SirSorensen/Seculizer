@@ -17,7 +17,7 @@
   }
 </script>
 
-<div transition:fade={{ delay: 250, duration: 300 }} class="item" bind:this={item} on:mousemove={handleMouse}>
+<div class="item" bind:this={item} on:mousemove={handleMouse}>
   <Emoji content={emoji} />
   {#if $program.getFormats().contains(value)}
     {@const format = $program.getFormats().getConstructedLatex(value)}
@@ -62,7 +62,7 @@
   }
 
   .item:hover .item-hover {
-    display: flex;
+    display: block;
   }
 
   p {

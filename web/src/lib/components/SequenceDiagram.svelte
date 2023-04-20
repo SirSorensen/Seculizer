@@ -67,6 +67,7 @@
     background: var(--sequence-bg);
     box-shadow: var(--shadow);
     padding: 1rem;
+    resize: both;
   }
   pre :global(#graphDiv .actor) {
     stroke: var(--sequence-note-stroke);

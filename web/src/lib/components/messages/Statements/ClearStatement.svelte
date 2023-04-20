@@ -6,6 +6,7 @@
 
   import { program } from "$lib/stores/programStore.js";
   import { onMount } from "svelte";
+    import { fade } from "svelte/transition";
   export let stmnt: ClearStatement;
 
   const id = stmnt.id;
@@ -19,7 +20,7 @@
   });
 </script>
 
-<div class="statement" style:top>
+<div class="statement" transition:fade style:top>
   <ActionBox title="clear"><Item emoji={icon} value={id} /></ActionBox>
 </div>
 

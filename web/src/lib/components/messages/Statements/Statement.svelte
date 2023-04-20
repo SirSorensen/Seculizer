@@ -13,8 +13,7 @@
   import SendStatement from "./SendStatement.svelte";
   import ParticipantStatement from "./ParticipantStatement.svelte";
   import type { ParticipantElements } from "src/types/participant";
-  import Latex from "$lib/components/Latex.svelte";
-    import Comment from "$lib/components/Comment.svelte";
+  import Comment from "$lib/components/Comment.svelte";
   const [send, receive] = crossfade({
 		fallback(node, params) {
 			const style = getComputedStyle(node);
