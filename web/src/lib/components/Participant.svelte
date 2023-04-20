@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { fade, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
   import type { Id, StmtComment, Type } from "$lang/types/parser/interfaces";
-  import { program } from "$lib/stores/programStore";
-  import { getStringFromType } from "$lib/utils/stringUtil";
   import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
+  import { program, currentFrame } from "$lib/stores/programStore";
+  import { getStringFromType } from "$lib/utils/stringUtil";
   import Item from "./Item.svelte";
   import Latex from "./Latex.svelte";
   import Comment from "./Comment.svelte";
@@ -31,6 +31,7 @@
     return flat;
   }
   let endHover = false;
+  $: highlightedItems = $currentFrame.getHighlightedKnowledge(name.value)
 </script>
 
 <div
@@ -59,13 +60,13 @@
   <div class="participantInnerContainer">
     <div class="participant-item">
       {#if comment}
-        <Item value={name} {emoji}>
+        <Item value={name} {emoji} highlight={$currentFrame.shouldHightlightParticipant(name.value)}>
           <svelte:fragment slot="hover">
             <Comment {comment} />
           </svelte:fragment>
         </Item>
       {:else}
-        <Item value={name} {emoji} />
+        <Item value={name} {emoji} highlight={$currentFrame.shouldHightlightParticipant(name.value)}/>
       {/if}
     </div>
   </div>
@@ -75,11 +76,11 @@
         {#if knowledge.length === 0}
           <p class="emptyText">Empty</p>
         {:else}
-          {#each knowledge as visualKnowledge}
+          {#each knowledge.sort(k => {return highlightedItems.includes(k.knowledge) ? 1: 0}) as visualKnowledge}
             <div class="knowledge">
               {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
                 {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
-                  <Item value={type} emoji={visualKnowledge.emoji}>
+                  <Item value={type} emoji={visualKnowledge.emoji} highlight={highlightedItems.includes(visualKnowledge.knowledge)}>
                     {#if value}
                       <div class="knowledgeValue">
                         {#if $program.getFormats().contains(value)}
@@ -96,7 +97,7 @@
               {:else}
                 {@const value = visualKnowledge.knowledge.value}
                 {#if visualKnowledge.knowledge.comment}
-                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} highlight={highlightedItems.includes(visualKnowledge.knowledge)}>
                     {#if value}
                       <div class="knowledgeValue">
                         {#if $program.getFormats().contains(value)}
@@ -113,7 +114,7 @@
                     </svelte:fragment>
                   </Item>
                 {:else}
-                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} highlight={highlightedItems.includes(visualKnowledge.knowledge)}>
                     {#if value}
                       <div class="knowledgeValue">
                         {#if $program.getFormats().contains(value)}
@@ -139,8 +140,11 @@
 <style>
   div.participantContainer {
     position: absolute;
-    z-index: 5;
+    z-index: 1;
     transform: translate(-50%, -50%);
+  }
+  div.participantContainer:hover{
+    z-index: 3;
   }
   div.participantInnerContainer,
   .knowledges {

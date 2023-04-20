@@ -1,4 +1,5 @@
 import type { Id, Statement, StmtComment } from "$lang/types/parser/interfaces";
+import type { ParticipantKnowledge } from "src/types/participant";
 import type { Participant } from "./Participant";
 import { ParticipantMap } from "./ParticipantMap";
 
@@ -8,6 +9,7 @@ export class Frame {
   private participantMap: ParticipantMap;
   private presentation: Statement | null;
   private history: {string: string, mermaid: string}[];
+  private hightlighted: { [id: string]: ParticipantKnowledge[] } = {};
 
   constructor(stmnt: Statement | null, prev: Frame | null, participantMap: ParticipantMap | { [id: string]: Participant }, history: {string: string, mermaid: string}[]) {
     this.next = null;
@@ -123,5 +125,22 @@ export class Frame {
     knowledge = this.participantMap.getParticipant("Shared").getKnowledge({type: "rawKnowledge", knowledge: id});
     if (knowledge && knowledge.type == "rawKnowledge") return knowledge.comment;
     return undefined;
+  }
+
+  addHighlightedKnowledge(knowledge: ParticipantKnowledge, ...participants: string[]) {
+    participants.push("Shared");
+    for (const participant of participants) {
+      const pKnowledge = this.participantMap.getParticipant(participant).getKnowledge(knowledge) ?? knowledge;
+      if(this.hightlighted[participant]) this.hightlighted[participant].push(pKnowledge)
+      else this.hightlighted[participant] = [pKnowledge];   
+    }
+  }
+
+  getHighlightedKnowledge(participantId:string): ParticipantKnowledge[] {
+    return this.hightlighted[participantId] || [];
+  }
+
+  shouldHightlightParticipant(participantId:string): boolean {
+    return this.hightlighted[participantId] !== undefined;
   }
 }

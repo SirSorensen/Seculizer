@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Type } from "$lang/types/parser/interfaces";
   import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
+  import { currentFrame } from "$lib/stores/programStore";
   import Item from "./Item.svelte";
   import Comment from "./Comment.svelte";
 
@@ -17,6 +18,7 @@
     }
     return flat;
   }
+  $: highlightedItems = $currentFrame.getHighlightedKnowledge("Shared")
 </script>
 
 <div class="container" id="commonKnowledgeContainer">
@@ -28,16 +30,16 @@
       {#each knowledges as visualKnowledge}
         {#if visualKnowledge.knowledge.type === "encryptedKnowledge"}
           {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as encryptedKnowledgeType}
-            <Item value={encryptedKnowledgeType} emoji={visualKnowledge.emoji} />
+            <Item value={encryptedKnowledgeType} emoji={visualKnowledge.emoji} highlight={highlightedItems.includes(visualKnowledge.knowledge)}/>
           {/each}
         {:else if visualKnowledge.knowledge.comment}
-          <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+          <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} highlight={highlightedItems.includes(visualKnowledge.knowledge)}>
             <svelte:fragment slot="hover">
               <Comment comment={visualKnowledge.knowledge.comment} />
             </svelte:fragment>
           </Item>
         {:else}
-          <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
+          <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} highlight={highlightedItems.includes(visualKnowledge.knowledge)}/>
         {/if}
       {/each}
     {/if}

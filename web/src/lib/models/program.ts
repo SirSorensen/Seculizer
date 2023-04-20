@@ -300,24 +300,29 @@ export class Program {
   }
 
   // New Statement
-  newStmnt(participant: string, newKnowledge: Type, last: Frame, comment?: StmtComment) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, { type: "rawKnowledge", knowledge: newKnowledge, comment: comment });
+  newStmnt(participant: string, newKnowledgeType: Type, last: Frame, comment?: StmtComment) {
+    const newKnowledge:ParticipantKnowledge = { type: "rawKnowledge", knowledge: newKnowledgeType, comment: comment };
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, newKnowledge);
     
+    last.addHighlightedKnowledge(newKnowledge, participant);
     this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant))
     last.addToHistory(
-      HistoryTemplates.new(participant, newKnowledge, this),
-      `Note over ${participant}: New ${getStringFromType(newKnowledge)}`
+      HistoryTemplates.new(participant, newKnowledgeType, this),
+      `Note over ${participant}: New ${getStringFromType(newKnowledgeType)}`
     );
   }
 
   // Set Statement
   setStmnt(participant: string, knowledge: Type, value: Type, last: Frame) {
-    last.getParticipantMap().setKnowledgeOfParticipant(participant, {
+    const newKnowledge:ParticipantKnowledge = {
       type: "rawKnowledge",
       knowledge: knowledge,
       value: value,
-    });
+    };
+    last.getParticipantMap().setKnowledgeOfParticipant(participant, newKnowledge);
     this.knowledgeHandler.recheckEncryptedKnowledge(last.getParticipantMap().getParticipant(participant))
+    
+    last.addHighlightedKnowledge(newKnowledge, participant);
     last.addToHistory(
       HistoryTemplates.set(participant, knowledge, value, this),
       `Note over ${participant}: ${getStringFromType(knowledge)} = ${getStringFromType(value)}`
@@ -351,9 +356,13 @@ export class Program {
   generateKnowledgeElement(expression: Expression, senderId: string, receiverId: string, last: Frame, canDescrypt = true): ParticipantKnowledge[] {
     if (expression.child.type == "encryptExpression") {
       const encryptedExpression = expression.child as EncryptExpression;
+      const outerKnowledge:ParticipantKnowledge = { type: "rawKnowledge", knowledge: encryptedExpression.outer }
+      last.addHighlightedKnowledge(outerKnowledge, senderId, receiverId);
       return this.generateEncryptedKnowledge(senderId, receiverId, encryptedExpression.inner, encryptedExpression.outer, last, canDescrypt);
     } else if (expression.child.type == "signExpression") {
       const signExpression = expression.child as SignExpression;
+      const outerKnowledge:ParticipantKnowledge = { type: "rawKnowledge", knowledge: signExpression.outer }
+      last.addHighlightedKnowledge(outerKnowledge, senderId);
       let subKnowledge: ParticipantKnowledge[] = [];
       signExpression.inner.forEach((expression) => {
         subKnowledge = subKnowledge.concat(this.generateKnowledgeElement(expression, senderId, receiverId, last, canDescrypt));
@@ -361,7 +370,9 @@ export class Program {
       return subKnowledge;
     } else {
       const type = expression.child as Type;
-      return [{ type: "rawKnowledge", knowledge: type }];
+      const knowledge:ParticipantKnowledge = { type: "rawKnowledge", knowledge: type };
+      last.addHighlightedKnowledge(knowledge, senderId, receiverId);
+      return [knowledge];
     }
   }
 

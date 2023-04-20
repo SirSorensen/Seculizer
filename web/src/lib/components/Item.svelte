@@ -7,6 +7,7 @@
   import Latex from "./Latex.svelte";
   export let emoji: string;
   export let value: Type;
+  export let highlight = false;
   let item: HTMLElement;
   let hoverValues = { left: "0px", top: "100%" };
   function handleMouse(e: MouseEvent) {
@@ -17,7 +18,7 @@
   }
 </script>
 
-<div class="item" bind:this={item} on:mousemove={handleMouse}>
+<div class="item" class:highlight bind:this={item} on:mousemove={handleMouse}>
   <Emoji content={emoji} />
   {#if $program.getFormats().contains(value)}
     {@const format = $program.getFormats().getConstructedLatex(value)}
@@ -35,7 +36,11 @@
 
 <style>
   .item :global(.emoji i) {
-    font-size: 3rem;
+    font-size: 2.9rem;
+    transition: font-size 0.2s ease-in-out;
+  }
+  .item.highlight :global(.emoji i) {
+    font-size: 3.2rem;
   }
 
   .item {
@@ -67,5 +72,9 @@
 
   p {
     margin: 0;
+  }
+
+  .item.highlight p{
+    font-weight: bold;
   }
 </style>
