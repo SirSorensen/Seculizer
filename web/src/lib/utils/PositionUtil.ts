@@ -65,9 +65,9 @@ export function calcPositions(amount: number, box: HTMLElement) {
     y: number;
   }[] = pos
     .flatMap((row, y) => {
-      const xWidth = boxRect.width / row.length;
+      const yWidth = boxRect.height / row.length;
       return row.map((col, x) => {
-        const yWidth = boxRect.height / pos.length;
+        const xWidth = boxRect.width / pos.length;
         return col ? { x: x * xWidth + xWidth / 2, y: y * yWidth + yWidth / 2 } : null;
       });
     })
