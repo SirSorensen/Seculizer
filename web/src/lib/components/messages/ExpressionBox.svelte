@@ -9,8 +9,8 @@
   } from "$lang/types/parser/interfaces";
   import { getIconFromType, getStringFromType } from "$lib/utils/stringUtil.js";
   import Item from "$lib/components/Item.svelte";
-  import EncryptIcon from "$lib/Icons/EncryptIcon.svelte";
-  import SignIcon from "$lib/Icons/SignIcon.svelte";
+  import EncryptIcon from "$lib/components/Icons/EncryptIcon.svelte";
+  import SignIcon from "$lib/components/Icons/SignIcon.svelte";
   import Latex from "../Latex.svelte";
 
   import { currentFrame, program } from "$lib/stores/programStore.js";
