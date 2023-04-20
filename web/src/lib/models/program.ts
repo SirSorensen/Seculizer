@@ -359,10 +359,8 @@ export class Program {
     // decryptable = true if receiver knows the key, it is therefore not encrypted
     const key = this.checkKeyRelation(outer);
     const receiver = last.getParticipantMap().getParticipant(receiverId);
-    const keyVal = receiver.getValueOfKnowledge(key);
     
-    if (key.type != "function") canDecrypt = canDecrypt && receiver.doesTypeAndValueExist(key, keyVal);
-    else canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnow(receiver, key, keyVal);
+    canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnow(receiver, key);
 
     const knowledges: ParticipantKnowledge[] = [];
     inner.forEach((expression) => {
