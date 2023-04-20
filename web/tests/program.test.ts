@@ -402,9 +402,9 @@ test("Construct an EquationMap and check if Participant knows", () => {
   const parti: Participant = new Participant("Alice");
   parti.setKnowledge(init_knowledge);
 
-  const result1 = knowledgeHandler.doesParticipantKnow(parti, func, undefined);
-  const result2 = knowledgeHandler.doesParticipantKnow(parti, modified_func, undefined);
-  const result3 = knowledgeHandler.doesParticipantKnow(parti, base_func, undefined);
+  const result1 = knowledgeHandler.isFunctionKnown(parti, func, undefined);
+  const result2 = knowledgeHandler.isFunctionKnown(parti, modified_func, undefined);
+  const result3 = knowledgeHandler.isFunctionKnown(parti, base_func, undefined);
 
   expect(result1).toBeTruthy();
   expect(result2).toBeTruthy();
@@ -480,21 +480,21 @@ test("Construct an EquationMap with functions with nested right functions", () =
   const parti4: Participant = new Participant("Alice4");
   parti3.setKnowledge(init_knowledge4);
 
-  const result1 = knowledgeHandler.doesParticipantKnow(parti, func, undefined);
-  const result2 = knowledgeHandler.doesParticipantKnow(parti, help_func1, undefined);
-  const result3 = knowledgeHandler.doesParticipantKnow(parti, modified_func1, undefined);
+  const result1 = knowledgeHandler.isFunctionKnown(parti, func, undefined);
+  const result2 = knowledgeHandler.isFunctionKnown(parti, help_func1, undefined);
+  const result3 = knowledgeHandler.isFunctionKnown(parti, modified_func1, undefined);
 
-  const result1_2 = knowledgeHandler.doesParticipantKnow(parti2, func, undefined);
-  const result2_2 = knowledgeHandler.doesParticipantKnow(parti2, help_func1, undefined);
-  const result3_2 = knowledgeHandler.doesParticipantKnow(parti2, modified_func1, undefined);
+  const result1_2 = knowledgeHandler.isFunctionKnown(parti2, func, undefined);
+  const result2_2 = knowledgeHandler.isFunctionKnown(parti2, help_func1, undefined);
+  const result3_2 = knowledgeHandler.isFunctionKnown(parti2, modified_func1, undefined);
 
-  const result1_3 = knowledgeHandler.doesParticipantKnow(parti3, func, undefined);
-  const result2_3 = knowledgeHandler.doesParticipantKnow(parti3, help_func1, undefined);
-  const result3_3 = knowledgeHandler.doesParticipantKnow(parti3, modified_func1, undefined);
+  const result1_3 = knowledgeHandler.isFunctionKnown(parti3, func, undefined);
+  const result2_3 = knowledgeHandler.isFunctionKnown(parti3, help_func1, undefined);
+  const result3_3 = knowledgeHandler.isFunctionKnown(parti3, modified_func1, undefined);
 
-  const result1_4 = knowledgeHandler.doesParticipantKnow(parti4, func, undefined);
-  const result2_4 = knowledgeHandler.doesParticipantKnow(parti4, help_func1, undefined);
-  const result3_4 = knowledgeHandler.doesParticipantKnow(parti4, modified_func1, undefined);
+  const result1_4 = knowledgeHandler.isFunctionKnown(parti4, func, undefined);
+  const result2_4 = knowledgeHandler.isFunctionKnown(parti4, help_func1, undefined);
+  const result3_4 = knowledgeHandler.isFunctionKnown(parti4, modified_func1, undefined);
 
   expect(result1).toBeTruthy();
   expect(result2).toBeFalsy();
@@ -538,12 +538,12 @@ test("Construct an EquationMap with functions with nested left functions", () =>
   const parti: Participant = new Participant("Alice");
   parti.setKnowledge(init_knowledge);
 
-  const result = knowledgeHandler.doesParticipantKnow(parti, modified_func2, undefined);
+  const result = knowledgeHandler.isFunctionKnown(parti, modified_func2, undefined);
 
   expect(result).toBeTruthy();
 });
 
-test("Does equalityMap.doesParticipantKnow work with string values?", () => {
+test("Does equalityMap.isFunctionKnown work with string values?", () => {
   const init_param1: Type = { type: "id", value: "a" };
   const init_param2: Type = { type: "id", value: "b" };
   const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
@@ -581,8 +581,56 @@ test("Does equalityMap.doesParticipantKnow work with string values?", () => {
   const parti2: Participant = new Participant("Alice2");
   parti2.setKnowledge(init_knowledge2);
 
-  const result = knowledgeHandler.doesParticipantKnow(parti, modified_func2, init_knowledge_value);
-  const result2 = knowledgeHandler.doesParticipantKnow(parti2, modified_func2, init_knowledge_value);
+  const result = knowledgeHandler.isFunctionKnown(parti, modified_func2, init_knowledge_value);
+  const result2 = knowledgeHandler.isFunctionKnown(parti2, modified_func2, init_knowledge_value);
+
+  expect(result).toBeTruthy();
+  expect(result2).toBeFalsy();
+});
+
+test("Does equalityMap.isFunctionKnown work with function values?", () => {
+  const init_param1: Type = { type: "id", value: "a" };
+  const init_param2: Type = { type: "id", value: "b" };
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
+  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
+
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
+
+  const param1: Type = { type: "id", value: "x" };
+  const param2: Type = { type: "id", value: "y" };
+
+  const help_func1: FunctionCall = { type: "function", id: "foo", params: [param1, param2] }; // foo(x,y)
+  const help_func2: FunctionCall = { type: "function", id: "lee", params: [param1, param2] }; // lee(x,y)
+  const modified_func1: FunctionCall = { type: "function", id: "foo", params: [help_func2, param2] }; // foo(lee(x,y),y))
+  const modified_func2: FunctionCall = { type: "function", id: "foo", params: [help_func1, param2] }; // foo(foo(x,y),y))
+
+
+
+  const init_knowledge_knowledge: Id = {
+    type: "id",
+    value: "this_is_a_value",
+  };
+  const init_knowledge1: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: init_knowledge_knowledge,
+    value: modified_func1,
+  };
+
+  const init_knowledge2: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: init_knowledge_knowledge,
+    value: modified_func2,
+  };
+
+  const parti: Participant = new Participant("Alice");
+  parti.setKnowledge(init_knowledge1);
+
+  const parti2: Participant = new Participant("Alice2");
+  parti2.setKnowledge(init_knowledge2);
+
+  const result = knowledgeHandler.doesParticipantKnow(parti, init_knowledge2.knowledge);
+  const result2 = knowledgeHandler.doesParticipantKnow(parti2, modified_func2);
 
   expect(result).toBeTruthy();
   expect(result2).toBeFalsy();
@@ -637,9 +685,9 @@ test("Does participant know opaque function?", () => {
   const modified_parti: Participant = new Participant("Alice");
   modified_parti.setKnowledge(init_modified_knowledge);
 
-  const result = knowledgeHandler.doesParticipantKnow(parti, func1, undefined);
-  const result2 = knowledgeHandler.doesParticipantKnow(param_parti, func1, undefined);
-  const result3 = knowledgeHandler.doesParticipantKnow(modified_parti, func1, undefined);
+  const result = knowledgeHandler.isFunctionKnown(parti, func1, undefined);
+  const result2 = knowledgeHandler.isFunctionKnown(param_parti, func1, undefined);
+  const result3 = knowledgeHandler.isFunctionKnown(modified_parti, func1, undefined);
 
   expect(result).toBeTruthy();
   expect(result2).toBeFalsy();
