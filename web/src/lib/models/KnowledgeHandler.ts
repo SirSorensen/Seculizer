@@ -28,12 +28,12 @@ export class KnowledgeHandler {
     return this.opaqueFunctions;
   }
 
-  checkIfInputisKnown(input: Type, participant: Participant, val: Type | undefined = undefined): boolean {
-    if (this.isTypeAndValueKnown(participant, input, val)) return true;
+  isInputKnownByParticipant(input: Type, participant: Participant, val: Type | undefined = undefined): boolean {
+    if (this.doesParticipantHaveKnowledge(participant, input, val)) return true;
 
     if (input.type === "function" && val == undefined && !this.opaqueFunctions.includes((input as FunctionCall).id)) {
       for (const param of input.params) {
-        if (!this.checkIfInputisKnown(param, participant)) return false;
+        if (!this.isInputKnownByParticipant(param, participant)) return false;
       }
       return true;
     }
@@ -41,7 +41,7 @@ export class KnowledgeHandler {
   }
 
   // Checks if the participant knows the given function call
-  isTypeAndValueKnown(parti: Participant, type: Type, val: Type | undefined): boolean {
+  doesParticipantHaveKnowledge(parti: Participant, type: Type, val: Type | undefined): boolean {
     // Construct a temporary knowledge object from the given parameter 'type' and 'value'
     const tmpKnowledge: ParticipantKnowledge = {
       type: "rawKnowledge",
@@ -135,7 +135,7 @@ export class KnowledgeHandler {
   isFunctionKnown(parti: Participant, f: FunctionCall, val: Type | undefined): boolean {
     const history: Map<string, boolean> = new Map();
     const queue: queueElement[] = [];
-    if (!this.equations.getEquations()[f.id]) return this.checkIfInputisKnown(f, parti, val);
+    if (!this.equations.getEquations()[f.id]) return this.isInputKnownByParticipant(f, parti, val);
     const maxDepth = this.equations.calcMaxDepth(f);
 
     queue.push({ f: f, searchDepth: 0, paramDepth: [] });
@@ -149,7 +149,7 @@ export class KnowledgeHandler {
       if (history.has(getStringFromType(_f))) continue;
       history.set(getStringFromType(_f), true);
 
-      if (this.checkIfInputisKnown(_f, parti, val)) return true;
+      if (this.isInputKnownByParticipant(_f, parti, val)) return true;
 
       if (this.equations.getEquations()[_f.id])
         for (const eq of this.equations.getEquations()[_f.id].eqs) {
@@ -188,7 +188,7 @@ export class KnowledgeHandler {
   doesParticipantKnow(parti: Participant, type: Type, value: Type | undefined): boolean {
     if (type.type === "function") return this.isFunctionKnown(parti, type, value);
 
-    return this.isTypeAndValueKnown(parti, type, value);
+    return this.doesParticipantHaveKnowledge(parti, type, value);
   }
 
   // Given a function and a paramDepth, returns the index of the next inner functions
