@@ -116,10 +116,6 @@ export class KnowledgeHandler {
         // therefore return true
         return true;
       }
-      //   return (
-      //     JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge) && // check if knowledge is the same
-      //     (!strict || JSON.stringify(knowledgeA.value) === JSON.stringify(knowledgeB.value)) // if strict is true, then we need to check the value as well
-      //   );
     } else if (knowledgeA.type === "encryptedKnowledge" && knowledgeB.type === "encryptedKnowledge") {
       if (JSON.stringify(knowledgeA.encryption) !== JSON.stringify(knowledgeB.encryption)) return false;
       if (knowledgeA.knowledge.length !== knowledgeB.knowledge.length) return false;
