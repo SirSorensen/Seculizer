@@ -43,7 +43,6 @@ export class Program {
 
   first: Frame | null = null;
 
-  keyRelations: { [id: string]: string } = {};
   formats: LatexMap = new LatexMap();
   knowledgeHandler = new KnowledgeHandler();
   icons: Map<string, string> = new Map();
@@ -128,9 +127,9 @@ export class Program {
       keyRelations.keyRelations.forEach((keyRelation: KeyRelation) => {
         const sk = keyRelation.sk.value;
         const pk = keyRelation.pk.value;
-        this.keyRelations[pk] = sk;
+        this.knowledgeHandler.addKeyRelation(pk, sk);
       });
-      if (this.log) console.log("KeyRelations created", this.keyRelations);
+      if (this.log) console.log("KeyRelations created", this.knowledgeHandler.getKeyRelations());
     } else if (this.log) console.log("No keyRelations found");
   }
 
@@ -382,14 +381,11 @@ export class Program {
   ): ParticipantKnowledge[] {
     // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
     // decryptable = true if receiver knows the key, it is therefore not encrypted
-    const key = this.checkKeyRelation(outer);
-
     const sender = last.getParticipantMap().getParticipant(senderId);
-    const keyVal = sender.getValueOfKnowledge(key);
-
+    const keyVal = sender.getValueOfKnowledge(outer);
     const receiver = last.getParticipantMap().getParticipant(receiverId);
 
-    canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnow(receiver, key, keyVal);
+    canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnowKey(receiver, outer, keyVal);
 
     const knowledges: ParticipantKnowledge[] = [];
     inner.forEach((expression) => {
@@ -413,14 +409,6 @@ export class Program {
     else {
       return [{ type: "encryptedKnowledge", knowledge: knowledges, encryption: outer }];
     }
-  }
-
-  checkKeyRelation(key: Type): Type {
-    if (key.type == "id") {
-      const tmp_key = this.keyRelations[key.value];
-      if (tmp_key) return { type: "id", value: tmp_key };
-    }
-    return key;
   }
 
   getIcons() {

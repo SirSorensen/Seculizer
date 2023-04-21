@@ -38,8 +38,8 @@ test("web/program with simple.sepo", () => {
   startFunction("Samples/simple");
   expect(program).toBeDefined();
 
-  expect(program.keyRelations).toBeDefined();
-  expect(Object.keys(program.keyRelations).length).toBeGreaterThan(0);
+  expect(program.knowledgeHandler.getKeyRelations()).toBeDefined();
+  expect(Object.keys(program.knowledgeHandler.getKeyRelations()).length).toBeGreaterThan(0);
 
   expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
   expect(program.knowledgeHandler.getOpaqueFunctions().length).toBeGreaterThan(0);
@@ -66,8 +66,8 @@ test("web/program with DF.sepo", () => {
   startFunction("Protocols/Diffie-hellman");
   expect(program).toBeDefined();
 
-  expect(program.keyRelations).toBeDefined();
-  expect(Object.keys(program.keyRelations).length).toBe(0);
+  expect(program.knowledgeHandler.getKeyRelations()).toBeDefined();
+  expect(Object.keys(program.knowledgeHandler.getKeyRelations()).length).toBe(0);
 
   expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
   expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
@@ -86,8 +86,8 @@ test("web/program with send-with-sign.sepo", () => {
   startFunction("Samples/send-with-sign");
   expect(program).toBeDefined();
 
-  expect(program.keyRelations).toBeDefined();
-  expect(Object.keys(program.keyRelations).length).toBe(0);
+  expect(program.knowledgeHandler.getKeyRelations()).toBeDefined();
+  expect(Object.keys(program.knowledgeHandler.getKeyRelations()).length).toBe(0);
 
   expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
   expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
@@ -152,8 +152,8 @@ test("web/program with send-with-enc.sepo", () => {
   startFunction("Samples/send-with-enc");
   expect(program).toBeDefined();
 
-  expect(program.keyRelations).toBeDefined();
-  expect(Object.keys(program.keyRelations).length).toBe(0);
+  expect(program.knowledgeHandler.getKeyRelations()).toBeDefined();
+  expect(Object.keys(program.knowledgeHandler.getKeyRelations()).length).toBe(0);
 
   expect(program.knowledgeHandler.getOpaqueFunctions()).toBeDefined();
   expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
@@ -689,4 +689,83 @@ test("Does participant know opaque function?", () => {
   expect(result).toBeTruthy();
   expect(result2).toBeFalsy();
   expect(result3).toBeTruthy();
+});
+
+
+test("Does participant know id and function with keyRelation?", () => {
+  const init_param1: Type = { type: "id", value: "a" };
+  const init_param2: Type = { type: "id", value: "b" };
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
+  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
+
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
+  knowledgeHandler.addOpaqueFunction("foo");
+
+  const param1_pk: Type = { type: "id", value: "x_pk" };
+  const param2_pk: Type = { type: "id", value: "y_pk" };
+
+  const param1_sk: Type = { type: "id", value: "x_sk" };
+  const param2_sk: Type = { type: "id", value: "y_sk" };
+  knowledgeHandler.addKeyRelation(param1_pk.value, param1_sk.value);
+  knowledgeHandler.addKeyRelation(param2_pk.value, param2_sk.value);
+
+  const func_pk: FunctionCall = { type: "function", id: "foo", params: [param1_pk, param2_pk] }; // foo(x,y)
+  const func_modified_sk: FunctionCall = { type: "function", id: "lee", params: [param1_sk, param2_sk] }; // lee(x,y)
+
+  const init_knowledge_funcWithPk: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: func_pk,
+  };
+
+  const init_knowledge_param1_pk: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: param1_pk,
+  };
+  const init_knowledge_param2_pk: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: param2_pk,
+  };
+
+  const init_knowledge_param1_sk: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: param1_sk,
+  };
+  const init_knowledge_param2_sk: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: param2_sk,
+  };
+
+  const init_knowledge_func_modified_sk: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: func_modified_sk,
+  };
+
+  // Bob knows foo(x_pk,y_pk)
+  const parti_func1_pk: Participant = new Participant("Alice");
+  parti_func1_pk.setKnowledge(init_knowledge_funcWithPk);
+
+  // Bob knows x_pk and y_pk
+  const parti_param1_param2_pk: Participant = new Participant("Bob");
+  parti_param1_param2_pk.setKnowledge(init_knowledge_param1_pk);
+  parti_param1_param2_pk.setKnowledge(init_knowledge_param2_pk);
+
+  // Charlie knows x_sk and y_sk
+  const parti_param1_param2_sk: Participant = new Participant("Charlie");
+  parti_param1_param2_sk.setKnowledge(init_knowledge_param1_sk);
+  parti_param1_param2_sk.setKnowledge(init_knowledge_param2_sk);
+
+  // Delta knows lee(x_sk,y_sk)
+  const parti_func_modified_sk: Participant = new Participant("Delta");
+  parti_func_modified_sk.setKnowledge(init_knowledge_func_modified_sk);
+
+  const result = knowledgeHandler.doesParticipantKnowKey(parti_func1_pk, func_pk, undefined);
+  const result2 = knowledgeHandler.doesParticipantKnowKey(parti_param1_param2_pk, func_pk, undefined);
+  const result3 = knowledgeHandler.doesParticipantKnowKey(parti_param1_param2_sk, func_pk, undefined);
+  const result4 = knowledgeHandler.doesParticipantKnowKey(parti_func_modified_sk, func_pk, undefined);
+
+  expect(result).toBeFalsy();
+  expect(result2).toBeFalsy();
+  expect(result3).toBeTruthy();
+  expect(result4).toBeTruthy();
 });

@@ -1,4 +1,4 @@
-import type { FunctionCall, Type } from "$lang/types/parser/interfaces";
+import type { FunctionCall, Id, Type } from "$lang/types/parser/interfaces";
 import { getStringFromType } from "$lib/utils/stringUtil";
 import type { ParticipantKnowledge } from "src/types/participant";
 import { EquationMap } from "./EquationMap";
@@ -15,9 +15,18 @@ type queueElement = {
 export class KnowledgeHandler {
   equations: EquationMap = new EquationMap();
   private opaqueFunctions: string[] = [];
+  private keyRelations: { [id: string]: string } = {};
 
   getEquations(): EquationMap {
     return this.equations;
+  }
+
+  getKeyRelations(): { [id: string]: string } {
+    return this.keyRelations;
+  }
+
+  addKeyRelation(pk : string, sk : string){
+    this.keyRelations[pk] = sk;
   }
 
   addOpaqueFunction(id: string) {
@@ -40,7 +49,7 @@ export class KnowledgeHandler {
     return false;
   }
 
-  // Checks if the participant knows the given function call
+  // Checks if the participant knows the given type
   doesParticipantHaveKnowledge(parti: Participant, type: Type, val: Type | undefined): boolean {
     // Construct a temporary knowledge object from the given parameter 'type' and 'value'
     const tmpKnowledge: ParticipantKnowledge = {
@@ -185,10 +194,26 @@ export class KnowledgeHandler {
     return false;
   }
 
+  doesParticipantKnowKey(parti: Participant, type: Type, value: Type | undefined): boolean {
+    const sk = this.convertPKToSK(type);
+    return this.doesParticipantKnow(parti, sk, value);
+  }
+
   doesParticipantKnow(parti: Participant, type: Type, value: Type | undefined): boolean {
     if (type.type === "function") return this.isFunctionKnown(parti, type, value);
 
     return this.doesParticipantHaveKnowledge(parti, type, value);
+  }
+
+  // Given a type, returns the type with all pk converted to sk
+  convertPKToSK(pk: Type): Type {
+    const sk = structuredClone(pk);
+    if (pk.type === "function") {
+      (sk as FunctionCall).params = pk.params.map((param) => this.convertPKToSK(param));
+    } else {
+      if (pk.type === "id" && this.keyRelations[pk.value] !== undefined) (sk as Id).value = this.keyRelations[pk.value];
+    }
+    return sk;
   }
 
   // Given a function and a paramDepth, returns the index of the next inner functions
@@ -255,10 +280,10 @@ export class KnowledgeHandler {
     if (!receiver) throw new Error("Receiver not found!");
 
     if (this.isSimpleKnowledge(knowledge)) return;
-    const tmp_knowledge = sender.getKnowledge(knowledge);
+    const tmp_knowledge = sender.getKnowledge(knowledge, false);
     if (tmp_knowledge) receiver.setKnowledge(tmp_knowledge);
     else {
-      console.error("Knowledge not found!", partiMap.getParticipant(senderId).getName(), knowledge);
+      if (knowledge.type === "rawKnowledge" && knowledge.knowledge.type !== "function") console.error("Knowledge not found!", partiMap.getParticipant(senderId).getName(), knowledge);
       receiver.setKnowledge(knowledge);
     }
     this.recheckEncryptedKnowledge(receiver);
