@@ -80,10 +80,6 @@ export class Participant {
     return this.name;
   }
 
-  setKnowledgeList(knowledge: { item: ParticipantKnowledge; id: number }[]) {
-    this.knowledge = knowledge;
-  }
-
   getComment(): StmtComment | undefined {
     return this.comment;
   }

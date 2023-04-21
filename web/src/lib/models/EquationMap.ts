@@ -16,7 +16,7 @@ export class EquationMap {
       this.equations[left.id] = { eqs: [], maxDepth: 0 };
     }
     this.equations[left.id].eqs.push(new Equal(left, right));
-    this.equations[left.id].maxDepth += this.functionIdParameter(right);
+    this.equations[left.id].maxDepth += this.calcTotalIdParameters(right);
     if (this.equations[left.id].maxDepth > 1) this.equations[left.id].maxDepth -= 1;
   }
 
@@ -34,11 +34,11 @@ export class EquationMap {
   }
 
   // Given a function, returns the number of parameters that are not functionCalls
-  functionIdParameter(f: FunctionCall): number {
+  calcTotalIdParameters(f: FunctionCall): number {
     let idParams = 0;
 
     for (const param of f.params) {
-      if (param.type === "function") idParams += this.functionIdParameter(param);
+      if (param.type === "function") idParams += this.calcTotalIdParameters(param);
       else idParams += 1;
     }
 

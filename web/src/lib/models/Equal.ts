@@ -5,8 +5,7 @@ type leftParamType = rightParamType | leftParamType[];
 type paramIndexType = number | paramIndexType[];
 
 export class Equal {
-  // exp(exp(A,B),C) = exp(exp(A,C),B)
-
+  // If given foo(A,B) => lee(B,A), then this.left = foo(A,B) and this.right = lee(B,A)
   private right: FunctionCall;
   private left: FunctionCall;
 
@@ -14,17 +13,13 @@ export class Equal {
   //(i.e. exp(A,B) => exp(B,A) -> [1, 0]
   // or foo(lee(A,B),C) => foo(A,B) -> [[0,0],1]
   //or foo(A,B) => foo(lee(A,B),B) -> [0,1,1] )
-
   private paramIndex: paramIndexType[] = [];
 
   constructor(left: FunctionCall, right: FunctionCall) {
     this.right = right;
     this.left = left;
-
     const leftParams = this.constructLeftParamArray(left);
     const rightParams = this.constructRightParamArray(right);
-
-    // See paramIndex description
     this.paramIndex = this.constructParamIndex(leftParams, rightParams);
   }
 
