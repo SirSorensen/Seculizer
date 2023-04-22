@@ -139,8 +139,11 @@
 <style>
   div.participantContainer {
     position: absolute;
-    z-index: 5;
+    z-index: 1;
     transform: translate(-50%, -50%);
+  }
+  div.participantContainer:hover{
+    z-index: 3;
   }
   div.participantInnerContainer,
   .knowledges {
