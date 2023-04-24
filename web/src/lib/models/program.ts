@@ -370,7 +370,7 @@ export class Program {
       return subKnowledge;
     } else {
       const type = expression.child as Type;
-      return [sender.getParticipantKnowledgeFromKnowledge(type)];
+      return [sender.getRawParticipantKnowledge(type)];
     }
 
   }
@@ -386,7 +386,7 @@ export class Program {
   ): ParticipantKnowledge[] {
     // if receiver was unable to decrypt an outer expression earlier, it cannot be decrypted now
     // decryptable = true if receiver knows the key, it is therefore not encrypted
-    const knowledgeOuter = sender.getRawParticipantKnowledgeFromKnowledge(outer);
+    const knowledgeOuter = sender.getRawParticipantKnowledge(outer);
     
     canDecrypt = canDecrypt && this.knowledgeHandler.doesParticipantKnowKey(receiver, knowledgeOuter);
 

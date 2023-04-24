@@ -95,7 +95,7 @@ export class Participant {
     else return tmpRawKnowledge;
   }
 
-  getRawParticipantKnowledgeFromKnowledge(knowledge: Type): RawParticipantKnowledge {
+  getRawParticipantKnowledge(knowledge: Type): RawParticipantKnowledge {
     const tmpRawKnowledge: RawParticipantKnowledge = {
       type: "rawKnowledge",
       knowledge: knowledge,
