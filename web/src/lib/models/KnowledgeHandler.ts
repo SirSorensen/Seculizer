@@ -42,7 +42,7 @@ export class KnowledgeHandler {
 
     if (input.type === "function" && val == undefined && !this.opaqueFunctions.includes((input as FunctionCall).id)) {
       for (const param of input.params) {
-        if (!this.isInputKnownByParticipant(param, participant)) return false;
+        if (!this.isSimpleType(param) && !this.isInputKnownByParticipant(param, participant)) return false;
       }
       return true;
     }
@@ -301,9 +301,13 @@ export class KnowledgeHandler {
 
   isSimpleKnowledge(knowledge: ParticipantKnowledge): boolean {
     if (knowledge.type === "rawKnowledge") {
-      return knowledge.knowledge.type == "string" || knowledge.knowledge.type == "number";
+      return this.isSimpleType(knowledge.knowledge); 
     }
     return knowledge.knowledge.every((item) => this.isSimpleKnowledge(item));
+  }
+
+  isSimpleType(type: Type): boolean {
+    return type.type == "string" || type.type == "number";
   }
 
   recheckEncryptedKnowledge(parti: Participant) {
