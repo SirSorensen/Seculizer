@@ -1,6 +1,6 @@
 import type { FunctionCall, Id, Type } from "$lang/types/parser/interfaces";
 import { getStringFromType } from "$lib/utils/stringUtil";
-import type { ParticipantKnowledge } from "src/types/participant";
+import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { EquationMap } from "./EquationMap";
 import { Participant } from "./Participant";
 import type { ParticipantMap } from "./ParticipantMap";
@@ -25,7 +25,7 @@ export class KnowledgeHandler {
     return this.keyRelations;
   }
 
-  addKeyRelation(pk : string, sk : string){
+  addKeyRelation(pk: string, sk: string) {
     this.keyRelations[pk] = sk;
   }
 
@@ -194,22 +194,31 @@ export class KnowledgeHandler {
     return false;
   }
 
-  doesParticipantKnowKey(parti: Participant, type: Type, value: Type | undefined): boolean {
-    const sk = this.convertPKToSK(type);
-    return this.doesParticipantKnow(parti, sk, value);
+  doesParticipantKnowKey(parti: Participant, knowledge: RawParticipantKnowledge): boolean {
+    const sk = this.convertPKToSK(knowledge.knowledge);
+
+    const tmpRawKnowledge : RawParticipantKnowledge = {
+      type: "rawKnowledge",
+      knowledge: sk,
+      value: knowledge.value,
+    }
+
+    return this.doesParticipantKnow(parti, tmpRawKnowledge);
   }
 
-  doesParticipantKnow(parti: Participant, type: Type, value: Type | undefined): boolean {
-    if (type.type === "function") return this.isFunctionKnown(parti, type, value);
+  doesParticipantKnow(parti: Participant, knowledge: RawParticipantKnowledge): boolean {
+    const type = knowledge.knowledge;
+    const value = knowledge.value;
 
+    if (type.type === "function") return this.isFunctionKnown(parti, type, value);
     return this.doesParticipantHaveKnowledge(parti, type, value);
   }
 
   // Given a type, returns the type with all pk converted to sk
   convertPKToSK(pk: Type): Type {
     const sk = structuredClone(pk);
-    if (pk.type === "function") {
-      (sk as FunctionCall).params = pk.params.map((param) => this.convertPKToSK(param));
+    if (sk.type === "function") {
+      (sk as FunctionCall).params = sk.params.map((param) => this.convertPKToSK(param));
     } else {
       if (pk.type === "id" && this.keyRelations[pk.value] !== undefined) (sk as Id).value = this.keyRelations[pk.value];
     }
@@ -283,7 +292,8 @@ export class KnowledgeHandler {
     const tmp_knowledge = sender.getKnowledge(knowledge, false);
     if (tmp_knowledge) receiver.setKnowledge(tmp_knowledge);
     else {
-      if (knowledge.type === "rawKnowledge" && knowledge.knowledge.type !== "function") console.error("Knowledge not found!", partiMap.getParticipant(senderId).getName(), knowledge);
+      if (knowledge.type === "rawKnowledge" && knowledge.knowledge.type !== "function")
+        console.error("Knowledge not found!", partiMap.getParticipant(senderId).getName(), knowledge);
       receiver.setKnowledge(knowledge);
     }
     this.recheckEncryptedKnowledge(receiver);
@@ -297,14 +307,19 @@ export class KnowledgeHandler {
   }
 
   recheckEncryptedKnowledge(parti: Participant) {
-    const updated = false;
+    let updated = false;
     parti.getKnowledgeList().forEach((knowledge) => {
-      const type = knowledge.item.type;
-      if (type !== "encryptedKnowledge") return;
+      // If the knowledge is not encrypted, skip
+      if (knowledge.item.type !== "encryptedKnowledge") return;
+
+      // If the knowledge is encrypted, check if the participant knows the encryption
       const encryptedKnowledge = knowledge.item;
       const encryption = encryptedKnowledge.encryption;
-      const shouldDecrypt = this.doesParticipantKnow(parti, encryption, undefined);
+      const shouldDecrypt = this.doesParticipantKnow(parti, encryption);
+
+      // If the participant knows the encryption, decrypt the knowledge
       if (shouldDecrypt) {
+        updated = true;
         parti.removeKnowledge(encryptedKnowledge);
         encryptedKnowledge.knowledge.forEach((element) => {
           parti.setKnowledge(element);
