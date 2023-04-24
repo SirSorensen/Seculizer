@@ -627,8 +627,8 @@ test("Does equalityMap.isFunctionKnown work with function values?", () => {
   const parti2: Participant = new Participant("Alice2");
   parti2.setKnowledge(init_knowledge2);
 
-  const result = knowledgeHandler.doesParticipantKnow(parti, init_knowledge2.knowledge, init_knowledge2.value);
-  const result2 = knowledgeHandler.doesParticipantKnow(parti2, init_knowledge2.knowledge, init_knowledge2.value);
+  const result = knowledgeHandler.doesParticipantKnow(parti, init_knowledge2);
+  const result2 = knowledgeHandler.doesParticipantKnow(parti2, init_knowledge2);
 
   expect(result).toBeTruthy();
   expect(result2).toBeTruthy();
@@ -759,10 +759,10 @@ test("Does participant know id and function with keyRelation?", () => {
   const parti_func_modified_sk: Participant = new Participant("Delta");
   parti_func_modified_sk.setKnowledge(init_knowledge_func_modified_sk);
 
-  const result = knowledgeHandler.doesParticipantKnowKey(parti_func1_pk, func_pk, undefined);
-  const result2 = knowledgeHandler.doesParticipantKnowKey(parti_param1_param2_pk, func_pk, undefined);
-  const result3 = knowledgeHandler.doesParticipantKnowKey(parti_param1_param2_sk, func_pk, undefined);
-  const result4 = knowledgeHandler.doesParticipantKnowKey(parti_func_modified_sk, func_pk, undefined);
+  const result = knowledgeHandler.doesParticipantKnowKey(parti_func1_pk, init_knowledge_funcWithPk);
+  const result2 = knowledgeHandler.doesParticipantKnowKey(parti_param1_param2_pk, init_knowledge_funcWithPk);
+  const result3 = knowledgeHandler.doesParticipantKnowKey(parti_param1_param2_sk, init_knowledge_funcWithPk);
+  const result4 = knowledgeHandler.doesParticipantKnowKey(parti_func_modified_sk, init_knowledge_funcWithPk);
 
   expect(result).toBeFalsy();
   expect(result2).toBeFalsy();
