@@ -18,5 +18,5 @@ type RawParticipantKnowledge = {
 type EncryptedParticipantKnowledge = {
   type: "encryptedKnowledge";
   knowledge: ParticipantKnowledge[];
-  encryption: Type;
+  encryption: RawParticipantKnowledge;
 };

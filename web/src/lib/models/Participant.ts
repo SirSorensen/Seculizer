@@ -1,5 +1,5 @@
 import type { StmtComment, Type } from "$lang/types/parser/interfaces";
-import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
+import type { EncryptedParticipantKnowledge, ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { KnowledgeHandler } from "./KnowledgeHandler";
 
 export class Participant {
@@ -66,6 +66,42 @@ export class Participant {
   getKnowledge(knowledge: ParticipantKnowledge, strict = false): ParticipantKnowledge | undefined {
     const result = this.knowledge.find(({ item }) => KnowledgeHandler.compareKnowledge(item, knowledge, strict));
     return result?.item;
+  }
+
+  getParticipantKnowledgeFromKnowledge(knowledge: Type, inner: ParticipantKnowledge[] = []): ParticipantKnowledge {
+    const tmpRawKnowledge: RawParticipantKnowledge = {
+      type: "rawKnowledge",
+      knowledge: knowledge,
+    };
+    let result = this.getKnowledge(tmpRawKnowledge, false);
+
+    // RawKnowledge not found, try to find encryptedKnowledge,
+    // where inner = knowledge of encryptedKnowledge
+    // and knowledge = encryption of encryptedKnowledge
+    if (result === undefined && inner.length > 0) {
+      const tmpEncKnowledge: EncryptedParticipantKnowledge = {
+        type: "encryptedKnowledge",
+        knowledge: inner,
+        encryption: {
+          type: "rawKnowledge",
+          knowledge: knowledge,
+        },
+      };
+
+      result = this.getKnowledge(tmpEncKnowledge, false);
+    }
+
+    if (result !== undefined) return result;
+    else return tmpRawKnowledge;
+  }
+
+  getRawParticipantKnowledgeFromKnowledge(knowledge: Type): RawParticipantKnowledge {
+    const tmpRawKnowledge: RawParticipantKnowledge = {
+      type: "rawKnowledge",
+      knowledge: knowledge,
+      value: this.getValueOfKnowledge(knowledge)
+    };
+    return tmpRawKnowledge
   }
 
   cloneKnowledgeList(): { item: ParticipantKnowledge; id: number }[] {
