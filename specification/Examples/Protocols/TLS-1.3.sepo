@@ -2,41 +2,43 @@
 // https://cabulous.medium.com/tls-1-2-andtls-1-3-handshake-walkthrough-4cfd0a798164
 Participants: Client, Server;
 Knowledge: {
-    Client: cSP, clientSK;
-    Server: sSP, serverSk ? "Server private key";
-    Shared: serverCert, clientCert;
+    Client: cSP ? "Client Security Parameters", clientSK ? "Client private key";
+    Server: sSP ? "Server Security Parameters", serverSk ? "Server private key";
+    Shared: serverCert ? "Server certificate", clientCert ? "Client certificate";
 };
 KeyRelations: (sk:serverSk, pk:serverPk), (pk:clientPK, sk:clientSK);
 Functions: hash;
-Equations: add(a,b) => add(b,a);
-Format: hash(x,y,z) = $Hash(\\x||\\y||\\z)$, add(a,b,c) = ${a + b + c}$, cRB = $\text{random bytes}_{client}$;
+Equations: add(a,b,c) => add(b,a,c), add(a,b,c) => add(a,c,b), add(a,b,c) => add(c,b,a), add(a,b,c) => add(b,c,a), add(a,b,c) => add(c,a,b), add(a,b,c) => add(c,a,b);
+Format: hash(x,y,z) = $Hash(x||y||z)$, add(a,b) = ${a + b}$, add(a,b,c) = ${a + b + c}$;
 Icons: {
     "laptop": Client;
-    "🔑": serverSk, serverPk, pmk;
-    "📝": supportedCipherSuites, supportedExtensions, cipserSuite, cRB, sRB, extension;
-    "input-numbers": TLSVersion;
+    "🔑": serverSk, serverPk,clientPK,clientSK, pmk,mk;
+    "📝": cSP, sSP, cRB, sRB;
     "home-button": Server;
 };
 Protocol: {
-    Client: new cRB;
+    Client: new cRB ? "Client Random Bytes"; ? "Client creates random bytes"
     Client -> Server: "Client Hello";
-    Client -> Server: cRB;
-    Client -> Server: cSP;
+    Client -> Server: cRB; ? "Client sends random bytes to server"
+    Client -> Server: cSP; ? "Client sends security parameters to server"
 
     Server -> Client: "Server Hello";
-    Server -> Client: sSP;
-    Server -> Client: {serverPk}serverCert;
+    Server: new sRB ? "Server Random Bytes"; ? "Server creates random bytes"
+    Server -> Client: sSP; ? "Server sends security parameters to client"
+    Server -> Client: {serverPk}serverCert; ? "Server sends public key verified by server certificate"
 
-    Client: new pmk ? "Pre-master-key";
-    Client -> Server: {clientPK}clientCert;
-    Client -> Server: {pmk}serverPk;
+    Client: new pmk ? "Pre-master-key"; ? "Client creates the pre-master-key by concating the security parameters"
+    Client: pmk := add(cSP, sSP); ? "Client creates the pre-master-key by concating the security parameters"
 
-    Client: new masterSecret;
-    Client: masterSecret := add(pmk, cRB, sRB);
-    Client -> Server: {hash(cRB, sRB, masterSecret)}serverPk;
+    Client -> Server: {clientPK}clientCert; ? "Client sends public key verified by client certificate"
+    Client -> Server: {pmk}serverPk; ? "Client sends pre-master-key encrypted by server public key"
 
-    Server: new masterSecret;
-    Server: masterSecret := add(pmk, cRB, sRB);
-    Server -> Client: {hash(cRB, sRB, masterSecret)}clientPk;
+    Client: new mk ? "Master-key"; ? "Client creates the master-key by concating the pre-master-key and the random bytes"
+    Client: mk := add(pmk, cRB, sRB); ? "Client creates the master-key by concating the pre-master-key and the random bytes"
+    Client -> Server: {hash(cRB, sRB, mk)}serverPk; ? "Client sends hash of random bytes and master-key encrypted by server public key"
+
+    Server: new mk ? "Master-key"; ? "Server creates the master-key by concating the pre-master-key and the random bytes"
+    Server: mk := add(pmk, cRB, sRB); ? "Server creates the master-key by concating the pre-master-key and the random bytes"
+    Server -> Client: {hash(cRB, sRB, mk)}clientPk; ? "Server sends hash of random bytes and master-key encrypted by client public key"
 
 };
