@@ -39,7 +39,7 @@ Protocol: {
       let tmp = new MagicString(content);
       let re = /(\r\n)|\n/g;
       let match;
-      let line = 0;
+      let line = 1;
       tmp.prependLeft(0, `<span class="line">${line++}</span>`);
       while ((match = re.exec(content)) != null) {
         tmp.update(match.index, match.index + match[0].length, `</br><span class="line">${line++}</span>`);
@@ -63,7 +63,7 @@ Protocol: {
           let addBefore = `<span class="token token-Error"><i class="tokenErrMsg">${error.msg}</i>`;
 
           if (location.start === 0) {
-            addBefore = `<span class="line">0</span>` + addBefore;
+            addBefore = `<span class="line">1</span>` + addBefore;
           }
           const addAfter = `</span>`;
 
@@ -75,7 +75,7 @@ Protocol: {
       }
       hightlighted = content.endsWith("\n") ? tmp.toString() + "\n" : tmp.toString();
     } else {
-      hightlighted = `<span class="line">0</span>`;
+      hightlighted = `<span class="line">1</span>`;
     }
   }
   let preElement: HTMLPreElement;
