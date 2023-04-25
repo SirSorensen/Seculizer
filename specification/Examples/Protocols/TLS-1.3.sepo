@@ -2,34 +2,41 @@
 // https://cabulous.medium.com/tls-1-2-andtls-1-3-handshake-walkthrough-4cfd0a798164
 Participants: Client, Server;
 Knowledge: {
-    Client: TLSVersion, supportedCipherSuites, supportedExtensions;
-    Server: serverSk ? "Server private key";
-    Shared: serverPk ? "Server public key";
+    Client: cSP, clientSK;
+    Server: sSP, serverSk ? "Server private key";
+    Shared: serverCert, clientCert;
 };
-KeyRelations: (sk:serverSk, pk:serverPk);
+KeyRelations: (sk:serverSk, pk:serverPk), (pk:clientPK, sk:clientSK);
 Functions: hash;
 Equations: add(a,b) => add(b,a);
-Format: hash(x,y) = $Hash(x||y)$, add(a,b) = ${a + b}$, clientRandomBytes = $\text{random bytes}_{client}$;
+Format: hash(x,y,z) = $Hash(\\x||\\y||\\z)$, add(a,b,c) = ${a + b + c}$, cRB = $\text{random bytes}_{client}$;
 Icons: {
     "laptop": Client;
     "🔑": serverSk, serverPk, pmk;
-    "📝": supportedCipherSuites, supportedExtensions, cipserSuite, clientRandomBytes, serverRandomBytes, extension;
+    "📝": supportedCipherSuites, supportedExtensions, cipserSuite, cRB, sRB, extension;
     "input-numbers": TLSVersion;
     "home-button": Server;
 };
 Protocol: {
-    Client: new clientRandomBytes;
+    Client: new cRB;
     Client -> Server: "Client Hello";
-    Client -> Server: TLSVersion;
-    Client -> Server: clientRandomBytes;
-    Client -> Server: supportedCipherSuites;
-    Client -> Server: supportedExtensions;
+    Client -> Server: cRB;
+    Client -> Server: cSP;
 
-    Server: new cipserSuite;
-    Server: new serverRandomBytes;
-    Server: new extension;
-    Server -> Client: {|"Server Hello", cipserSuite, serverRandomBytes, extension|}serverPk;
+    Server -> Client: "Server Hello";
+    Server -> Client: sSP;
+    Server -> Client: {serverPk}serverCert;
 
-    Client: new pmk ? "Pre-master-key"; //Burde man kunne bare sige pmk := add(...) her?
-    Client: pmk := add(clientRandomBytes, serverRandomBytes);
+    Client: new pmk ? "Pre-master-key";
+    Client -> Server: {clientPK}clientCert;
+    Client -> Server: {pmk}serverPk;
+
+    Client: new masterSecret;
+    Client: masterSecret := add(pmk, cRB, sRB);
+    Client -> Server: {hash(cRB, sRB, masterSecret)}serverPk;
+
+    Server: new masterSecret;
+    Server: masterSecret := add(pmk, cRB, sRB);
+    Server -> Client: {hash(cRB, sRB, masterSecret)}clientPk;
+
 };

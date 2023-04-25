@@ -7,7 +7,7 @@
     if(input.endsWith("$")) input = input.slice(0, -1);
     latexOutput = katex.renderToString(input, {
       throwOnError: false,
-      displayMode: false,
+      displayMode: true,
     });
   }
 </script>
