@@ -16,6 +16,7 @@ export class KnowledgeHandler {
   equations: EquationMap = new EquationMap();
   private opaqueFunctions: string[] = [];
   private keyRelations: { [id: string]: string } = {};
+  private sharedKnowledge: Participant | undefined = undefined;
 
   getEquations(): EquationMap {
     return this.equations;
@@ -210,8 +211,8 @@ export class KnowledgeHandler {
     const type = knowledge.knowledge;
     const value = knowledge.value;
 
-    if (type.type === "function") return this.isFunctionKnown(parti, type, value);
-    return this.doesParticipantHaveKnowledge(parti, type, value);
+    if (type.type === "function") return this.isFunctionKnown(parti, type, value) || (this.sharedKnowledge !== undefined && this.isFunctionKnown(this.sharedKnowledge, type, value));
+    return this.doesParticipantHaveKnowledge(parti, type, value) || (this.sharedKnowledge !== undefined && this.doesParticipantHaveKnowledge(this.sharedKnowledge, type, value));
   }
 
   // Given a type, returns the type with all pk converted to sk
@@ -289,7 +290,8 @@ export class KnowledgeHandler {
     if (!receiver) throw new Error("Receiver not found!");
 
     if (this.isSimpleKnowledge(knowledge)) return;
-    const tmp_knowledge = sender.getKnowledge(knowledge, false);
+    let tmp_knowledge = sender.getKnowledge(knowledge, false);
+    if(!tmp_knowledge && this.sharedKnowledge) tmp_knowledge = this.sharedKnowledge.getKnowledge(knowledge, false)
     if (tmp_knowledge) receiver.setKnowledge(tmp_knowledge);
     else {
       if (knowledge.type === "rawKnowledge" && knowledge.knowledge.type !== "function")
@@ -331,5 +333,9 @@ export class KnowledgeHandler {
       }
     });
     if (updated) this.recheckEncryptedKnowledge(parti); //This could be if something is encrypted with something encrypted
+  }
+
+  setSharedKnowledge(participant:Participant) {
+    this.sharedKnowledge = participant;
   }
 }

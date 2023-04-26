@@ -103,6 +103,7 @@ export class Program {
 
     // Add shared knowledge
     this.init_participants.addParticipant("Shared");
+    this.knowledgeHandler.setSharedKnowledge(this.init_participants.getParticipant("Shared"));
   }
 
   // Construct Knowledge
