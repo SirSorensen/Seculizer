@@ -2,19 +2,20 @@
 // https://cabulous.medium.com/tls-1-2-andtls-1-3-handshake-walkthrough-4cfd0a798164
 Participants: Client, Server;
 Knowledge: {
-    Client: cSP ? "Client Security Parameters", clientSK ? "Client private key";
+    Client: cSP ? "Client Security Parameters", clientSk ? "Client private key";
     Server: sSP ? "Server Security Parameters", serverSk ? "Server private key";
     Shared: serverCert ? "Server certificate", clientCert ? "Client certificate";
 };
-KeyRelations: (sk:serverSk, pk:serverPk), (pk:clientPK, sk:clientSK);
+KeyRelations: (sk:serverSk, pk:serverPk), (pk:clientPk, sk:clientSk);
 Functions: hash;
 Equations: add(a,b,c) => add(b,a,c), add(a,b,c) => add(a,c,b), add(a,b,c) => add(c,b,a), add(a,b,c) => add(b,c,a), add(a,b,c) => add(c,a,b), add(a,b,c) => add(c,a,b);
 Format: hash(x,y,z) = $Hash(x||y||z)$, add(a,b) = ${a + b}$, add(a,b,c) = ${a + b + c}$;
 Icons: {
     "laptop": Client;
-    "🔑": serverSk, serverPk,clientPK,clientSK, pmk,mk;
+    "🔑": serverSk, serverPk,clientPk,clientSk, pmk,mk;
     "📝": cSP, sSP, cRB, sRB;
     "home-button": Server;
+    "man": hash;
 };
 Protocol: {
     Client: new cRB ? "Client Random Bytes"; ? "Client creates random bytes"
@@ -30,7 +31,7 @@ Protocol: {
     Client: new pmk ? "Pre-master-key"; ? "Client creates the pre-master-key by concating the security parameters"
     Client: pmk := add(cSP, sSP); ? "Client creates the pre-master-key by concating the security parameters"
 
-    Client -> Server: {clientPK}clientCert; ? "Client sends public key verified by client certificate"
+    Client -> Server: {clientPk}clientCert; ? "Client sends public key verified by client certificate"
     Client -> Server: {pmk}serverPk; ? "Client sends pre-master-key encrypted by server public key"
 
     Client: new mk ? "Master-key"; ? "Client creates the master-key by concating the pre-master-key and the random bytes"
