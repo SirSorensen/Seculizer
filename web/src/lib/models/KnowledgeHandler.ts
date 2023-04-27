@@ -60,7 +60,12 @@ export class KnowledgeHandler {
     };
 
     // Get the list of knowledges from the participant
-    const partiKnowledge = parti.getKnowledgeList();
+    let partiKnowledge = parti.getKnowledgeList();
+
+    // If there is shared knowledge, add it to the list of knowledges
+    if (this.sharedKnowledge !== undefined) {
+      partiKnowledge = partiKnowledge.concat(this.sharedKnowledge.getKnowledgeList());
+    }
 
     // Check if the temporary knowledge object is in the list of knowledges
     return partiKnowledge.some((knowledge) => {
@@ -211,8 +216,8 @@ export class KnowledgeHandler {
     const type = knowledge.knowledge;
     const value = knowledge.value;
 
-    if (type.type === "function") return this.isFunctionKnown(parti, type, value) || (this.sharedKnowledge !== undefined && this.isFunctionKnown(this.sharedKnowledge, type, value));
-    return this.doesParticipantHaveKnowledge(parti, type, value) || (this.sharedKnowledge !== undefined && this.doesParticipantHaveKnowledge(this.sharedKnowledge, type, value));
+    if (type.type === "function") return this.isFunctionKnown(parti, type, value);
+    return this.doesParticipantHaveKnowledge(parti, type, value);
   }
 
   // Given a type, returns the type with all pk converted to sk
