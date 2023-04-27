@@ -24,7 +24,7 @@ export class Equal {
   }
 
   // Construct an array of the parameters of the given function call (i.e. exp(A,B) -> [A, B] and foo(lee(A,B),C) -> [ [A, B] , C])
-  constructLeftParamArray(f: FunctionCall): leftParamType[] {
+  private constructLeftParamArray(f: FunctionCall): leftParamType[] {
     const paramArray: leftParamType[] = [];
 
     //Build index
@@ -36,7 +36,7 @@ export class Equal {
     return paramArray;
   }
 
-  constructRightParamArray(f: FunctionCall): rightParamType[] {
+  private constructRightParamArray(f: FunctionCall): rightParamType[] {
     let paramArray: rightParamType[] = [];
 
     for (const param of f.params) {
@@ -50,7 +50,7 @@ export class Equal {
     return paramArray;
   }
 
-  constructParamIndex(leftParams: leftParamType[], rightParams: rightParamType[]): paramIndexType[] {
+  private constructParamIndex(leftParams: leftParamType[], rightParams: rightParamType[]): paramIndexType[] {
     let paramIndex: paramIndexType[] = [];
 
     const findIndex = (leftSubParam: leftParamType[], rightParam: rightParamType): paramIndexType => {
@@ -121,7 +121,7 @@ export class Equal {
   }
 
   // Check if the given function call is applicable to the equation, by comparing the parameters' types and amount thereof
-  checkIfApplicable(call: FunctionCall, check: FunctionCall): boolean {
+  private checkIfApplicable(call: FunctionCall, check: FunctionCall): boolean {
     if (call.params.length != check.params.length) return false;
 
     for (let i = 0; i < call.params.length; i++) {
