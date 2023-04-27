@@ -39,9 +39,12 @@ export function getIconFromType(type: Type, program: Program): string {
     case "id":
       return program.getIcon(type.value);
       break;
-    case "function":
-      return "gear";
+    case "function": {
+      const icon = program.getIcon(type.id);
+      if(icon === "red-question-mark") return "gear";
+      return icon;
       break;
+    }
     default:
       return "red-question-mark";
       break;
