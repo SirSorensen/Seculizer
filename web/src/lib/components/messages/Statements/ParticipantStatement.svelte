@@ -22,8 +22,8 @@
     let participant = participantElements.elements[stmnt.id.value];
 
     if (participant) {
-      let x = participant.offsetLeft + (container?.offsetLeft || 0);
-      let y = participant.offsetTop + (container?.offsetTop || 0) + participant.offsetHeight + 50;
+      let x = participant.offsetLeft + (container?.offsetLeft || 0) - statement.offsetWidth/2;
+      let y = participant.offsetTop + (container?.offsetTop || 0) + participant.offsetHeight/2;
       statement.style.left = x + "px";
       statement.style.top = y + "px";
     }
@@ -76,6 +76,5 @@
 <style>
   .statement {
     position: absolute;
-    transform: translate(-50%, -50%);
   }
 </style>

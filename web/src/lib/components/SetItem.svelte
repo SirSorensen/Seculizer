@@ -1,16 +1,17 @@
 <script lang="ts">
   import type { StmtComment, Type } from "$lang/types/parser/interfaces";
-
   import { getStringFromType } from "$lib/utils/stringUtil";
   import { fade } from "svelte/transition";
   import Emoji from "./Emoji.svelte";
   import Latex from "./Latex.svelte";
   import { program } from "$lib/stores/programStore.js";
   import Comment from "./Comment.svelte";
+  
   export let emoji: string;
   export let value: Type;
   export let newValue: Type;
   export let comment: StmtComment | undefined;
+
   let item: HTMLElement;
   let hoverValues = { left: "0px", top: "100%" };
   function handleMouse(e: MouseEvent) {
@@ -24,13 +25,15 @@
 <div transition:fade={{ delay: 250, duration: 300 }} class="item" bind:this={item} on:mousemove={handleMouse}>
   <Emoji content={emoji} />
   <p>
-    {#if $program.getFormats().contains(value)}
-      {@const format = $program.getFormats().getConstructedLatex(value)}
-      <Latex input={format} />
-    {:else}
-      {getStringFromType(value)}
-    {/if}
-    =
+    <span>
+      {#if $program.getFormats().contains(value)}
+        {@const format = $program.getFormats().getConstructedLatex(value)}
+        <Latex input={format} />
+      {:else}
+        {getStringFromType(value)}
+      {/if}
+      =
+    </span>
     {#if $program.getFormats().contains(newValue)}
       {@const format = $program.getFormats().getConstructedLatex(newValue)}
       <Latex input={format} />
