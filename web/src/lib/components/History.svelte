@@ -40,7 +40,7 @@
   }
 </script>
 
-<div class="historyContainer" class:open={historyState.open}>
+<div class="historyContainer" class:open={historyState.open} class:historyState={historyState.state === "history"}>
   <div class="option" class:open={historyState.state === "history"}>
     <ol class="history" bind:this={historyElem}>
       {#if $currentFrame && $currentFrame.getHistory().length > 0}
@@ -53,7 +53,7 @@
     </ol>
   </div>
   <div class="option" class:open={historyState.state === "sequenceDiagram"}>
-      <SequenceDiagram/>
+    <SequenceDiagram />
   </div>
   <div class="buttonContainer">
     <button class="roundButton" on:click={toggleSequenceDiagram}><i class="oma oma-people-dialogue" /></button>
@@ -109,7 +109,7 @@
     border-radius: 6rem;
     box-shadow: var(--shadow);
   }
-  .historyContainer.showHistory .roundButton .oma-hourglass-not-done {
+  .historyContainer.historyState.open .roundButton .oma-hourglass-not-done {
     transform: rotate(180deg);
   }
 </style>
