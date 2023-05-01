@@ -85,7 +85,20 @@ export class Latex {
         //Function gets { } around it
         if (!map) throw new Error("No LatexMap was given! For Function");
         tmpLatex += "{" + map.getConstructedLatex(param).slice(1, -1) + "}";
-      } else if (param.type != "number") {
+      } else if(param.type === "id"){
+        if(map && map.contains(param)){
+          let rec = map.getConstructedLatex(param);
+          if(rec.startsWith("$")){
+            rec = rec.slice(1);
+          }
+          if(rec.endsWith("$")){
+            rec = rec.slice(0, -1);
+          }
+          tmpLatex += "{" + rec + "}";
+        }else{
+          tmpLatex += param.value;
+        }
+      }else if (param.type != "number") {
         //Anything else gets \text{ } around it
         tmpLatex += "\\text{" + param.value + "}";
       } else {
