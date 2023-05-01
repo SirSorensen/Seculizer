@@ -57,7 +57,4 @@
     display: block;
   }
 
-  p {
-    margin: 0;
-  }
 </style>
