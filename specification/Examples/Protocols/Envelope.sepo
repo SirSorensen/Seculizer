@@ -1,11 +1,11 @@
 Participants: Alice, Parent, TPM ? "Trusted Platform Module, a secure cryptoprocessor";
 Knowledge: {
-    TPM: tpm_sk;
-    Shared: tpm_pk;
+    TPM: tpm_sk ? "The TPM's private key", pcr ? "Platform Configuration Register";
+    Shared: tpm_pk ? "The TPM's public key";
 };
 KeyRelations: (sk:tpm_sk, pk:tpm_pk);
 Functions: hash;
-Format: hash(x,y) = $H(x||y)$, tpm_sk = $tpm_{sk}$, tpm_pk = $tpm_{pk}$, pcr = $\textbf{pcr}$;
+Format: hash(x,y) = $H(x||y)$, tpm_sk = $tpm_{sk}$, tpm_pk = $tpm_{pk}$;
 Icons: {
     "woman": Alice;
     "family": Parent;
@@ -20,9 +20,9 @@ Protocol: {
     TPM: pcr := '1'; ? "The TPM initilize PCR to 1"
     TPM -> Alice: "Booted";
     Alice: new n ? "Nonce"; ? "A new nonce is generated"
-    Alice: new esk; ? "A new session key is generated"
+    Alice: new esk ? "Alice session key"; ? "A new session key is generated"
     Alice -> TPM: "Session", {esk}tpm_pk; ? "Alice sends the TPM a session key encrypted with the TPM's public key"
-    TPM: new sid; ? "The TPM generates a new session id"
+    TPM: new sid ? "Alice's Session ID"; ? "The TPM generates a new session id"
     TPM -> Alice: sid; ? "The TPM sends the session id to Alice"
 
     Alice -> TPM: {"Extend", n, sid}esk; ? "Alice extends the PCR with the nonce and the session id"
@@ -34,12 +34,12 @@ Protocol: {
     TPM -> Alice: {|"Created", k, hash('obt', pcr)|}tpm_sk; ? "The TPM sends the new key and the PCR to Alice"
 
     clear: sid, esk; ? "The session key and the session id are cleared"
-    Alice: new v; ? "Alice creates an abilitry value"
+    Alice: new v ? "Abilitry value"; ? "Alice creates an abilitry value"
     Alice -> Parent: "Envelope", {v}k; ? "Alice sends the abilitry value encrypted with the new key to the parent"
 
-    Parent: new esk; ? "The parent generates a new session key"
+    Parent: new esk ? "Parent session key"; ? "The parent generates a new session key"
     Parent -> TPM : "Session", {esk}tpm_pk; ? "The parent sends the TPM a session key encrypted with the TPM's public key"
-    TPM: new sid; ? "The TPM generates a new session id"
+    TPM: new sid ? "Parent's Session ID"; ? "The TPM generates a new session id"
     TPM -> Parent: sid; ? "The TPM sends the session id to the parent"
 
     Parent -> TPM: match {
