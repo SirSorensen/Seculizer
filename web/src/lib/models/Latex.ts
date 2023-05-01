@@ -1,5 +1,5 @@
 import type { Type } from "$lang/types/parser/interfaces";
-import type { LatexMap } from "./LatexMap";
+import type { FormatMap } from "./FormatMap";
 
 export class Latex {
   paramIndex: number[] = [];
@@ -67,7 +67,7 @@ export class Latex {
     }
   }
 
-  constructLatex(call: Type, map: LatexMap | undefined = undefined): string {
+  constructLatex(call: Type, map: FormatMap | undefined = undefined): string {
     let params: Type[];
     if (call.type == "function") {
       params = call.params;
