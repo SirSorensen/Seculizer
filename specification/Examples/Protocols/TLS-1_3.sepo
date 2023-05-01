@@ -2,8 +2,8 @@
 // https://cabulous.medium.com/tls-1-2-andtls-1-3-handshake-walkthrough-4cfd0a798164
 Participants: Client, Server;
 Knowledge: {
-    Client: cSP ? "Client Security Parameters", clientSk ? "Client private key";
-    Server: sSP ? "Server Security Parameters", serverSk ? "Server private key";
+    Client: cSP ? "Client Security Parameters", clientSk ? "Client private key", clientPk ? "Client public key";
+    Server: sSP ? "Server Security Parameters", serverSk ? "Server private key", serverPk ? "Server public key";
     Shared: serverCert ? "Server certificate", clientCert ? "Client certificate";
 };
 KeyRelations: (sk:serverSk, pk:serverPk), (pk:clientPk, sk:clientSk);
