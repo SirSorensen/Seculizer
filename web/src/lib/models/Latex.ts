@@ -86,7 +86,7 @@ export class Latex {
         if (!map) throw new Error("No LatexMap was given! For Function");
         tmpLatex += "{" + map.getConstructedLatex(param).slice(1, -1) + "}";
       } else if(param.type === "id"){
-        if(map && map.contains(param)){
+        if(map && map.contains(param) && !(call.type === "id" && param.value === call.value)){
           let rec = map.getConstructedLatex(param);
           if(rec.startsWith("$")){
             rec = rec.slice(1);
