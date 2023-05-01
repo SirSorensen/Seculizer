@@ -11,10 +11,10 @@
   import Item from "$lib/components/Item.svelte";
   import EncryptIcon from "$lib/components/Icons/EncryptIcon.svelte";
   import SignIcon from "$lib/components/Icons/SignIcon.svelte";
-  import Latex from "../Latex.svelte";
 
   import { currentFrame, program } from "$lib/stores/programStore.js";
   import Comment from "../Comment.svelte";
+    import Format from "../Formats/Format.svelte";
   export let isSubmessage = false;
   export let participants: { from: Id; to: Id };
   export let expression: ExpressionAST;
@@ -67,12 +67,7 @@
 {:else if child.type === "string" || child.type === "number" || child.type === "function"}
   {@const type = castToType(child)}
   <p>
-    {#if $program.getFormats().contains(type)}
-      {@const format = $program.getFormats().getConstructedLatex(type)}
-      <Latex input={format} />
-    {:else}
-      {getStringFromType(type)}
-    {/if}
+    <Format input={type} />
   </p>
 {:else if child.type === "id"}
   {@const id = castToId(child)}

@@ -1,12 +1,10 @@
 <script lang="ts">
   import type { StmtComment, Type } from "$lang/types/parser/interfaces";
-  import { getStringFromType } from "$lib/utils/stringUtil";
   import { fade } from "svelte/transition";
   import Emoji from "./Emoji.svelte";
-  import Latex from "./Latex.svelte";
-  import { program } from "$lib/stores/programStore.js";
   import Comment from "./Comment.svelte";
-  
+  import Format from "./Formats/Format.svelte";
+
   export let emoji: string;
   export let value: Type;
   export let newValue: Type;
@@ -26,20 +24,12 @@
   <Emoji content={emoji} />
   <p>
     <span>
-      {#if $program.getFormats().contains(value)}
-        {@const format = $program.getFormats().getConstructedLatex(value)}
-        <Latex input={format} />
-      {:else}
-        {getStringFromType(value)}
-      {/if}
+      
+      <Format input={value} />
       =
     </span>
-    {#if $program.getFormats().contains(newValue)}
-      {@const format = $program.getFormats().getConstructedLatex(newValue)}
-      <Latex input={format} />
-    {:else}
-      {getStringFromType(newValue)}
-    {/if}
+    
+    <Format input={newValue} />
   </p>
   {#if comment}
     <div class="item-hover" style:left={hoverValues.left} style:top={hoverValues.top}>

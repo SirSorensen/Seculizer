@@ -1,10 +1,8 @@
 <script lang="ts">
   import type { StmtComment, Type } from "$lang/types/parser/interfaces";
   import Emoji from "$lib/components/Emoji.svelte";
-  import Latex from "$lib/components/Latex.svelte";
-  import { getStringFromType } from "$lib/utils/stringUtil";
-  import { program } from "$lib/stores/programStore.js";
   import Comment from "$lib/components/Comment.svelte";
+  import Format from "../Formats/Format.svelte";
   export let encryptType: Type;
   export let comment: StmtComment | undefined;
   let item: HTMLElement;
@@ -21,12 +19,7 @@
   <Emoji content="locked" />
   <div class="id-container">
     <p>
-      {#if $program.getFormats().contains(encryptType)}
-        {@const format = $program.getFormats().getConstructedLatex(encryptType)}
-        <Latex input={format} />
-      {:else}
-        {getStringFromType(encryptType)}
-      {/if}
+      <Format input={encryptType} />
     </p>
   </div>
   {#if comment}

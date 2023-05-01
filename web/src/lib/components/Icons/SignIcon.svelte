@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { StmtComment, Type } from "$lang/types/parser/interfaces";
   import Emoji from "$lib/components/Emoji.svelte";
-  import Latex from "$lib/components/Latex.svelte";
-    import Comment from "$lib/components/Comment.svelte";
+  import Comment from "$lib/components/Comment.svelte";
   import { getStringFromType } from "$lib/utils/stringUtil";
   import { program } from "$lib/stores/programStore.js";
+    import Format from "../Formats/Format.svelte";
   export let signType: Type;
   export let signieIcon: string;
   export let comment: StmtComment | undefined;
@@ -26,12 +26,7 @@
     </span>
   </div>
   <p class="signie">
-    {#if $program.getFormats().contains(signType)}
-      {@const format = $program.getFormats().getConstructedLatex(signType)}
-      <Latex input={format} />
-    {:else}
-      {getStringFromType(signType)}
-    {/if}
+    <Format input={signType} />
   </p>
   {#if comment}
     <div class="item-hover" style:left={hoverValues.left} style:top={hoverValues.top}>

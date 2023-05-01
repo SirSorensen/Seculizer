@@ -1,10 +1,7 @@
 <script lang="ts">
   import type { Type } from "$lang/types/parser/interfaces";
-  import { getStringFromType } from "$lib/utils/stringUtil";
-  import { fade } from "svelte/transition";
-  import { program } from "$lib/stores/programStore.js";
   import Emoji from "./Emoji.svelte";
-  import Latex from "./Latex.svelte";
+  import Format from "./Formats/Format.svelte";
   export let emoji: string;
   export let value: Type;
   let item: HTMLElement;
@@ -19,12 +16,7 @@
 
 <div class="item" bind:this={item} on:mousemove={handleMouse}>
   <Emoji content={emoji} />
-  {#if $program.getFormats().contains(value)}
-    {@const format = $program.getFormats().getConstructedLatex(value)}
-    <Latex input={format} />
-  {:else}
-    <p>{getStringFromType(value)}</p>
-  {/if}
+  <Format input={value} />
   <slot />
   {#if $$slots.hover}
     <div class="item-hover" style:left={hoverValues.left} style:top={hoverValues.top}>
