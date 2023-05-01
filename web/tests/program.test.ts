@@ -7,7 +7,7 @@ import type { Frame } from "$lib/models/Frame";
 import path from "path";
 import { Latex } from "../src/lib/models/Latex";
 import { fileURLToPath } from "url";
-import { LatexMap } from "$lib/models/LatexMap";
+import { LatexMap } from "$lib/models/FormatMap";
 import { Equal } from "$lib/models/Equal";
 import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { Participant } from "$lib/models/Participant";

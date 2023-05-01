@@ -32,7 +32,7 @@ import type {
 import { getSimpleStringFromExpression, getStringFromType } from "$lib/utils/stringUtil";
 import HistoryTemplates from "$lib/utils/HistoryEnum";
 import { Frame } from "./Frame";
-import { LatexMap } from "./LatexMap";
+import { FormatMap } from "./FormatMap";
 import { ParticipantMap } from "./ParticipantMap";
 import { z } from "zod";
 import type { ParticipantKnowledge } from "src/types/participant";
@@ -44,7 +44,7 @@ export class Program {
 
   first: Frame | null = null;
 
-  formats: LatexMap = new LatexMap();
+  formats: FormatMap = new FormatMap();
   knowledgeHandler = new KnowledgeHandler();
   icons: Map<string, string> = new Map();
   log = false;
@@ -152,7 +152,8 @@ export class Program {
   constructFormat(format: Format) {
     if (format) {
       format.formats.forEach((format: FormatItem) => {
-        this.formats.addLatex(format.id, format.format.value);
+        if (format.format.type == "latex") this.formats.addLatex(format.id, format.format.value);
+        else if (format.format.type == "string") this.formats.addString(format.id, format.format.value);
       });
 
       if (this.log) console.log("Formats created", this.formats);
