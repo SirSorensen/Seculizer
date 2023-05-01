@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { StmtComment } from "$lang/types/parser/interfaces";
-    import Latex from "./Latex.svelte";
+    import Latex from "./Formats/Latex.svelte";
 
     export let comment: StmtComment;
 </script>

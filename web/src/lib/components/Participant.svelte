@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { fade, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
   import type { Id, StmtComment, Type } from "$lang/types/parser/interfaces";
-  import { program } from "$lib/stores/programStore";
-  import { getStringFromType } from "$lib/utils/stringUtil";
   import type { ParticipantKnowledge, VisualKnowledge } from "src/types/participant";
   import Item from "./Item.svelte";
-  import Latex from "./Latex.svelte";
   import Comment from "./Comment.svelte";
+  import Format from "./Formats/Format.svelte";
+  
   export let name: Id;
   export let emoji: string;
   export let comment: StmtComment | undefined;
@@ -82,12 +81,7 @@
                   <Item value={type} emoji={visualKnowledge.emoji}>
                     {#if value}
                       <div class="knowledgeValue">
-                        {#if $program.getFormats().contains(value)}
-                          {@const format = $program.getFormats().getConstructedLatex(value)}
-                          <Latex input={format} />
-                        {:else}
-                          <small>{getStringFromType(value)}</small>
-                        {/if}
+                        <Format input={value} />
                       </div>
                       <!--Should this value be available if encrypted?-->
                     {/if}
@@ -99,12 +93,8 @@
                   <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
                     {#if value}
                       <div class="knowledgeValue">
-                        {#if $program.getFormats().contains(value)}
-                          {@const format = $program.getFormats().getConstructedLatex(value)}
-                          <Latex input={format} />
-                        {:else}
-                          <small>{getStringFromType(value)}</small>
-                        {/if}
+                        
+                        <Format input={value} />
                       </div>
                       <!--Should this value be available if encrypted?-->
                     {/if}
@@ -116,12 +106,8 @@
                   <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
                     {#if value}
                       <div class="knowledgeValue">
-                        {#if $program.getFormats().contains(value)}
-                          {@const format = $program.getFormats().getConstructedLatex(value)}
-                          <Latex input={format} />
-                        {:else}
-                          <small>{getStringFromType(value)}</small>
-                        {/if}
+                        
+                        <Format input={value} />
                       </div>
                       <!--Should this value be available if encrypted?-->
                     {/if}
