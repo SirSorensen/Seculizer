@@ -1,7 +1,9 @@
 <script lang="ts">
   import Header from "$lib/components/Header.svelte";
 </script>
-
+<svelte:head>
+  <title>Seculizer</title>
+</svelte:head>
 <div id="main">
   <Header />
   <slot />
@@ -19,7 +21,8 @@
     --multi-message-bg: rgba(255, 255, 255, 0.69);
     --multi-message-border: gray;
     --message-bg: #fff3d3;
-    --sub-message-border-color: black;
+    --sub-message-border-color: #d7b765;
+    --sub-message-border: .15rem solid var(--sub-message-border-color);
     --action-header-bg: #ffcc30;
 
     --shadow: 0 0 4px rgba(0, 0, 0, 0.25);

@@ -5,7 +5,7 @@
   import Item from "./Item.svelte";
   import Comment from "./Comment.svelte";
   import Format from "./Formats/Format.svelte";
-  
+
   export let name: Id;
   export let emoji: string;
   export let comment: StmtComment | undefined;
@@ -57,15 +57,13 @@
 >
   <div class="participantInnerContainer">
     <div class="participant-item">
-      {#if comment}
-        <Item value={name} {emoji}>
-          <svelte:fragment slot="hover">
+      <Item value={name} {emoji}>
+        <svelte:fragment slot="hover">
+          {#if comment}
             <Comment {comment} />
-          </svelte:fragment>
-        </Item>
-      {:else}
-        <Item value={name} {emoji} />
-      {/if}
+          {/if}
+        </svelte:fragment>
+      </Item>
     </div>
   </div>
   {#key knowledge.length}
@@ -80,39 +78,27 @@
                 {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as { type, value }}
                   <Item value={type} emoji={visualKnowledge.emoji}>
                     {#if value}
-                      <div class="knowledgeValue">
+                      <small class="knowledgeValue">
                         <Format input={value} />
-                      </div>
+                      </small>
                       <!--Should this value be available if encrypted?-->
                     {/if}
                   </Item>
                 {/each}
               {:else}
                 {@const value = visualKnowledge.knowledge.value}
-                {#if visualKnowledge.knowledge.comment}
-                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
-                    {#if value}
-                      <div class="knowledgeValue">
-                        
-                        <Format input={value} />
-                      </div>
-                      <!--Should this value be available if encrypted?-->
-                    {/if}
-                    <svelte:fragment slot="hover">
+                <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
+                  {#if value}
+                    <small class="knowledgeValue">
+                      <Format input={value} />
+                    </small>
+                  {/if}
+                  <svelte:fragment slot="hover">
+                    {#if visualKnowledge.knowledge.comment}
                       <Comment comment={visualKnowledge.knowledge.comment} />
-                    </svelte:fragment>
-                  </Item>
-                {:else}
-                  <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
-                    {#if value}
-                      <div class="knowledgeValue">
-                        
-                        <Format input={value} />
-                      </div>
-                      <!--Should this value be available if encrypted?-->
                     {/if}
-                  </Item>
-                {/if}
+                  </svelte:fragment>
+                </Item>
               {/if}
             </div>
           {/each}
@@ -128,7 +114,7 @@
     z-index: 1;
     transform: translate(-50%, -50%);
   }
-  div.participantContainer:hover{
+  div.participantContainer:hover {
     z-index: 3;
   }
   div.participantInnerContainer,
@@ -169,5 +155,9 @@
     font-size: 1rem;
     font-style: italic;
     color: var(--knowledge-empty-color);
+  }
+  .knowledgeValue {
+    font-size: 0.75rem;
+    display: block;
   }
 </style>

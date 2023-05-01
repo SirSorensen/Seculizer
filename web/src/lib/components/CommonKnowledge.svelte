@@ -30,14 +30,14 @@
           {#each flatKnowledgeTypes(visualKnowledge.knowledge.knowledge) as encryptedKnowledgeType}
             <Item value={encryptedKnowledgeType} emoji={visualKnowledge.emoji} />
           {/each}
-        {:else if visualKnowledge.knowledge.comment}
+        {:else}
           <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji}>
             <svelte:fragment slot="hover">
-              <Comment comment={visualKnowledge.knowledge.comment} />
+              {#if visualKnowledge.knowledge.comment}
+                <Comment comment={visualKnowledge.knowledge.comment} />
+              {/if}
             </svelte:fragment>
           </Item>
-        {:else}
-          <Item value={visualKnowledge.knowledge.knowledge} emoji={visualKnowledge.emoji} />
         {/if}
       {/each}
     {/if}

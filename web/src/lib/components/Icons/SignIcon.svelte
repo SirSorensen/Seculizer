@@ -20,7 +20,7 @@
 
 <div class="sign-icon" bind:this={item} on:mousemove={handleMouse}>
   <div class="emoji-container">
-    <Emoji content="pen" />
+    <Emoji classes="pen" content="pen" />
     <span class="signie-emoji">
       <Emoji content={signieIcon} />
     </span>
@@ -45,18 +45,18 @@
   .emoji-container {
     position: relative;
   }
-  .emoji-container .signie-emoji :global(.emoji) {
+  .emoji-container .signie-emoji {
     position: absolute;
-    bottom: 0;
     right: 0;
-    font-size: 1.3rem;
+    bottom: 0;
+    transform: translate(-25%, 50%);
   }
   .signie {
     text-align: center;
     font-size: 0.9rem;
     margin: 0;
   }
-  .sign-icon :global(.emoji) {
+  .sign-icon :global(.emoji.pen) {
     font-size: 2rem;
     height: 2.1rem;
     margin: 0;

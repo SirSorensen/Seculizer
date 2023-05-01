@@ -22,8 +22,8 @@
 
 <div transition:fade={{ delay: 250, duration: 300 }} class="item" bind:this={item} on:mousemove={handleMouse}>
   <Emoji content={emoji} />
-  <p>
-    <span>
+  <p class="item-text">
+    <span class="item-text-inner">
       
       <Format input={value} />
       =
@@ -69,7 +69,12 @@
   .item:hover .item-hover {
     display: flex;
   }
-  p {
+
+  p.item-text {
     margin: 0;
+    display: flex;
+  }
+  p.item-text .item-text-inner {
+    display: flex;
   }
 </style>

@@ -17,8 +17,7 @@
 <style>
   :global(.katex-display){
     margin: 0rem .2rem;
-    font-size: 1rem;
+    font-size: inherit;
     max-width: 100%;
-    overflow: auto;
   }
 </style>

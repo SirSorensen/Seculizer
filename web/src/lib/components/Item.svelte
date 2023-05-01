@@ -56,5 +56,8 @@
   .item:hover .item-hover {
     display: block;
   }
+  .item .item-hover:empty {
+    display: none;
+  }
 
 </style>

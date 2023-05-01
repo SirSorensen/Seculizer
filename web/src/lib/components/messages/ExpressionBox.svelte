@@ -14,7 +14,7 @@
 
   import { currentFrame, program } from "$lib/stores/programStore.js";
   import Comment from "../Comment.svelte";
-    import Format from "../Formats/Format.svelte";
+  import Format from "../Formats/Format.svelte";
   export let isSubmessage = false;
   export let participants: { from: Id; to: Id };
   export let expression: ExpressionAST;
@@ -36,13 +36,17 @@
   {#if isSubmessage}
     <div class="subMessage">
       {#each inner as innerExpression}
-        <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+        <div class:innerExpression={inner.length > 1}>
+          <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+        </div>
       {/each}
       <EncryptIcon encryptType={outer} comment={encryptComment} />
     </div>
   {:else}
     {#each inner as innerExpression}
-      <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+    <div class:innerExpression={inner.length > 1}>
+        <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+      </div>
     {/each}
     <EncryptIcon encryptType={outer} comment={encryptComment} />
   {/if}
@@ -54,13 +58,17 @@
   {#if isSubmessage}
     <div class="subMessage">
       {#each inner as innerExpression}
-        <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+      <div class:innerExpression={inner.length > 1}>
+          <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+        </div>
       {/each}
       <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} comment={signComment} />
     </div>
   {:else}
     {#each inner as innerExpression}
-      <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+    <div class:innerExpression={inner.length > 1}>
+        <svelte:self isSubmessage={true} expression={innerExpression} {participants} />
+      </div>
     {/each}
     <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} comment={signComment} />
   {/if}
@@ -87,5 +95,14 @@
     padding: 0.5rem;
     text-align: center;
     font-size: 1rem;
+  }
+
+  .innerExpression {
+    border: var(--sub-message-border);
+    margin: .4rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>
