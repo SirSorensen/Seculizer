@@ -9,12 +9,13 @@ Knowledge: {
 KeyRelations: (sk:serverSk, pk:serverPk), (pk:clientPk, sk:clientSk);
 Functions: hash;
 Equations: add(a,b,c) => add(b,a,c), add(a,b,c) => add(a,c,b), add(a,b,c) => add(c,b,a), add(a,b,c) => add(b,c,a), add(a,b,c) => add(c,a,b), add(a,b,c) => add(c,a,b);
-Format: hash(x,y,z) = $Hash(x||y||z)$, add(a,b) = ${a + b}$, add(a,b,c) = ${a + b + c}$;
+Format: hash(x,y,z) = $Hash(x||y||z)$, add(a,b) = ${a + b}$, add(a,b,c) = ${a + b + c}$, cSP = $Client_{SP}$, sSP = $Server_{SP}$, clientSk = $Client_{sk}$, serverSk = $Server_{sk}$, serverPk = $Server_{pk}$, clientPk = $Client_{pk}$, serverCert = $Server_{cert}$, clientCert = $Client_{cert}$, cRB = $Client_{RB}$, sRB = $Server_{RB}$, pmk = "Pre-Master Key", mk = "Master Key";
 Icons: {
     "laptop": Client;
     "🔑": serverSk, serverPk,clientPk,clientSk, pmk,mk;
     "📝": cSP, sSP, cRB, sRB;
     "home-button": Server;
+    "identification-card": serverCert, clientCert;
 };
 Protocol: {
     Client: new cRB ? "Client Random Bytes"; ? "Client creates random bytes"

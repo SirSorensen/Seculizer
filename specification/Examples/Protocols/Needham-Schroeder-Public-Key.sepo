@@ -1,0 +1,27 @@
+Participants: Alice, Bob, Server;
+Knowledge: {
+    Alice: kPA, kSA;
+    Bob: kPB, kSB;
+    Server: kPA, kPB, kPS;
+};
+KeyRelations: (pk: kPA, sk: kSA), (pk: kPB, sk: kSB);
+Format: kPA = $Alice_{pk}$, kSA = $Alice_{sk}$, kPB = $Bob_{pk}$, kSB = $Bob_{sk}$, kPS = $Server_{sk}$, NA = $N_{Alice}$, NB = $N_{Bob}$;
+Icons: {
+    "woman": Alice;
+    "man": Bob;
+    "save": Server;
+    "🔑": kPA, kPB, kSA, kSB, kPS;
+    "input-numbers": NA, NB;
+};
+Protocol: {
+    Alice -> Server: "Alice", "Bob"; ? "Alice requests Bob's public key"
+    Server -> Alice: {| kPB |}kPS; ? "Server sends Bob's public key signed by the server"
+    Alice: new NA; ? "Alice chooses a random nonce and sends it to Bob"
+    Alice -> Bob: { NA }kPB; ? "Alice chooses a random nonce and sends it to Bob"
+    Bob -> Server: "Bob", "Alice"; ? "Bob requests Alice's public key"
+    Server -> Bob: {| kPA |}kPS; ? "Server sends Alice's public key signed by the server"
+    Bob: new NB; ? "Bob chooses a random nonce"
+    Bob -> Alice: { NA, NB }kPA; ? "Bob sends to Alice the newly created nonce along with Alice's nonce to prove decryption"
+    Alice -> Bob: { NB }kPB; ? "Alice confirms Bob's nonce to prove decryption"
+
+};
