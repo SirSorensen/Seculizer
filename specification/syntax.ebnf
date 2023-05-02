@@ -29,7 +29,7 @@ expression ::= type | encrypt_expr | sign_expr
 encrypt_expr ::= "{" expression ("," expression)* "}" type  /* Example: {exp(g,X)}inv(pk(A)); */
 sign_expr ::= "{|" expression ("," expression)* "|}" type   /* Example: {|msgA|}aKey; */
 
-match_exprt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: alice -> bob: match { "refuse": { ... }; }; */
+match_stmt ::= id "->" id ":" " match " "{" match_case+ "}" ";"    /* Example: alice -> bob: match { "refuse": { ... }; }; */
 match_case ::= type ":" "{" stmt* "}" ";"                           /* Example: "refuse": { ... }; */
 
 clear_stmt ::= "clear" ":" id ("," id)* ";"   /* Example: clear akey; */

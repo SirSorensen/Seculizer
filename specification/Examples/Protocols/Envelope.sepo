@@ -31,11 +31,11 @@ Protocol: {
     
     Alice -> TPM: "Create", hash('obt', pcr); ? "Alice requests the TPM to create a new key"
     TPM: new k; ? "The TPM generates a new key"
-    TPM -> Alice: {|"Created", k, hash('obt', pcr)|}tpm_sk; ? "The TPM sends the new key and the PCR to Alice"
+    TPM -> Alice: {|"Created", k, hash('obt', pcr)|}tpm_sk; ? "The TPM sends the key and the PCR to Alice"
 
     clear: sid, esk; ? "The session key and the session id are cleared"
-    Alice: new v ? "Abilitry value"; ? "Alice creates an abilitry value"
-    Alice -> Parent: "Envelope", {v}k; ? "Alice sends the abilitry value encrypted with the new key to the parent"
+    Alice: new v ? "Arbitrary value"; ? "Alice creates an arbitrary value"
+    Alice -> Parent: "Envelope", {v}k; ? "Alice sends the arbitrary value encrypted with the new key to the parent"
 
     Parent: new esk ? "Parent session key"; ? "The parent generates a new session key"
     Parent -> TPM : "Session", {esk}tpm_pk; ? "The parent sends the TPM a session key encrypted with the TPM's public key"
@@ -48,15 +48,15 @@ Protocol: {
             TPM: pcr := hash("ref", pcr); ? "The TPM extends the PCR"
             TPM -> Parent: "Extended", pcr; ? "The TPM sends the new PCR to the parent"
             Parent -> TPM: "Quote", {v}k; ? "The parent requests the TPM to quote the PCR"
-            TPM -> Parent: {|"Quoted", pcr, {v}k|}tpm_sk; ? "The TPM sends the PCR and the abilitry value encrypted with the new key to the parent"
+            TPM -> Parent: {|"Quoted", pcr, {v}k|}tpm_sk; ? "The TPM sends the PCR and the arbitrary value encrypted with the new key to the parent"
         };
         "Obtain":{
-            Parent -> TPM: {"Extend", "obt", sid}esk; ? "The parent requests the TPM to extend the PCR with the abilitry value and the session id"
+            Parent -> TPM: {"Extend", "obt", sid}esk; ? "The parent requests the TPM to extend the PCR with the arbitrary value and the session id"
             TPM: pcr := hash("obt", pcr); ? "The TPM extends the PCR"
             TPM -> Parent: "Extended", pcr; ? "The TPM sends the new PCR to the parent"
-            Parent -> TPM: "Decrypt",{v}k, pcr; ? "The parent requests the TPM to decrypt the abilitry value"
-            TPM -> Parent: v; ? "The TPM sends the abilitry value to the parent"
+            Parent -> TPM: "Decrypt",{v}k, pcr; ? "The parent requests the TPM to decrypt the arbitrary value"
+            TPM -> Parent: v; ? "The TPM sends the arbitrary value to the parent"
         };
 
-    }; ? "The parent now has a choice to either refuse or obtain the abilitry value"
+    }; ? "The parent now has a choice to either refuse or obtain the arbitrary value"
 };

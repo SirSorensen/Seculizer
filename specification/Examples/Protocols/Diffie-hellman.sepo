@@ -9,7 +9,7 @@ Format: exp(x,y) = $x^y$;
 Icons: {
     "woman": Alice;
     "man": Bob;
-    "input-number": X, Y;
+    "input-numbers": X, Y;
     "🔑": exp;
     "gear": g;
     "📝": msgA, msgB;
