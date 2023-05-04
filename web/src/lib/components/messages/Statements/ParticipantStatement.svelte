@@ -76,5 +76,6 @@
 <style>
   .statement {
     position: absolute;
+    z-index: 1;
   }
 </style>
