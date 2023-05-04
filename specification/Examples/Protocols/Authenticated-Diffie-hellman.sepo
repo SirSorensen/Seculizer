@@ -1,0 +1,23 @@
+Participants: Alice, Bob;
+Knowledge: {
+            Alice: X ? "This is a nonce", msgA ? "This is Alice's message";
+            Bob: Y ? "This is a nonce", msgB ? "This is Bob's message";
+            Shared: g ? "This is a generator", AliceCert ? "Alice's Certificate", BobCert ? "Bob's Certificate";
+        };
+Equations: exp(exp(g,Y),X) => exp(exp(g,X),Y);
+Format: exp(x,y) = $x^y$;
+Icons: {
+    "woman": Alice;
+    "man": Bob;
+    "input-numbers": X, Y;
+    "🔑": exp;
+    "gear": g;
+    "📝": msgA, msgB;
+    "identification-card": AliceCert, BobCert;
+};  
+Protocol: {
+    Alice -> Bob: {|exp(g,X)|}AliceCert; ? "Alice sends Bob her public key"
+    Bob -> Alice: {|exp(g,Y)|}BobCert; ? "Bob sends Alice his public key"
+    Alice -> Bob: {msgA}exp(exp(g,X),Y); ? "Alice sends Bob a message encrypted with Bob's public key"
+    Bob -> Alice: {msgB}exp(exp(g,Y),X); ? "Bob sends Alice a message encrypted with Alice's public key"
+};
