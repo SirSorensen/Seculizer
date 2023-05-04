@@ -3,6 +3,7 @@
     EncryptExpression,
     Expression as ExpressionAST,
     ExpressionNode,
+    FunctionCall,
     Id,
     SignExpression,
     Type,
@@ -24,6 +25,7 @@
   const castToSignExpression = (x: ExpressionNode) => x as SignExpression;
   const castToType = (x: ExpressionNode) => x as Type;
   const castToId = (x: ExpressionNode) => x as Id;
+  const castToFunctionCall = (x: ExpressionNode) => x as FunctionCall;
 </script>
 
 {#if !child}
@@ -72,7 +74,7 @@
     {/each}
     <SignIcon signType={outer} signieIcon={getIconFromType(outer, $program)} comment={signComment} />
   {/if}
-{:else if child.type === "string" || child.type === "number" || child.type === "function"}
+{:else if child.type === "string" || child.type === "number"}
   {@const type = castToType(child)}
   <p>
     <Format input={type} />
@@ -86,6 +88,16 @@
     </Item>
   {:else}
     <Item value={id} emoji={$program.getIcon(id.value)} />
+  {/if}
+{:else if child.type === "function"}
+  {@const functionCall = castToFunctionCall(child)}
+  {@const icon = $program.getIcon(functionCall.id)}
+  {#if icon === "red-question-mark"}
+    <p>
+      <Format input={functionCall} />
+    </p>
+    {:else}
+    <Item value={functionCall} emoji={$program.getIcon(functionCall.id)} />
   {/if}
 {/if}
 
