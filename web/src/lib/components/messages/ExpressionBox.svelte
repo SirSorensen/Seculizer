@@ -93,11 +93,9 @@
   {@const functionCall = castToFunctionCall(child)}
   {@const icon = $program.getIcon(functionCall.id)}
   {#if icon === "red-question-mark"}
-    <p>
-      <Format input={functionCall} />
-    </p>
+    <Item value={functionCall} emoji={"gear"} />
     {:else}
-    <Item value={functionCall} emoji={$program.getIcon(functionCall.id)} />
+    <Item value={functionCall} emoji={icon} />
   {/if}
 {/if}
 
