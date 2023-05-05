@@ -18,6 +18,6 @@ Icons: {
 Protocol: {
     Alice -> Bob: {|exp(g,X)|}AliceCert; ? "Alice sends Bob her public key"
     Bob -> Alice: {|exp(g,Y)|}BobCert; ? "Bob sends Alice his public key"
-    Alice -> Bob: {msgA}exp(exp(g,X),Y); ? "Alice sends Bob a message encrypted with Bob's public key"
-    Bob -> Alice: {msgB}exp(exp(g,Y),X); ? "Bob sends Alice a message encrypted with Alice's public key"
+    Alice -> Bob: {msgA}exp(exp(g,Y),X); ? "Alice sends Bob a message encrypted with Bob's public key"
+    Bob -> Alice: {msgB}exp(exp(g,X),Y); ? "Bob sends Alice a message encrypted with Alice's public key"
 };
