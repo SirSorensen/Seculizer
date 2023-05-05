@@ -5,7 +5,7 @@ Knowledge: {
 };
 KeyRelations: (sk:tpm_sk, pk:tpm_pk);
 Functions: hash;
-Format: hash(x,y) = $H(x||y)$, tpm_sk = $tpm_{sk}$, tpm_pk = $tpm_{pk}$;
+Format: hash(x,y) = $Hash(x||y)$, tpm_sk = $tpm_{sk}$, tpm_pk = $tpm_{pk}$;
 Icons: {
     "woman": Alice;
     "family": Parent;
@@ -17,7 +17,7 @@ Icons: {
 
 Protocol: {
     Alice -> TPM: "Boot"; ? "Alice boots the TPM"
-    TPM: pcr := '1'; ? "The TPM initilize PCR to 1"
+    TPM: pcr := 1; ? "The TPM initilize PCR to 1"
     TPM -> Alice: "Booted";
     Alice: new n ? "Nonce"; ? "A new nonce is generated"
     Alice: new esk ? "Alice session key"; ? "A new session key is generated"
@@ -29,9 +29,9 @@ Protocol: {
     TPM: pcr := hash(n, pcr); ? "The TPM extends the PCR"
     TPM -> Alice: "Extended", pcr; ? "The TPM sends the new PCR to Alice"
     
-    Alice -> TPM: "Create", hash('obt', pcr); ? "Alice requests the TPM to create a new key"
+    Alice -> TPM: "Create", hash("obt", pcr); ? "Alice requests the TPM to create a new key"
     TPM: new k; ? "The TPM generates a new key"
-    TPM -> Alice: {|"Created", k, hash('obt', pcr)|}tpm_sk; ? "The TPM sends the key and the PCR to Alice"
+    TPM -> Alice: {|"Created", k, hash("obt", pcr)|}tpm_sk; ? "The TPM sends the key and the PCR to Alice, signed with the TPM's secret key"
 
     clear: sid, esk; ? "The session key and the session id are cleared"
     Alice: new v ? "Arbitrary value"; ? "Alice creates an arbitrary value"
@@ -48,7 +48,7 @@ Protocol: {
             TPM: pcr := hash("ref", pcr); ? "The TPM extends the PCR"
             TPM -> Parent: "Extended", pcr; ? "The TPM sends the new PCR to the parent"
             Parent -> TPM: "Quote", {v}k; ? "The parent requests the TPM to quote the PCR"
-            TPM -> Parent: {|"Quoted", pcr, {v}k|}tpm_sk; ? "The TPM sends the PCR and the arbitrary value encrypted with the new key to the parent"
+            TPM -> Parent: {|"Quoted", pcr, {v}k|}tpm_sk; ? "The TPM sends the PCR and the arbitrary value encrypted with the new key to the parent. The entire message is signed with the TPM's secret key"
         };
         "Obtain":{
             Parent -> TPM: {"Extend", "obt", sid}esk; ? "The parent requests the TPM to extend the PCR with the arbitrary value and the session id"
