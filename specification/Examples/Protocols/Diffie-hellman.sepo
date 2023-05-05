@@ -1,7 +1,7 @@
 Participants: Alice, Bob;
 Knowledge: {
             Alice: X ? "This is an nonce", msgA ? "This is Alice's message";
-            Bob: Y ? "This is a random number", msgB ? "This is Bob's message";
+            Bob: Y ? "This is a nonce", msgB ? "This is Bob's message";
             Shared: g ? "This is a generator";
         };
 Equations: exp(exp(g,Y),X) => exp(exp(g,X),Y);
