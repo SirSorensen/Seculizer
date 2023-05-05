@@ -1,18 +1,18 @@
 <script lang="ts">
   export let input: string;
   import katex from "katex";
-  let latexOutput: string = "";
+  let TexOutput: string = "";
   $: {
     if(input.startsWith("$")) input = input.slice(1);
     if(input.endsWith("$")) input = input.slice(0, -1);
-    latexOutput = katex.renderToString(input, {
+    TexOutput = katex.renderToString(input, {
       throwOnError: false,
       displayMode: true,
     });
   }
 </script>
 
-{@html latexOutput}
+{@html TexOutput}
 
 <style>
   :global(.katex-display){

@@ -152,7 +152,7 @@ export class Program {
   constructFormat(format: Format) {
     if (format) {
       format.formats.forEach((format: FormatItem) => {
-        if (format.format.type == "latex") this.formats.addLatex(format.id, format.format.value);
+        if (format.format.type == "Tex") this.formats.addTex(format.id, format.format.value);
         else if (format.format.type == "string") this.formats.addString(format.id, format.format.value);
       });
 

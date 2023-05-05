@@ -328,7 +328,7 @@ Protocol: {
   .editor-container :global(.token.token-Arrow) {
     color: var(--ecolor-text);
   }
-  .editor-container :global(.token.token-latexLiteral) {
+  .editor-container :global(.token.token-TexLiteral) {
     color: var(--ecolor-regex);
     font-style: italic;
   }

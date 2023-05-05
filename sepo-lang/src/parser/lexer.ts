@@ -13,8 +13,8 @@ export const Participants = createToken({
   name: "Participants",
   pattern: /Participants:/,
 });
-export const latexLiteral = createToken({
-  name: "latexLiteral",
+export const TexLiteral = createToken({
+  name: "TexLiteral",
   pattern: /\$([^$])*\$/,
 });
 export const Knowledge = createToken({ name: "Knowledge", pattern: /Knowledge:/ });
@@ -67,7 +67,7 @@ export const allTokens = [
   Comment,
   NumberLiteral,
   StringLiteral,
-  latexLiteral,
+  TexLiteral,
   Participants,
   Knowledge,
   KeyRelations,

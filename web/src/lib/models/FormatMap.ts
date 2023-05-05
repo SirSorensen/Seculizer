@@ -1,10 +1,10 @@
 import type { FunctionCall, Type } from "$lang/types/parser/interfaces";
-import { Latex } from "./Latex";
+import { Tex } from "./Tex";
 
 type format =
   | {
-      type: "latex";
-      value: Latex;
+      type: "Tex";
+      value: Tex;
     }
   | {
       type: "string";
@@ -18,18 +18,18 @@ export class FormatMap {
     return call.id + "!p" + call.params.length;
   }
 
-  private constructFormat(format: Latex | string) : format {
-    if (format instanceof Latex) return { type: "latex", value: format };
+  private constructFormat(format: Tex | string) : format {
+    if (format instanceof Tex) return { type: "Tex", value: format };
     else return { type: "string", value: format };
   }
 
-  addLatex(call: Type, latex: string) {
-    if (call.type == "function") this.formatMap[this.constructKey(call)] = this.constructFormat(new Latex(call, latex));
-    else this.formatMap[call.value] = this.constructFormat(new Latex(call, latex));
+  addTex(call: Type, tex: string) {
+    if (call.type == "function") this.formatMap[this.constructKey(call)] = this.constructFormat(new Tex(call, tex));
+    else this.formatMap[call.value] = this.constructFormat(new Tex(call, tex));
   }
 
   addString(call: Type, str: string) {
-    if (call.type == "function") this.formatMap[this.constructKey(call)] = this.constructFormat(new Latex(call, str));
+    if (call.type == "function") this.formatMap[this.constructKey(call)] = this.constructFormat(new Tex(call, str));
     else this.formatMap[call.value] = this.constructFormat(str);
   }
 
@@ -38,14 +38,14 @@ export class FormatMap {
     else return this.formatMap[call.value] != undefined;
   }
 
-  getConstructedLatex(call: Type): string {
+  getConstructedTex(call: Type): string {
     if (call.type == "function") {
       const format = this.formatMap[this.constructKey(call)];
 
       if (format == undefined) {
         let str = "$" + call.id + "(";
         str += call.params.map((param) => {
-          if (param.type == "function") return this.getConstructedLatex(param);
+          if (param.type == "function") return this.getConstructedTex(param);
 
           return param.value;
         });
@@ -54,16 +54,16 @@ export class FormatMap {
       }
 
 
-      if (format.type == "latex") {
-        return format.value.constructLatex(call, this);
+      if (format.type == "Tex") {
+        return format.value.constructTex(call, this);
       } else return format.value;
     } else {
       const format = this.formatMap[call.value];
 
       if (format == undefined) return call.value as string;
 
-      if (format.type == "latex") {
-        return format.value.constructLatex(call, this);
+      if (format.type == "Tex") {
+        return format.value.constructTex(call, this);
       } else return format.value;
     }
   }

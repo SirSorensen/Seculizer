@@ -28,7 +28,7 @@ import {
   Slash,
   StringLiteral,
   allTokens,
-  latexLiteral,
+  TexLiteral,
   publicKey,
   secretKey,
   Set,
@@ -208,7 +208,7 @@ export class SepoParser extends CstParser {
   private formatElement = this.RULE("formatElement", () => {
     this.SUBRULE(this.type);
     this.CONSUME(Equal);
-    this.OR([{ ALT: () => this.CONSUME(StringLiteral) }, { ALT: () => this.SUBRULE(this.latex) }]);
+    this.OR([{ ALT: () => this.CONSUME(StringLiteral) }, { ALT: () => this.SUBRULE(this.Tex) }]);
   });
 
   private icons = this.RULE("icons", () => {
@@ -230,8 +230,8 @@ export class SepoParser extends CstParser {
     this.CONSUME(Semicolon);
   });
 
-  private latex = this.RULE("latex", () => {
-    this.CONSUME(latexLiteral);
+  private Tex = this.RULE("Tex", () => {
+    this.CONSUME(TexLiteral);
   });
 
   private protocol = this.RULE("protocol", () => {
@@ -261,7 +261,7 @@ export class SepoParser extends CstParser {
 
   private stmtComment = this.RULE("stmtComment", () => {
     this.CONSUME(QuestionMark);
-    this.OR([{ ALT: () => this.CONSUME(StringLiteral) }, { ALT: () => this.SUBRULE(this.latex) }]);
+    this.OR([{ ALT: () => this.CONSUME(StringLiteral) }, { ALT: () => this.SUBRULE(this.Tex) }]);
   });
 
   private clear = this.RULE("clear", () => {

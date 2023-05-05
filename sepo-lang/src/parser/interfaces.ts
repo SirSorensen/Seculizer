@@ -90,7 +90,7 @@ export interface Format extends ASTNode {
 export interface FormatItem extends ASTNode {
   type: "formatItem";
   id: Type;
-  format: StringLiteral | LatexLiteral;
+  format: StringLiteral | TexLiteral;
 }
 
 export interface Icons extends ASTNode {
@@ -98,8 +98,8 @@ export interface Icons extends ASTNode {
   icons: Map<string, string>;
 }
 
-export interface LatexLiteral extends ASTNode {
-  type: "latex";
+export interface TexLiteral extends ASTNode {
+  type: "Tex";
   value: string;
 }
 
@@ -127,7 +127,7 @@ export interface Statement extends ASTNode {
 
 export interface StmtComment extends ASTNode {
   type: "stmtComment";
-  value: LatexLiteral | StringLiteral;
+  value: TexLiteral | StringLiteral;
 }
 
 export interface StatementNode extends ASTNode {}
@@ -285,11 +285,11 @@ export interface FormatCST extends CstNode {
 export interface FormatElementCST extends CstNode {
   type: TypeCST;
   StringLiteral: IToken[];
-  latex: LatexCST;
+  Tex: TexCST;
 }
 
-export interface LatexCST extends CstNode {
-  latexLiteral: IToken[];
+export interface TexCST extends CstNode {
+  TexLiteral: IToken[];
 }
 
 export interface ProtocolCST extends CstNode {
@@ -309,7 +309,7 @@ export interface StatementCST extends CstNode {
 
 export interface StmtCommentCST extends CstNode {
   StringLiteral: IToken[];
-  latex: LatexCST;
+  Tex: TexCST;
 }
 export interface ClearCST extends CstNode {
   Id: IToken[];

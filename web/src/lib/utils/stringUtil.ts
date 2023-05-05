@@ -131,7 +131,7 @@ export function getStringFromExpression(expression: Expression, program: Program
 
 export function getFormattedTypeAsHTML(type: Type, program: Program): string {
   if (program.getFormats().contains(type)) {
-    let s = program.getFormats().getConstructedLatex(type);
+    let s = program.getFormats().getConstructedTex(type);
     if (s.startsWith("$")) s = s.slice(1);
     if (s.endsWith("$")) s = s.slice(0, -1);
     return katex.renderToString(s, {

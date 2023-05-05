@@ -1,12 +1,12 @@
 import type { Type } from "$lang/types/parser/interfaces";
 import type { FormatMap } from "./FormatMap";
 
-export class Latex {
+export class Tex {
   paramIndex: number[] = [];
   stringArray: string[] = [""];
   paramAmount: number;
 
-  constructor(call: Type, latex: string) {
+  constructor(call: Type, Tex: string) {
     let params: Type[];
     if (call.type == "function") {
       params = call.params;
@@ -16,27 +16,27 @@ export class Latex {
     //Params amount = 1 if the call was not a function, and the amount of params of the call if it was a function
     this.paramAmount = params.length;
 
-    const latexArray: string[] = latex.match(/([.,+*-?^$&%§()[\]{}|/\\|_ ]+)|([a-z,A-Z,α-ω,Α-Ω]+)/g) as string[];
+    const TexArray: string[] = Tex.match(/([.,+*-?^$&%§()[\]{}|/\\|_ ]+)|([a-z,A-Z,α-ω,Α-Ω]+)/g) as string[];
 
-    if (latexArray == null) throw new Error("No matches were found!");
+    if (TexArray == null) throw new Error("No matches were found!");
 
-    // charIndexArr = array of indexes of characters in latexArray
-    const charIndexArr = latexArray
+    // charIndexArr = array of indexes of characters in TexArray
+    const charIndexArr = TexArray
       .map((element, index) => {
         if (element.match(/([a-z,A-Z]+)/g)) return index;
       })
       .filter(Boolean);
 
-    // paramsIndexArr = array of arrays of indexes of parameters in latexArray
+    // paramsIndexArr = array of arrays of indexes of parameters in TexArray
     const paramsIndexArr: number[][] = [];
 
     for (const val of charIndexArr) {
       if (!val) continue;
       for (let index = 0; index < params.length; index++) {
         const param = params[index];
-        if (param.type == "function") throw new Error("Function type not supported for latex initialization!");
+        if (param.type == "function") throw new Error("Function type not supported for Tex initialization!");
         if (!paramsIndexArr[index]) paramsIndexArr[index] = [];
-        if (latexArray[val] == (param.value as string)) {
+        if (TexArray[val] == (param.value as string)) {
           paramsIndexArr[index].push(val);
         }
       }
@@ -53,9 +53,9 @@ export class Latex {
       })
       .flat();
 
-    // stringArray = array of strings, each string is a part of the latex string, where the seperations is to be filled by the parameters of call
-    for (let index = 0; index < latexArray.length; index++) {
-      const val = latexArray[index];
+    // stringArray = array of strings, each string is a part of the Tex string, where the seperations is to be filled by the parameters of call
+    for (let index = 0; index < TexArray.length; index++) {
+      const val = TexArray[index];
       if (!val) continue;
       const indexOf = paramsIndexArrFlat.indexOf(index);
       if (indexOf >= 0) {
@@ -67,7 +67,7 @@ export class Latex {
     }
   }
 
-  constructLatex(call: Type, map: FormatMap | undefined = undefined): string {
+  constructTex(call: Type, map: FormatMap | undefined = undefined): string {
     let params: Type[];
     if (call.type == "function") {
       params = call.params;
@@ -77,36 +77,36 @@ export class Latex {
     if (params.length != this.paramAmount)
       throw new Error("The amount of parameters given does not match the amount of parameters expected!");
 
-    let tmpLatex = this.stringArray[0];
+    let tmpTex = this.stringArray[0];
 
     for (let i = 1; i < this.stringArray.length; i++) {
       const param = params[this.paramIndex[i - 1]];
       if (param.type == "function") {
         //Function gets { } around it
-        if (!map) throw new Error("No LatexMap was given! For Function");
-        tmpLatex += "{" + map.getConstructedLatex(param).slice(1, -1) + "}";
+        if (!map) throw new Error("No TexMap was given! For Function");
+        tmpTex += "{" + map.getConstructedTex(param).slice(1, -1) + "}";
       } else if(param.type === "id"){
         if(map && map.contains(param) && !(call.type === "id" && param.value === call.value)){
-          let rec = map.getConstructedLatex(param);
+          let rec = map.getConstructedTex(param);
           if(rec.startsWith("$")){
             rec = rec.slice(1);
           }
           if(rec.endsWith("$")){
             rec = rec.slice(0, -1);
           }
-          tmpLatex += "{" + rec + "}";
+          tmpTex += "{" + rec + "}";
         }else{
-          tmpLatex += param.value;
+          tmpTex += "\\text{" + param.value + "}";
         }
       }else if (param.type != "number") {
         //Anything else gets \text{ } around it
-        tmpLatex += "\\text{" + param.value + "}";
+        tmpTex += "\\text{" + param.value + "}";
       } else {
-        tmpLatex += param.value;
+        tmpTex += param.value;
       }
-      tmpLatex += this.stringArray[i];
+      tmpTex += this.stringArray[i];
     }
 
-    return tmpLatex;
+    return tmpTex;
   }
 }

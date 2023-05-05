@@ -60,13 +60,13 @@ equations_element ::= function "=>" function                /* Example: exp(exp(
 
 /* ---- Format ---- */
 formats ::= format ("," format)*                        /* Example: exp(x,y) = $x^y$ */
-format ::= type "=" string | latex   /* Example: exp(x,y) = $x^y$ */
+format ::= type "=" string | Tex   /* Example: exp(x,y) = $x^y$ */
 
 /* ---- Icons ---- */
 iconSet ::= string ":" id ("," id)* ";" /* Example: "👩‍👦": "Alice", "Bob"; */
 
-/* --- Latex ---  */
-latex ::= "$" [^$]* "$" /* Example: $x^y$ */
+/* --- Tex ---  */
+Tex ::= "$" [^$]* "$" /* Example: $x^y$ */
 
 /* --- Statement comments --- */
-stmtComment ::= "?" string | latex /* Example: ? "This is a comment" */
+stmtComment ::= "?" string | Tex /* Example: ? "This is a comment" */

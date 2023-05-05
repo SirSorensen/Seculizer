@@ -5,9 +5,9 @@ import { parse } from "$lang/index.js";
 import type { Id, Type, FunctionCall } from "$lang/types/parser/interfaces";
 import type { Frame } from "$lib/models/Frame";
 import path from "path";
-import { Latex } from "../src/lib/models/Latex";
+import { Tex } from "../src/lib/models/Tex";
 import { fileURLToPath } from "url";
-import { LatexMap } from "$lib/models/FormatMap";
+import { FormatMap } from "$lib/models/FormatMap";
 import { Equal } from "$lib/models/Equal";
 import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { Participant } from "$lib/models/Participant";
@@ -79,7 +79,7 @@ test("web/program with DF.sepo", () => {
   expect(Object.keys(program.knowledgeHandler.getEquations().getEquations()).length).toBe(1);
 
   expect(program.icons).toBeDefined();
-  expect(program.icons.size).toBe(7);
+  expect(program.icons.size).toBe(8);
 });
 
 test("web/program with send-with-sign.sepo", () => {
@@ -93,7 +93,7 @@ test("web/program with send-with-sign.sepo", () => {
   expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
 
   expect(program.formats).toBeDefined();
-  expect(Object.keys(program.formats.latexMap).length).toBe(0);
+  expect(Object.keys(program.formats.formatMap).length).toBe(0);
 
   expect(program.knowledgeHandler.getEquations()).toBeDefined();
   expect(Object.keys(program.knowledgeHandler.getEquations().getEquations()).length).toBe(0);
@@ -159,7 +159,7 @@ test("web/program with send-with-enc.sepo", () => {
   expect(program.knowledgeHandler.getOpaqueFunctions().length).toBe(0);
 
   expect(program.formats).toBeDefined();
-  expect(Object.keys(program.formats.latexMap).length).toBe(0);
+  expect(Object.keys(program.formats.formatMap).length).toBe(0);
 
   expect(program.knowledgeHandler.getEquations()).toBeDefined();
   expect(Object.keys(program.knowledgeHandler.getEquations().getEquations()).length).toBe(0);
@@ -280,31 +280,31 @@ test("web/Program with clear.sepo", () => {
   }
 });
 
-test("Construct Latex class & constructLatex method test", () => {
+test("Construct Tex class & constructTex method test", () => {
   const init_param1: Type = { type: "id", value: "x" };
   const init_param2: Type = { type: "id", value: "y" };
   const init_func: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
 
-  const latex = new Latex(init_func, "$Hash(x||y||x)$");
+  const tex = new Tex(init_func, "$Hash(x||y||x)$");
 
   const param1: Type = { type: "id", value: "z" };
   const param2: Type = { type: "number", value: 5 };
   const func: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
 
-  const result = latex.constructLatex(func);
+  const result = tex.constructTex(func);
 
   expect(result).toBe("$Hash(\\text{z}||5||\\text{z})$");
 });
 
-test("Make LatexMap and call a function with embedded function", () => {
+test("Make FormatMap and call a function with embedded function", () => {
   const init_param1: Type = { type: "id", value: "x" };
   const init_param2: Type = { type: "id", value: "y" };
   const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
   const init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param1, init_param2] };
 
-  const latexMap = new LatexMap();
-  latexMap.addLatex(init_func1, "$Hash(x||y||x)$");
-  latexMap.addLatex(init_func2, "$Based_{XXX}(y&&x)$");
+  const formatMap = new FormatMap();
+  formatMap.addTex(init_func1, "$Hash(x||y||x)$");
+  formatMap.addTex(init_func2, "$Based_{XXX}(y&&x)$");
 
   const param1: Type = { type: "id", value: "z" };
   const param2: Type = { type: "number", value: 5 };
@@ -312,7 +312,7 @@ test("Make LatexMap and call a function with embedded function", () => {
   const func1: FunctionCall = { type: "function", id: "Hash", params: [param1, param2] };
   const func2: FunctionCall = { type: "function", id: "Base", params: [param3, func1] };
 
-  const result = latexMap.getConstructedLatex(func2);
+  const result = formatMap.getConstructedTex(func2);
 
   expect(result).toBe("$Based_{XXX}({Hash(\\text{z}||5||\\text{z})}&&\\text{Jesus})$");
 });

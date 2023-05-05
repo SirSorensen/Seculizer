@@ -32,8 +32,8 @@ import {
   KnowledgeItem,
   KnowledgeItemCST,
   KnowledgeListCST,
-  LatexCST,
-  LatexLiteral,
+  TexCST,
+  TexLiteral,
   MatchCase,
   MatchCaseCST,
   MatchCST,
@@ -286,19 +286,19 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
         format: { type: "string", value: string[0].image.slice(1, -1) },
       };
     }
-    const latex = this.visit(ctx.latex);
+    const Tex = this.visit(ctx.Tex);
     return {
       type: "formatItem",
       id: id,
-      format: latex,
+      format: Tex,
     };
   }
 
-  latex(ctx: LatexCST): LatexLiteral {
-    let latex = ctx.latexLiteral[0].image;
+  Tex(ctx: TexCST): TexLiteral {
+    let Tex = ctx.TexLiteral[0].image;
     return {
-      type: "latex",
-      value: latex,
+      type: "Tex",
+      value: Tex,
     };
   }
 
@@ -398,11 +398,11 @@ export class SepoToAstVisitor extends BaseSepoVisitor {
   }
 
   stmtComment(ctx: StmtCommentCST): StmtComment {
-    const latexComment = this.visit(ctx.latex);
-    if (latexComment) {
+    const TexComment = this.visit(ctx.Tex);
+    if (TexComment) {
       return {
         type: "stmtComment",
-        value: latexComment,
+        value: TexComment,
       };
     }
     const stringComment = ctx.StringLiteral[0].image;

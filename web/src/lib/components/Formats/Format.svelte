@@ -2,14 +2,14 @@
     import type { Type } from "$lang/types/parser/interfaces";
     import { program } from "$lib/stores/programStore.js";
     import { getStringFromType } from "$lib/utils/stringUtil";
-    import Latex from "./Latex.svelte";
+    import Tex from "./Tex.svelte";
     export let input: Type;
 </script>
 
 {#if $program.getFormats().contains(input)}
-  {@const format = $program.getFormats().getConstructedLatex(input)}
+  {@const format = $program.getFormats().getConstructedTex(input)}
   {#if format.startsWith("$") && format.endsWith("$")}
-    <Latex input={format} />
+    <Tex input={format} />
   {:else}
     {format}
   {/if}

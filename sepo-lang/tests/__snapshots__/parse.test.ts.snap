@@ -1,5 +1,499 @@
 // Vitest Snapshot v1
 
+exports[`should parse Authenticated-Diffie-hellman.sepo 1`] = `
+{
+  "equations": {
+    "equations": [
+      {
+        "left": {
+          "id": "exp",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "g",
+                },
+                {
+                  "type": "id",
+                  "value": "Y",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "X",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "exp",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "g",
+                },
+                {
+                  "type": "id",
+                  "value": "X",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "Y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+    ],
+    "type": "equations",
+  },
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$x^y$",
+        },
+        "id": {
+          "id": "exp",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": undefined,
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Bob" => "man",
+      "X" => "input-numbers",
+      "Y" => "input-numbers",
+      "exp" => "🔑",
+      "g" => "gear",
+      "msgA" => "📝",
+      "msgB" => "📝",
+      "AliceCert" => "identification-card",
+      "BobCert" => "identification-card",
+    },
+    "type": "icons",
+  },
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is a nonce",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "X",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is Alice's message",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "msgA",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is a nonce",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "Y",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is Bob's message",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "msgB",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is a generator",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "g",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Alice's Certificate",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "AliceCert",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Bob's Certificate",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "BobCert",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Shared",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participantItem",
+      },
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participantItem",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "id": "exp",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "g",
+                          },
+                          {
+                            "type": "id",
+                            "value": "X",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "AliceCert",
+                  },
+                  "type": "signExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice sends Bob her public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "id": "exp",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "g",
+                          },
+                          {
+                            "type": "id",
+                            "value": "Y",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "BobCert",
+                  },
+                  "type": "signExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob sends Alice his public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msgA",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "id": "exp",
+                    "params": [
+                      {
+                        "id": "exp",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "g",
+                          },
+                          {
+                            "type": "id",
+                            "value": "Y",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      {
+                        "type": "id",
+                        "value": "X",
+                      },
+                    ],
+                    "type": "function",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice sends Bob a message encrypted with Bob's public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msgB",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "id": "exp",
+                    "params": [
+                      {
+                        "id": "exp",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "g",
+                          },
+                          {
+                            "type": "id",
+                            "value": "X",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      {
+                        "type": "id",
+                        "value": "Y",
+                      },
+                    ],
+                    "type": "function",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob sends Alice a message encrypted with Alice's public key",
+          },
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
 exports[`should parse Clear.sepo 1`] = `
 {
   "equations": undefined,
@@ -147,7 +641,7 @@ exports[`should parse Diffie-hellman.sepo 1`] = `
     "formats": [
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$x^y$",
         },
         "id": {
@@ -174,8 +668,9 @@ exports[`should parse Diffie-hellman.sepo 1`] = `
     "icons": Map {
       "Alice" => "woman",
       "Bob" => "man",
-      "X" => "🔑",
-      "Y" => "🔑",
+      "X" => "input-numbers",
+      "Y" => "input-numbers",
+      "exp" => "🔑",
       "g" => "gear",
       "msgA" => "📝",
       "msgB" => "📝",
@@ -227,7 +722,7 @@ exports[`should parse Diffie-hellman.sepo 1`] = `
               "type": "stmtComment",
               "value": {
                 "type": "string",
-                "value": "This is a random number",
+                "value": "This is a nonce",
               },
             },
             "value": {
@@ -416,14 +911,14 @@ exports[`should parse Diffie-hellman.sepo 1`] = `
                           },
                           {
                             "type": "id",
-                            "value": "X",
+                            "value": "Y",
                           },
                         ],
                         "type": "function",
                       },
                       {
                         "type": "id",
-                        "value": "Y",
+                        "value": "X",
                       },
                     ],
                     "type": "function",
@@ -449,7 +944,7 @@ exports[`should parse Diffie-hellman.sepo 1`] = `
           "type": "stmtComment",
           "value": {
             "type": "string",
-            "value": "Alice sends Bob a message encrypted with Bob's public key",
+            "value": "Alice sends Bob a message encrypted with Bob and Alice's shared secret key",
           },
         },
         "type": "statement",
@@ -514,7 +1009,7 @@ exports[`should parse Diffie-hellman.sepo 1`] = `
           "type": "stmtComment",
           "value": {
             "type": "string",
-            "value": "Bob sends Alice a message encrypted with Alice's public key",
+            "value": "Bob sends Alice a message encrypted with Bob and Alice's shared secret key",
           },
         },
         "type": "statement",
@@ -533,7 +1028,7 @@ exports[`should parse Envelope.sepo 1`] = `
     "formats": [
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$H(x||y)$",
         },
         "id": {
@@ -554,7 +1049,7 @@ exports[`should parse Envelope.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$tpm_{sk}$",
         },
         "id": {
@@ -565,23 +1060,12 @@ exports[`should parse Envelope.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$tpm_{pk}$",
         },
         "id": {
           "type": "id",
           "value": "tpm_pk",
-        },
-        "type": "formatItem",
-      },
-      {
-        "format": {
-          "type": "latex",
-          "value": "$\\\\textbf{pcr}$",
-        },
-        "id": {
-          "type": "id",
-          "value": "pcr",
         },
         "type": "formatItem",
       },
@@ -634,10 +1118,29 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "children": [
           {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "The TPM's private key",
+              },
+            },
             "value": {
               "type": "id",
               "value": "tpm_sk",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Platform Configuration Register",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "pcr",
             },
           },
         ],
@@ -650,7 +1153,13 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "children": [
           {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "The TPM's public key",
+              },
+            },
             "value": {
               "type": "id",
               "value": "tpm_pk",
@@ -825,7 +1334,13 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "child": {
           "child": {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Alice session key",
+              },
+            },
             "type": "newStatement",
             "value": {
               "type": "id",
@@ -902,7 +1417,13 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "child": {
           "child": {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Alice's Session ID",
+              },
+            },
             "type": "newStatement",
             "value": {
               "type": "id",
@@ -1233,7 +1754,7 @@ exports[`should parse Envelope.sepo 1`] = `
           "type": "stmtComment",
           "value": {
             "type": "string",
-            "value": "The TPM sends the new key and the PCR to Alice",
+            "value": "The TPM sends the key and the PCR to Alice",
           },
         },
         "type": "statement",
@@ -1258,7 +1779,13 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "child": {
           "child": {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Arbitrary value",
+              },
+            },
             "type": "newStatement",
             "value": {
               "type": "id",
@@ -1275,7 +1802,7 @@ exports[`should parse Envelope.sepo 1`] = `
           "type": "stmtComment",
           "value": {
             "type": "string",
-            "value": "Alice creates an abilitry value",
+            "value": "Alice creates an arbitrary value",
           },
         },
         "type": "statement",
@@ -1327,7 +1854,7 @@ exports[`should parse Envelope.sepo 1`] = `
           "type": "stmtComment",
           "value": {
             "type": "string",
-            "value": "Alice sends the abilitry value encrypted with the new key to the parent",
+            "value": "Alice sends the arbitrary value encrypted with the new key to the parent",
           },
         },
         "type": "statement",
@@ -1335,7 +1862,13 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "child": {
           "child": {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Parent session key",
+              },
+            },
             "type": "newStatement",
             "value": {
               "type": "id",
@@ -1412,7 +1945,13 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "child": {
           "child": {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Parent's Session ID",
+              },
+            },
             "type": "newStatement",
             "value": {
               "type": "id",
@@ -1732,7 +2271,7 @@ exports[`should parse Envelope.sepo 1`] = `
                       "type": "stmtComment",
                       "value": {
                         "type": "string",
-                        "value": "The TPM sends the PCR and the abilitry value encrypted with the new key to the parent",
+                        "value": "The TPM sends the PCR and the arbitrary value encrypted with the new key to the parent",
                       },
                     },
                     "type": "statement",
@@ -1800,7 +2339,7 @@ exports[`should parse Envelope.sepo 1`] = `
                       "type": "stmtComment",
                       "value": {
                         "type": "string",
-                        "value": "The parent requests the TPM to extend the PCR with the abilitry value and the session id",
+                        "value": "The parent requests the TPM to extend the PCR with the arbitrary value and the session id",
                       },
                     },
                     "type": "statement",
@@ -1937,7 +2476,7 @@ exports[`should parse Envelope.sepo 1`] = `
                       "type": "stmtComment",
                       "value": {
                         "type": "string",
-                        "value": "The parent requests the TPM to decrypt the abilitry value",
+                        "value": "The parent requests the TPM to decrypt the arbitrary value",
                       },
                     },
                     "type": "statement",
@@ -1970,7 +2509,7 @@ exports[`should parse Envelope.sepo 1`] = `
                       "type": "stmtComment",
                       "value": {
                         "type": "string",
-                        "value": "The TPM sends the abilitry value to the parent",
+                        "value": "The TPM sends the arbitrary value to the parent",
                       },
                     },
                     "type": "statement",
@@ -1995,7 +2534,616 @@ exports[`should parse Envelope.sepo 1`] = `
           "type": "stmtComment",
           "value": {
             "type": "string",
-            "value": "The parent now has a choice to either refuse or obtain the abilitry value",
+            "value": "The parent now has a choice to either refuse or obtain the arbitrary value",
+          },
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse Needham-Schroeder-Public-Key.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Alice_{pk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "kPA",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Alice_{sk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "kSA",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Bob_{pk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "kPB",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Bob_{sk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "kSB",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Server_{sk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "kPS",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$N_{Alice}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "NA",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$N_{Bob}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "NB",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": undefined,
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Bob" => "man",
+      "Server" => "save",
+      "kPA" => "🔑",
+      "kPB" => "🔑",
+      "kSA" => "🔑",
+      "kSB" => "🔑",
+      "kPS" => "🔑",
+      "NA" => "input-numbers",
+      "NB" => "input-numbers",
+    },
+    "type": "icons",
+  },
+  "keyRelations": {
+    "keyRelations": [
+      {
+        "pk": {
+          "type": "id",
+          "value": "kPA",
+        },
+        "sk": {
+          "type": "id",
+          "value": "kSA",
+        },
+        "type": "keyRelation",
+      },
+      {
+        "pk": {
+          "type": "id",
+          "value": "kPB",
+        },
+        "sk": {
+          "type": "id",
+          "value": "kSB",
+        },
+        "type": "keyRelation",
+      },
+    ],
+    "type": "keyRelations",
+  },
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "comment": undefined,
+            "value": {
+              "type": "id",
+              "value": "kPA",
+            },
+          },
+          {
+            "comment": undefined,
+            "value": {
+              "type": "id",
+              "value": "kSA",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "comment": undefined,
+            "value": {
+              "type": "id",
+              "value": "kPB",
+            },
+          },
+          {
+            "comment": undefined,
+            "value": {
+              "type": "id",
+              "value": "kSB",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "comment": undefined,
+            "value": {
+              "type": "id",
+              "value": "kPA",
+            },
+          },
+          {
+            "comment": undefined,
+            "value": {
+              "type": "id",
+              "value": "kPB",
+            },
+          },
+          {
+            "comment": undefined,
+            "value": {
+              "type": "id",
+              "value": "kPS",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Server",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participantItem",
+      },
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participantItem",
+      },
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Server",
+        },
+        "type": "participantItem",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "\\"Alice\\"",
+                },
+                "type": "expression",
+              },
+              {
+                "child": {
+                  "type": "string",
+                  "value": "\\"Bob\\"",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice requests Bob's public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "kPB",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "kPS",
+                  },
+                  "type": "signExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server sends Bob's public key signed by the server",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "comment": undefined,
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "NA",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice chooses a random nonce and sends it to Bob",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "NA",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "kPB",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice chooses a random nonce and sends it to Bob",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "string",
+                  "value": "\\"Bob\\"",
+                },
+                "type": "expression",
+              },
+              {
+                "child": {
+                  "type": "string",
+                  "value": "\\"Alice\\"",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob requests Alice's public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "kPA",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "kPS",
+                  },
+                  "type": "signExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server sends Alice's public key signed by the server",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "comment": undefined,
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "NB",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob chooses a random nonce",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "NA",
+                      },
+                      "type": "expression",
+                    },
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "NB",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "kPA",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob sends to Alice the newly created nonce along with Alice's nonce to prove decryption",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "NB",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "kPB",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice confirms Bob's nonce to prove decryption",
           },
         },
         "type": "statement",
@@ -2014,7 +3162,7 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
     "formats": [
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$K_{A,s}$",
         },
         "id": {
@@ -2025,7 +3173,7 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$K_{B,s}$",
         },
         "id": {
@@ -2036,7 +3184,7 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$K_{A,B}$",
         },
         "id": {
@@ -2047,7 +3195,7 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$N_{A}$",
         },
         "id": {
@@ -2058,7 +3206,7 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$N_{B}$",
         },
         "id": {
@@ -2069,7 +3217,7 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$N_{B} - 1$",
         },
         "id": {
@@ -2623,7 +3771,7 @@ exports[`should parse Needham-Schroeder-Shared-Key.sepo 1`] = `
 }
 `;
 
-exports[`should parse TLS-1.3.sepo 1`] = `
+exports[`should parse TLS-1_3.sepo 1`] = `
 {
   "equations": {
     "equations": [
@@ -2639,6 +3787,10 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               "type": "id",
               "value": "b",
             },
+            {
+              "type": "id",
+              "value": "c",
+            },
           ],
           "type": "function",
         },
@@ -2653,6 +3805,205 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               "type": "id",
               "value": "a",
             },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+      {
+        "left": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+      {
+        "left": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "c",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "a",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+      {
+        "left": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+            {
+              "type": "id",
+              "value": "a",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+      {
+        "left": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "c",
+            },
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+      {
+        "left": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "c",
+            },
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
           ],
           "type": "function",
         },
@@ -2665,8 +4016,8 @@ exports[`should parse TLS-1.3.sepo 1`] = `
     "formats": [
       {
         "format": {
-          "type": "latex",
-          "value": "$Hash(x||y)$",
+          "type": "Tex",
+          "value": "$Hash(x||y||z)$",
         },
         "id": {
           "id": "hash",
@@ -2679,6 +4030,10 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               "type": "id",
               "value": "y",
             },
+            {
+              "type": "id",
+              "value": "z",
+            },
           ],
           "type": "function",
         },
@@ -2686,7 +4041,7 @@ exports[`should parse TLS-1.3.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "\${a + b}$",
         },
         "id": {
@@ -2707,12 +4062,158 @@ exports[`should parse TLS-1.3.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
-          "value": "$\\\\text{random bytes}_{client}$",
+          "type": "Tex",
+          "value": "\${a + b + c}$",
+        },
+        "id": {
+          "id": "add",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Client_{SP}$",
         },
         "id": {
           "type": "id",
-          "value": "clientRandomBytes",
+          "value": "cSP",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Server_{SP}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "sSP",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Client_{sk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "clientSk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Server_{sk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "serverSk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Server_{pk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "serverPk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Client_{pk}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "clientPk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Server_{cert}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "serverCert",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Client_{cert}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "clientCert",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Client_{RB}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "cRB",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$Server_{RB}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "sRB",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "string",
+          "value": "Pre-Master Key",
+        },
+        "id": {
+          "type": "id",
+          "value": "pmk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "string",
+          "value": "Master Key",
+        },
+        "id": {
+          "type": "id",
+          "value": "mk",
         },
         "type": "formatItem",
       },
@@ -2733,15 +4234,17 @@ exports[`should parse TLS-1.3.sepo 1`] = `
       "Client" => "laptop",
       "serverSk" => "🔑",
       "serverPk" => "🔑",
+      "clientPk" => "🔑",
+      "clientSk" => "🔑",
       "pmk" => "🔑",
-      "supportedCipherSuites" => "📝",
-      "supportedExtensions" => "📝",
-      "cipserSuite" => "📝",
-      "clientRandomBytes" => "📝",
-      "serverRandomBytes" => "📝",
-      "extension" => "📝",
-      "TLSVersion" => "input-numbers",
+      "mk" => "🔑",
+      "cSP" => "📝",
+      "sSP" => "📝",
+      "cRB" => "📝",
+      "sRB" => "📝",
       "Server" => "home-button",
+      "serverCert" => "identification-card",
+      "clientCert" => "identification-card",
     },
     "type": "icons",
   },
@@ -2758,6 +4261,17 @@ exports[`should parse TLS-1.3.sepo 1`] = `
         },
         "type": "keyRelation",
       },
+      {
+        "pk": {
+          "type": "id",
+          "value": "clientPk",
+        },
+        "sk": {
+          "type": "id",
+          "value": "clientSk",
+        },
+        "type": "keyRelation",
+      },
     ],
     "type": "keyRelations",
   },
@@ -2766,24 +4280,42 @@ exports[`should parse TLS-1.3.sepo 1`] = `
       {
         "children": [
           {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Client Security Parameters",
+              },
+            },
             "value": {
               "type": "id",
-              "value": "TLSVersion",
+              "value": "cSP",
             },
           },
           {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Client private key",
+              },
+            },
             "value": {
               "type": "id",
-              "value": "supportedCipherSuites",
+              "value": "clientSk",
             },
           },
           {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Client public key",
+              },
+            },
             "value": {
               "type": "id",
-              "value": "supportedExtensions",
+              "value": "clientPk",
             },
           },
         ],
@@ -2800,12 +4332,38 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               "type": "stmtComment",
               "value": {
                 "type": "string",
+                "value": "Server Security Parameters",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "sSP",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
                 "value": "Server private key",
               },
             },
             "value": {
               "type": "id",
               "value": "serverSk",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Server public key",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "serverPk",
             },
           },
         ],
@@ -2822,12 +4380,25 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               "type": "stmtComment",
               "value": {
                 "type": "string",
-                "value": "Server public key",
+                "value": "Server certificate",
               },
             },
             "value": {
               "type": "id",
-              "value": "serverPk",
+              "value": "serverCert",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Client certificate",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "clientCert",
             },
           },
         ],
@@ -2866,11 +4437,17 @@ exports[`should parse TLS-1.3.sepo 1`] = `
       {
         "child": {
           "child": {
-            "comment": undefined,
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Client Random Bytes",
+              },
+            },
             "type": "newStatement",
             "value": {
               "type": "id",
-              "value": "clientRandomBytes",
+              "value": "cRB",
             },
           },
           "id": {
@@ -2879,7 +4456,13 @@ exports[`should parse TLS-1.3.sepo 1`] = `
           },
           "type": "participantStatement",
         },
-        "comment": undefined,
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client creates random bytes",
+          },
+        },
         "type": "statement",
       },
       {
@@ -2916,7 +4499,7 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               {
                 "child": {
                   "type": "id",
-                  "value": "TLSVersion",
+                  "value": "cRB",
                 },
                 "type": "expression",
               },
@@ -2933,7 +4516,13 @@ exports[`should parse TLS-1.3.sepo 1`] = `
           },
           "type": "sendStatement",
         },
-        "comment": undefined,
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client sends random bytes to server",
+          },
+        },
         "type": "statement",
       },
       {
@@ -2943,7 +4532,7 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               {
                 "child": {
                   "type": "id",
-                  "value": "clientRandomBytes",
+                  "value": "cSP",
                 },
                 "type": "expression",
               },
@@ -2960,7 +4549,13 @@ exports[`should parse TLS-1.3.sepo 1`] = `
           },
           "type": "sendStatement",
         },
-        "comment": undefined,
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client sends security parameters to server",
+          },
+        },
         "type": "statement",
       },
       {
@@ -2969,152 +4564,8 @@ exports[`should parse TLS-1.3.sepo 1`] = `
             "expressions": [
               {
                 "child": {
-                  "type": "id",
-                  "value": "supportedCipherSuites",
-                },
-                "type": "expression",
-              },
-            ],
-            "type": "messageSendStatement",
-          },
-          "leftId": {
-            "type": "id",
-            "value": "Client",
-          },
-          "rightId": {
-            "type": "id",
-            "value": "Server",
-          },
-          "type": "sendStatement",
-        },
-        "comment": undefined,
-        "type": "statement",
-      },
-      {
-        "child": {
-          "child": {
-            "expressions": [
-              {
-                "child": {
-                  "type": "id",
-                  "value": "supportedExtensions",
-                },
-                "type": "expression",
-              },
-            ],
-            "type": "messageSendStatement",
-          },
-          "leftId": {
-            "type": "id",
-            "value": "Client",
-          },
-          "rightId": {
-            "type": "id",
-            "value": "Server",
-          },
-          "type": "sendStatement",
-        },
-        "comment": undefined,
-        "type": "statement",
-      },
-      {
-        "child": {
-          "child": {
-            "comment": undefined,
-            "type": "newStatement",
-            "value": {
-              "type": "id",
-              "value": "cipserSuite",
-            },
-          },
-          "id": {
-            "type": "id",
-            "value": "Server",
-          },
-          "type": "participantStatement",
-        },
-        "comment": undefined,
-        "type": "statement",
-      },
-      {
-        "child": {
-          "child": {
-            "comment": undefined,
-            "type": "newStatement",
-            "value": {
-              "type": "id",
-              "value": "serverRandomBytes",
-            },
-          },
-          "id": {
-            "type": "id",
-            "value": "Server",
-          },
-          "type": "participantStatement",
-        },
-        "comment": undefined,
-        "type": "statement",
-      },
-      {
-        "child": {
-          "child": {
-            "comment": undefined,
-            "type": "newStatement",
-            "value": {
-              "type": "id",
-              "value": "extension",
-            },
-          },
-          "id": {
-            "type": "id",
-            "value": "Server",
-          },
-          "type": "participantStatement",
-        },
-        "comment": undefined,
-        "type": "statement",
-      },
-      {
-        "child": {
-          "child": {
-            "expressions": [
-              {
-                "child": {
-                  "inner": [
-                    {
-                      "child": {
-                        "type": "string",
-                        "value": "\\"Server Hello\\"",
-                      },
-                      "type": "expression",
-                    },
-                    {
-                      "child": {
-                        "type": "id",
-                        "value": "cipserSuite",
-                      },
-                      "type": "expression",
-                    },
-                    {
-                      "child": {
-                        "type": "id",
-                        "value": "serverRandomBytes",
-                      },
-                      "type": "expression",
-                    },
-                    {
-                      "child": {
-                        "type": "id",
-                        "value": "extension",
-                      },
-                      "type": "expression",
-                    },
-                  ],
-                  "outer": {
-                    "type": "id",
-                    "value": "serverPk",
-                  },
-                  "type": "signExpression",
+                  "type": "string",
+                  "value": "\\"Server Hello\\"",
                 },
                 "type": "expression",
               },
@@ -3141,6 +4592,115 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               "type": "stmtComment",
               "value": {
                 "type": "string",
+                "value": "Server Random Bytes",
+              },
+            },
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "sRB",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server creates random bytes",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "sSP",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server sends security parameters to client",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "serverPk",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "serverCert",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server sends public key verified by server certificate",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
                 "value": "Pre-master-key",
               },
             },
@@ -3156,7 +4716,13 @@ exports[`should parse TLS-1.3.sepo 1`] = `
           },
           "type": "participantStatement",
         },
-        "comment": undefined,
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client creates the pre-master-key by concating the security parameters",
+          },
+        },
         "type": "statement",
       },
       {
@@ -3172,11 +4738,11 @@ exports[`should parse TLS-1.3.sepo 1`] = `
               "params": [
                 {
                   "type": "id",
-                  "value": "clientRandomBytes",
+                  "value": "cSP",
                 },
                 {
                   "type": "id",
-                  "value": "serverRandomBytes",
+                  "value": "sSP",
                 },
               ],
               "type": "function",
@@ -3188,7 +4754,367 @@ exports[`should parse TLS-1.3.sepo 1`] = `
           },
           "type": "participantStatement",
         },
-        "comment": undefined,
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client creates the pre-master-key by concating the security parameters",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "clientPk",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "clientCert",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client sends public key verified by client certificate",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "pmk",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "serverPk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client sends pre-master-key encrypted by server public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Master-key",
+              },
+            },
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "mk",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client creates the master-key by concating the pre-master-key and the random bytes",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "mk",
+            },
+            "type": "setStatement",
+            "value": {
+              "id": "add",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "pmk",
+                },
+                {
+                  "type": "id",
+                  "value": "cRB",
+                },
+                {
+                  "type": "id",
+                  "value": "sRB",
+                },
+              ],
+              "type": "function",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client creates the master-key by concating the pre-master-key and the random bytes",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "id": "hash",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "cRB",
+                          },
+                          {
+                            "type": "id",
+                            "value": "sRB",
+                          },
+                          {
+                            "type": "id",
+                            "value": "mk",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "serverPk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Client sends hash of random bytes and master-key encrypted by server public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "Master-key",
+              },
+            },
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "mk",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server creates the master-key by concating the pre-master-key and the random bytes",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "id": {
+              "type": "id",
+              "value": "mk",
+            },
+            "type": "setStatement",
+            "value": {
+              "id": "add",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "pmk",
+                },
+                {
+                  "type": "id",
+                  "value": "cRB",
+                },
+                {
+                  "type": "id",
+                  "value": "sRB",
+                },
+              ],
+              "type": "function",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Server",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server creates the master-key by concating the pre-master-key and the random bytes",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "id": "hash",
+                        "params": [
+                          {
+                            "type": "id",
+                            "value": "cRB",
+                          },
+                          {
+                            "type": "id",
+                            "value": "sRB",
+                          },
+                          {
+                            "type": "id",
+                            "value": "mk",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "clientPk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Server",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Client",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Server sends hash of random bytes and master-key encrypted by client public key",
+          },
+        },
         "type": "statement",
       },
     ],
@@ -4333,7 +6259,7 @@ exports[`should parse simple.sepo 1`] = `
     "formats": [
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$Hash(x||y)$",
         },
         "id": {
@@ -4354,7 +6280,7 @@ exports[`should parse simple.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$g^{y}$",
         },
         "id": {
@@ -4375,7 +6301,7 @@ exports[`should parse simple.sepo 1`] = `
       },
       {
         "format": {
-          "type": "latex",
+          "type": "Tex",
           "value": "$function(x,y,x)$",
         },
         "id": {
