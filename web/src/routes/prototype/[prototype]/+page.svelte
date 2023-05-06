@@ -81,8 +81,14 @@
     }
     updateNavigation();
   }
-</script>
+  
+  function handleKeyPress(event: KeyboardEvent) {
+    if (event.key === "ArrowLeft") navigation.prev && prevFrame();
+    else if (event.key === "ArrowRight") navigation.next && nextFrame(navigation.next);
+  }
 
+</script>
+<svelte:window on:keydown={handleKeyPress} />
 {#if error}
   <p class="error">{error}</p>
 {/if}
