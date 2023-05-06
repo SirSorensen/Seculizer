@@ -543,6 +543,38 @@ test("Construct an EquationMap with functions with nested left functions", () =>
   expect(result).toBeTruthy();
 });
 
+test("Construct an EquationMap with functions with multiple steps", () => {
+  const init_param1: Type = { type: "id", value: "a" };
+  const init_param2: Type = { type: "id", value: "b" };
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
+  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
+  const init_func3: FunctionCall = { type: "function", id: "gaa", params: [init_param1, init_param2] }; // gaa(a,b)
+  const init_func4: FunctionCall = { type: "function", id: "tuu", params: [init_param1, init_param2] }; // tuu(a,b)
+
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
+  knowledgeHandler.getEquations().addEquation(init_func2, init_func3); // lee(a,b) => gaa(a,b)
+  knowledgeHandler.getEquations().addEquation(init_func3, init_func4); // gaa(a,b) => tuu(a,b)
+
+  const param1: Type = { type: "id", value: "x" };
+  const param2: Type = { type: "id", value: "y" };
+
+  const func1: FunctionCall = { type: "function", id: "foo", params: [param1, param2] }; // foo(x,y)
+  const func2: FunctionCall = { type: "function", id: "tuu", params: [param1, param2] }; // tuu(x,y)
+
+  const init_knowledge: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: func2,
+  };
+
+  const parti: Participant = new Participant("Alice");
+  parti.setKnowledge(init_knowledge);
+
+  const result = knowledgeHandler.isFunctionKnown(parti, func1, undefined);
+
+  expect(result).toBeTruthy();
+});
+
 test("Does equalityMap.isFunctionKnown work with string values?", () => {
   const init_param1: Type = { type: "id", value: "a" };
   const init_param2: Type = { type: "id", value: "b" };
