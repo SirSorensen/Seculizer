@@ -1,40 +1,49 @@
 import type { FunctionCall } from "$lang/types/parser/interfaces";
 import { Equal } from "./Equal";
 
-// This type is used to store the equalities of a function call in equations
-type equalResult = {
-  eqs: Equal[];
-  maxDepth: number;
-};
-
 export class EquationMap {
-  private equations: { [id: string]: equalResult } = {};
+  private equations: { [id: string]: Equal[] } = {};
+  private maxDepth = 0;
 
   // Adds an equality to the equation map and updates the maxDepth of the equalResult
   addEquation(left: FunctionCall, right: FunctionCall) {
     if (!this.equations[left.id]) {
-      this.equations[left.id] = { eqs: [], maxDepth: 0 };
+      this.equations[left.id] = [];
     }
-    this.equations[left.id].eqs.push(new Equal(left, right));
-    this.equations[left.id].maxDepth += this.calcTotalIdParameters(right);
-    if (this.equations[left.id].maxDepth > 1) this.equations[left.id].maxDepth -= 1;
+    this.equations[left.id].push(new Equal(left, right));
+
+    this.updateMaxDepth(right);
   }
 
-  // Given a function, calculates and returns the maxDepth of the function for searching for equalities
-  calcMaxDepth(f: FunctionCall): number {
-    let maxDepth = 0;
-    maxDepth += this.equations[f.id].maxDepth;
+  // Update maxDepth from right of new equation
+  private updateMaxDepth(right: FunctionCall) {
+    // The maxDepth is the number of identifier parameters of the right function call minus 1 (atleast 1)
+    let rightIdParams = this.calcTotalIdParameters(right);
+    if (rightIdParams > 1) rightIdParams -= 1;
+    this.maxDepth += rightIdParams;
+  }
+
+  // Update maxDepth from right of new equation
+  calcMaxDepth(f: FunctionCall) {
+    const totalFunctionParams = this.calcTotalFunctionParameters(f);
+
+    return totalFunctionParams * this.maxDepth;
+  }
+
+  private calcTotalFunctionParameters(f: FunctionCall): number {
+    let totalParams = 1;
+
     for (const param of f.params) {
-      if (param.type == "function" && this.equations[param.id]) {
-        maxDepth += this.equations[param.id].maxDepth;
+      if (param.type === "function") {
+        totalParams += this.calcTotalFunctionParameters(param);
       }
     }
 
-    return maxDepth;
+    return totalParams;
   }
 
   // Given a function, returns the number of parameters that are not functionCalls
-  calcTotalIdParameters(f: FunctionCall): number {
+  private calcTotalIdParameters(f: FunctionCall): number {
     let idParams = 0;
 
     for (const param of f.params) {
@@ -46,7 +55,12 @@ export class EquationMap {
   }
 
   // Returns equations
-  getEquations(): { [id: string]: equalResult } {
+  getEquations(): { [id: string]: Equal[] } {
     return this.equations;
+  }
+
+  // Returns the maxDepth of the equation map
+  getMaxDepth(): number {
+    return this.maxDepth;
   }
 }

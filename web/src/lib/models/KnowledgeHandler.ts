@@ -166,8 +166,9 @@ export class KnowledgeHandler {
 
       if (this.isInputKnownByParticipant(_f, parti, val)) return true;
 
+      // Enqueue equalities
       if (this.equations.getEquations()[_f.id])
-        for (const eq of this.equations.getEquations()[_f.id].eqs) {
+        for (const eq of this.equations.getEquations()[_f.id]) {
           const _fEq = eq.generateEqual(_f);
           if (_fEq === undefined) continue;
           queue.push({ f: _fEq, searchDepth: current.searchDepth + 1, paramDepth: current.paramDepth });
@@ -175,7 +176,6 @@ export class KnowledgeHandler {
 
       // Enqueue inner functions
       const tmpParamDepth = this.calcParamDepth(_f, current.paramDepth);
-
       while (tmpParamDepth.length > 0) {
         const tmpDepth = tmpParamDepth.shift();
         if (tmpDepth === undefined) continue;
@@ -184,7 +184,7 @@ export class KnowledgeHandler {
         const _fParam = this.getParamFunctionFromDepth(_f, _paramDepth);
 
         if (this.equations.getEquations()[_fParam.id])
-          for (const _fParamEq of this.equations.getEquations()[_fParam.id].eqs) {
+          for (const _fParamEq of this.equations.getEquations()[_fParam.id]) {
             const _fParamGenEq = _fParamEq.generateEqual(_fParam);
             if (_fParamGenEq === undefined) continue;
 
@@ -195,6 +195,22 @@ export class KnowledgeHandler {
             });
           }
       }
+
+      // Enqueue equalities of function at paramDepth
+      if (current.paramDepth.length === 0) continue;
+      const _fParam = this.getParamFunctionFromDepth(_f, current.paramDepth);
+      if (this.equations.getEquations()[_fParam.id])
+        for (const _fParamEq of this.equations.getEquations()[_fParam.id]) {
+          const _fParamGenEq = _fParamEq.generateEqual(_fParam);
+          if (_fParamGenEq === undefined) continue;
+
+          queue.push({
+            f: this.cloneFunctionChangedParam(_f, current.paramDepth, _fParamGenEq),
+            searchDepth: current.searchDepth + 1,
+            paramDepth: current.paramDepth,
+          });
+        }
+
     }
 
     return false;
