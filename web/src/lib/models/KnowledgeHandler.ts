@@ -94,7 +94,7 @@ export class KnowledgeHandler {
     return false;
   }
 
-  isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
+  private isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
     if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
       const isKnowledgeSame = JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge);
       if (!isKnowledgeSame) return false;
@@ -166,12 +166,18 @@ export class KnowledgeHandler {
 
       if (this.isInputKnownByParticipant(_f, parti, val)) return true;
 
-      // Enqueue equalities
-      if (this.equations.getEquations()[_f.id])
-        for (const eq of this.equations.getEquations()[_f.id]) {
-          const _fEq = eq.generateEqual(_f);
-          if (_fEq === undefined) continue;
-          queue.push({ f: _fEq, searchDepth: current.searchDepth + 1, paramDepth: current.paramDepth });
+      // Enqueue equalities of function at paramDepth
+      const _fParam = this.getParamFunctionFromDepth(_f, current.paramDepth);
+      if (this.equations.getEquations()[_fParam.id])
+        for (const _fParamEq of this.equations.getEquations()[_fParam.id]) {
+          const _fParamGenEq = _fParamEq.generateEqual(_fParam);
+          if (_fParamGenEq === undefined) continue;
+
+          queue.push({
+            f: this.cloneFunctionChangedParam(_f, current.paramDepth, _fParamGenEq),
+            searchDepth: current.searchDepth + 1,
+            paramDepth: current.paramDepth,
+          });
         }
 
       // Enqueue inner functions
@@ -195,22 +201,6 @@ export class KnowledgeHandler {
             });
           }
       }
-
-      // Enqueue equalities of function at paramDepth
-      if (current.paramDepth.length === 0) continue;
-      const _fParam = this.getParamFunctionFromDepth(_f, current.paramDepth);
-      if (this.equations.getEquations()[_fParam.id])
-        for (const _fParamEq of this.equations.getEquations()[_fParam.id]) {
-          const _fParamGenEq = _fParamEq.generateEqual(_fParam);
-          if (_fParamGenEq === undefined) continue;
-
-          queue.push({
-            f: this.cloneFunctionChangedParam(_f, current.paramDepth, _fParamGenEq),
-            searchDepth: current.searchDepth + 1,
-            paramDepth: current.paramDepth,
-          });
-        }
-
     }
 
     return false;
@@ -267,7 +257,7 @@ export class KnowledgeHandler {
   // Given a function and a paramDepth, returns the inner function from the paramDepth
   // For example if f = f(a, g(b, c), e) and paramDepth = [], it returns f
   // For example if f = f(a, g(h(b, c), k(d, e)), f) and paramDepth = [1], it returns g
-  getParamFunctionFromDepth(f: FunctionCall, paramDepth: number[]): FunctionCall {
+  private getParamFunctionFromDepth(f: FunctionCall, paramDepth: number[]): FunctionCall {
     let _f: FunctionCall = f;
     for (const depth of paramDepth) {
       if (!_f.params[depth] || _f.params[depth].type != "function")
@@ -322,7 +312,7 @@ export class KnowledgeHandler {
     this.recheckEncryptedKnowledge(receiver);
   }
 
-  isSimpleKnowledge(knowledge: ParticipantKnowledge): boolean {
+  private isSimpleKnowledge(knowledge: ParticipantKnowledge): boolean {
     if (knowledge.type === "rawKnowledge") {
       return this.isSimpleType(knowledge.knowledge); 
     }
