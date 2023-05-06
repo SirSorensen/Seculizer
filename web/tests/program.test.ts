@@ -513,6 +513,45 @@ test("Construct an EquationMap with functions with nested right functions", () =
   expect(result3_4).toBeFalsy();
 });
 
+
+test("Functions with nested right functions and multiple steps don't work", () => {
+  const init_param1: Type = { type: "id", value: "a" };
+  const init_param2: Type = { type: "id", value: "b" };
+  const init_func1: FunctionCall = { type: "function", id: "foo", params: [init_param1, init_param2] }; // foo(a,b)
+  const init_func2: FunctionCall = { type: "function", id: "lee", params: [init_param1, init_param2] }; // lee(a,b)
+  const init_func3: FunctionCall = { type: "function", id: "gaa", params: [init_param1, init_param2] }; // gaa(a,b)
+  const init_func4: FunctionCall = { type: "function", id: "foo", params: [init_func2, init_param2] }; // foo(lee(a,b),b)
+
+  const knowledgeHandler = new KnowledgeHandler();
+  knowledgeHandler.getEquations().addEquation(init_func3, init_func4); // gaa(a,b) => foo(lee(a,b),b)
+  knowledgeHandler.getEquations().addEquation(init_func1, init_func2); // foo(a,b) => lee(a,b)
+  knowledgeHandler.getEquations().addEquation(init_func2, init_func3); // lee(a,b) => gaa(a,b)
+
+  const param1: Type = { type: "id", value: "x" };
+  const param2: Type = { type: "id", value: "y" };
+
+  const func1: FunctionCall = { type: "function", id: "foo", params: [param1, param2] }; // foo(x,y)
+  const func2: FunctionCall = { type: "function", id: "lee", params: [param1, param2] }; // lee(x,y)
+  const func3: FunctionCall = { type: "function", id: "gaa", params: [param1, param2] }; // gaa(x,y)
+  const modified_func2: FunctionCall = { type: "function", id: "gaa", params: [func3, param2] }; // gaa(gaa(x,y),y))
+
+  const init_knowledge: RawParticipantKnowledge = {
+    type: "rawKnowledge",
+    knowledge: modified_func2,
+  };
+
+  const parti: Participant = new Participant("Alice");
+  parti.setKnowledge(init_knowledge);
+
+  const result1 = knowledgeHandler.isFunctionKnown(parti, func1, undefined);
+  const result2 = knowledgeHandler.isFunctionKnown(parti, func2, undefined);
+  const result3 = knowledgeHandler.isFunctionKnown(parti, func3, undefined);
+
+  expect(result1).toBeFalsy();
+  expect(result2).toBeFalsy();
+  expect(result3).toBeTruthy();
+});
+
 test("Construct an EquationMap with functions with nested known functions and multiple steps", () => {
   const init_param1: Type = { type: "id", value: "a" };
   const init_param2: Type = { type: "id", value: "b" };
