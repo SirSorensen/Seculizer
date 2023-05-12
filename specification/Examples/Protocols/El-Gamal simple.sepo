@@ -1,0 +1,21 @@
+Participants: Alice, Bob;
+Knowledge: {
+            Bob: msgB ? "This is Bob's message";
+            Shared: g ? "This is a generator", p ? "This is a prime number";
+        };
+KeyRelations: (sk:alice_sk,pk:alice_pk);
+Format: exp(x,y) = $x^{y}$, mod(x,y) = $x \text{ mod } y$, alice_sk = $sk_{Alice}$, alice_pk = $pk_{Alice}$;
+Icons: {
+    "woman": Alice;
+    "man": Bob;
+    "input-numbers": g, p, exp, r;
+    "key": alice_sk, alice_pk;
+    "📝": msgB;
+};  
+Protocol: {
+    Alice: new alice_sk ? "This is Alice's secret key. It is a random number less than p, and gcd(sk,p) = 1";
+    Alice: new alice_pk ? "This is Alice's public key";
+    Alice: alice_pk := mod(exp(g,alice_sk),p); ? "Alice computes her public key"
+    Alice -> Bob: alice_pk; ? "Alice sends Bob her public key"
+    Bob -> Alice: {msgB}alice_pk; ? "Bob sends Alice his first ciphertext component"
+};
