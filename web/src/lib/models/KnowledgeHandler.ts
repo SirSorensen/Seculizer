@@ -94,6 +94,7 @@ export class KnowledgeHandler {
     return false;
   }
 
+  // Given 2 ParticipantKnowledge objects, check if they are equal
   private isKnowledgeEqual(knowledgeA: ParticipantKnowledge, knowledgeB: ParticipantKnowledge, strict = false): boolean {
     if (knowledgeA.type === "rawKnowledge" && knowledgeB.type === "rawKnowledge") {
       const isKnowledgeSame = JSON.stringify(knowledgeA.knowledge) === JSON.stringify(knowledgeB.knowledge);
