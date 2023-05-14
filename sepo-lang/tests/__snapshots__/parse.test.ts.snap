@@ -1021,6 +1021,831 @@ exports[`should parse Diffie-hellman.sepo 1`] = `
 }
 `;
 
+exports[`should parse El-Gamal simple.sepo 1`] = `
+{
+  "equations": undefined,
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$x^{y}$",
+        },
+        "id": {
+          "id": "exp",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$(x) \\\\text{ mod } y$",
+        },
+        "id": {
+          "id": "mod",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$sk_{Alice}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "alice_sk",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$pk_{Alice}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "alice_pk",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": undefined,
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Bob" => "man",
+      "g" => "input-numbers",
+      "p" => "input-numbers",
+      "exp" => "input-numbers",
+      "r" => "input-numbers",
+      "alice_sk" => "key",
+      "alice_pk" => "key",
+      "msgB" => "📝",
+    },
+    "type": "icons",
+  },
+  "keyRelations": {
+    "keyRelations": [
+      {
+        "pk": {
+          "type": "id",
+          "value": "alice_pk",
+        },
+        "sk": {
+          "type": "id",
+          "value": "alice_sk",
+        },
+        "type": "keyRelation",
+      },
+    ],
+    "type": "keyRelations",
+  },
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is Bob's message",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "msgB",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participantItem",
+      },
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participantItem",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is Alice's secret key. It is a random number less than p, and gcd(sk,p) = 1",
+              },
+            },
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "alice_sk",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice constructs her private key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is Alice's public key",
+              },
+            },
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "alice_pk",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice constructs her public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "type": "id",
+                  "value": "alice_pk",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice sends Bob her public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msgB",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "type": "id",
+                    "value": "alice_pk",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob sends Alice his ciphertext",
+          },
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
+exports[`should parse El-Gamal.sepo 1`] = `
+{
+  "equations": {
+    "equations": [
+      {
+        "left": {
+          "id": "mod",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "id": "mod",
+                  "params": [
+                    {
+                      "type": "id",
+                      "value": "a",
+                    },
+                    {
+                      "type": "id",
+                      "value": "b",
+                    },
+                  ],
+                  "type": "function",
+                },
+                {
+                  "type": "id",
+                  "value": "c",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "mod",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "a",
+                },
+                {
+                  "type": "id",
+                  "value": "c",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "b",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+      {
+        "left": {
+          "id": "exp",
+          "params": [
+            {
+              "id": "exp",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "a",
+                },
+                {
+                  "type": "id",
+                  "value": "b",
+                },
+              ],
+              "type": "function",
+            },
+            {
+              "type": "id",
+              "value": "c",
+            },
+          ],
+          "type": "function",
+        },
+        "right": {
+          "id": "exp",
+          "params": [
+            {
+              "type": "id",
+              "value": "a",
+            },
+            {
+              "id": "prod",
+              "params": [
+                {
+                  "type": "id",
+                  "value": "b",
+                },
+                {
+                  "type": "id",
+                  "value": "c",
+                },
+              ],
+              "type": "function",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "equation",
+      },
+    ],
+    "type": "equations",
+  },
+  "format": {
+    "formats": [
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$x^{y}$",
+        },
+        "id": {
+          "id": "exp",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$(x) \\\\text{ mod } y$",
+        },
+        "id": {
+          "id": "mod",
+          "params": [
+            {
+              "type": "id",
+              "value": "x",
+            },
+            {
+              "type": "id",
+              "value": "y",
+            },
+          ],
+          "type": "function",
+        },
+        "type": "formatItem",
+      },
+      {
+        "format": {
+          "type": "Tex",
+          "value": "$sk_{Alice}$",
+        },
+        "id": {
+          "type": "id",
+          "value": "alice_sk",
+        },
+        "type": "formatItem",
+      },
+    ],
+    "type": "format",
+  },
+  "functions": undefined,
+  "icons": {
+    "icons": Map {
+      "Alice" => "woman",
+      "Bob" => "man",
+      "g" => "input-numbers",
+      "p" => "input-numbers",
+      "exp" => "input-numbers",
+      "r" => "input-numbers",
+      "alice_sk" => "key",
+      "msgB" => "📝",
+    },
+    "type": "icons",
+  },
+  "keyRelations": undefined,
+  "knowledge": {
+    "knowledge": [
+      {
+        "children": [
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is Bob's message",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "msgB",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "knowledgeItem",
+      },
+      {
+        "children": [
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is a generator",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "g",
+            },
+          },
+          {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is a prime number",
+              },
+            },
+            "value": {
+              "type": "id",
+              "value": "p",
+            },
+          },
+        ],
+        "id": {
+          "type": "id",
+          "value": "Shared",
+        },
+        "type": "knowledgeItem",
+      },
+    ],
+    "type": "knowledge",
+  },
+  "participants": {
+    "participants": [
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Alice",
+        },
+        "type": "participantItem",
+      },
+      {
+        "comment": undefined,
+        "id": {
+          "type": "id",
+          "value": "Bob",
+        },
+        "type": "participantItem",
+      },
+    ],
+    "type": "participants",
+  },
+  "protocol": {
+    "statements": [
+      {
+        "child": {
+          "child": {
+            "comment": {
+              "type": "stmtComment",
+              "value": {
+                "type": "string",
+                "value": "This is Alice's secret key. It is a random number less than p, and gcd(sk,p) = 1",
+              },
+            },
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "alice_sk",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "participantStatement",
+        },
+        "comment": undefined,
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "id": "mod",
+                  "params": [
+                    {
+                      "id": "exp",
+                      "params": [
+                        {
+                          "type": "id",
+                          "value": "g",
+                        },
+                        {
+                          "type": "id",
+                          "value": "alice_sk",
+                        },
+                      ],
+                      "type": "function",
+                    },
+                    {
+                      "type": "id",
+                      "value": "p",
+                    },
+                  ],
+                  "type": "function",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Alice sends Bob her public key",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "comment": undefined,
+            "type": "newStatement",
+            "value": {
+              "type": "id",
+              "value": "r",
+            },
+          },
+          "id": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "type": "participantStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "This is nonce (a random number between 0 and p)",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "id": "mod",
+                  "params": [
+                    {
+                      "id": "exp",
+                      "params": [
+                        {
+                          "type": "id",
+                          "value": "g",
+                        },
+                        {
+                          "type": "id",
+                          "value": "r",
+                        },
+                      ],
+                      "type": "function",
+                    },
+                    {
+                      "type": "id",
+                      "value": "p",
+                    },
+                  ],
+                  "type": "function",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob sends Alice his first ciphertext component",
+          },
+        },
+        "type": "statement",
+      },
+      {
+        "child": {
+          "child": {
+            "expressions": [
+              {
+                "child": {
+                  "inner": [
+                    {
+                      "child": {
+                        "type": "id",
+                        "value": "msgB",
+                      },
+                      "type": "expression",
+                    },
+                  ],
+                  "outer": {
+                    "id": "mod",
+                    "params": [
+                      {
+                        "id": "exp",
+                        "params": [
+                          {
+                            "id": "mod",
+                            "params": [
+                              {
+                                "id": "exp",
+                                "params": [
+                                  {
+                                    "type": "id",
+                                    "value": "g",
+                                  },
+                                  {
+                                    "type": "id",
+                                    "value": "alice_sk",
+                                  },
+                                ],
+                                "type": "function",
+                              },
+                              {
+                                "type": "id",
+                                "value": "p",
+                              },
+                            ],
+                            "type": "function",
+                          },
+                          {
+                            "type": "id",
+                            "value": "r",
+                          },
+                        ],
+                        "type": "function",
+                      },
+                      {
+                        "type": "id",
+                        "value": "p",
+                      },
+                    ],
+                    "type": "function",
+                  },
+                  "type": "encryptExpression",
+                },
+                "type": "expression",
+              },
+            ],
+            "type": "messageSendStatement",
+          },
+          "leftId": {
+            "type": "id",
+            "value": "Bob",
+          },
+          "rightId": {
+            "type": "id",
+            "value": "Alice",
+          },
+          "type": "sendStatement",
+        },
+        "comment": {
+          "type": "stmtComment",
+          "value": {
+            "type": "string",
+            "value": "Bob sends Alice his second ciphertext component",
+          },
+        },
+        "type": "statement",
+      },
+    ],
+    "type": "protocol",
+  },
+  "type": "program",
+}
+`;
+
 exports[`should parse Envelope.sepo 1`] = `
 {
   "equations": undefined,
@@ -1029,7 +1854,7 @@ exports[`should parse Envelope.sepo 1`] = `
       {
         "format": {
           "type": "Tex",
-          "value": "$H(x||y)$",
+          "value": "$Hash(x||y)$",
         },
         "id": {
           "id": "hash",
@@ -1631,8 +2456,8 @@ exports[`should parse Envelope.sepo 1`] = `
                   "id": "hash",
                   "params": [
                     {
-                      "type": "id",
-                      "value": "obt",
+                      "type": "string",
+                      "value": "\\"obt\\"",
                     },
                     {
                       "type": "id",
@@ -1716,8 +2541,8 @@ exports[`should parse Envelope.sepo 1`] = `
                         "id": "hash",
                         "params": [
                           {
-                            "type": "id",
-                            "value": "obt",
+                            "type": "string",
+                            "value": "\\"obt\\"",
                           },
                           {
                             "type": "id",
@@ -1754,7 +2579,7 @@ exports[`should parse Envelope.sepo 1`] = `
           "type": "stmtComment",
           "value": {
             "type": "string",
-            "value": "The TPM sends the key and the PCR to Alice",
+            "value": "The TPM sends the key and the PCR to Alice, signed with the TPM's secret key",
           },
         },
         "type": "statement",
@@ -2271,7 +3096,7 @@ exports[`should parse Envelope.sepo 1`] = `
                       "type": "stmtComment",
                       "value": {
                         "type": "string",
-                        "value": "The TPM sends the PCR and the arbitrary value encrypted with the new key to the parent",
+                        "value": "The TPM sends the PCR and the arbitrary value encrypted with the new key to the parent. The entire message is signed with the TPM's secret key",
                       },
                     },
                     "type": "statement",
