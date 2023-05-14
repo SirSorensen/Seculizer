@@ -4,13 +4,13 @@ Knowledge: {
             Shared: g ? "This is a generator", p ? "This is a prime number";
         };
 Equations: mod(exp(mod(a,b),c),b) => mod(exp(a,c),b), exp(exp(a,b),c) => exp(a,prod(b,c));
-Format: exp(x,y) = $x^{y}$, mod(x,y) = $(x) \text{ mod } y$, alice_sk = $sk_{Alice}$;
+Format: exp(x,y) = $(x)^{y}$, mod(x,y) = $x \text{ mod } y$, alice_sk = $sk_{Alice}$;
 Icons: {
     "woman": Alice;
     "man": Bob;
     "input-numbers": g, p, exp, r;
     "key": alice_sk;
-    "📝": msgB;
+    "memo": msgB;
 };  
 Protocol: {
     Alice: new alice_sk ? "This is Alice's secret key. It is a random number less than p, and gcd(sk,p) = 1";
