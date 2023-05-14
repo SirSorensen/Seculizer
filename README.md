@@ -8,6 +8,6 @@ It is required to have NodeJS 18 installed to run the project.
 To run the projet:
 - Download the git repo: https://github.com/SirSorensen/Seculizer
 - From the folder in the terminal run: npm run production
-- This will build everything from scratch and run it locally on the URL.
+- This will build everything from scratch and run it locally on the URL. You can now open Seculizer in a browser on http://localhost:3000/.
 
 See a full user-guide on https://github.com/SirSorensen/Seculizer/blob/main/user-guide.pdf.
