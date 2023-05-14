@@ -4,15 +4,16 @@ type rightParamType = StringLiteral | NumberLiteral | Id;
 type leftParamType = rightParamType | leftParamType[];
 type paramIndexType = number | paramIndexType[];
 
-export class Equal {
+export class Equation {
   // If given foo(A,B) => lee(B,A), then this.left = foo(A,B) and this.right = lee(B,A)
   private right: FunctionCall;
   private left: FunctionCall;
 
   // The index of the parameters of the right function call in the left function call
-  //(i.e. exp(A,B) => exp(B,A) -> [1, 0]
-  // or foo(lee(A,B),C) => foo(A,B) -> [[0,0],1]
-  //or foo(A,B) => foo(lee(A,B),B) -> [0,1,1] )
+  // For example: 
+      // exp(A,B) => exp(B,A) -> [1, 0]
+      // foo(lee(A,B),C) => foo(A,B) -> [[0,0],1]
+      // foo(A,B) => foo(lee(A,B),B) -> [0,1,1]
   private paramIndex: paramIndexType[] = [];
 
   constructor(left: FunctionCall, right: FunctionCall) {

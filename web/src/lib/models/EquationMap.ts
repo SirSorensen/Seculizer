@@ -1,8 +1,8 @@
 import type { FunctionCall } from "$lang/types/parser/interfaces";
-import { Equal } from "./Equal";
+import { Equation } from "./Equation";
 
 export class EquationMap {
-  private equations: { [id: string]: Equal[] } = {};
+  private equations: { [id: string]: Equation[] } = {};
   private maxDepth = 0;
 
   // Adds an equality to the equation map and updates the maxDepth of the equalResult
@@ -10,7 +10,7 @@ export class EquationMap {
     if (!this.equations[left.id]) {
       this.equations[left.id] = [];
     }
-    this.equations[left.id].push(new Equal(left, right));
+    this.equations[left.id].push(new Equation(left, right));
 
     this.updateMaxDepth(right);
   }
@@ -55,7 +55,7 @@ export class EquationMap {
   }
 
   // Returns equations
-  getEquations(): { [id: string]: Equal[] } {
+  getEquations(): { [id: string]: Equation[] } {
     return this.equations;
   }
 

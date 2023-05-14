@@ -4,18 +4,18 @@ Knowledge: {
             Shared: g ? "This is a generator", p ? "This is a prime number";
         };
 Equations: mod(exp(mod(a,b),c),b) => mod(exp(a,c),b), exp(exp(a,b),c) => exp(a,prod(b,c));
-Format: exp(x,y) = $(x)^{y}$, mod(x,y) = $x \text{ mod } y$, _sk = $sk_{Alice}$;
+Format: exp(x,y) = $x^{y}$, mod(x,y) = $(x) \text{ mod } y$, alice_sk = $sk_{Alice}$;
 Icons: {
     "woman": Alice;
     "man": Bob;
     "input-numbers": g, p, exp, r;
-    "key": _sk;
+    "key": alice_sk;
     "📝": msgB;
 };  
 Protocol: {
-    Alice: new _sk ? "This is Alice's secret key. It is a random number less than p, and gcd(sk,p) = 1";
-    Alice -> Bob: mod(exp(g,_sk),p); ? "Alice sends Bob her public key"
+    Alice: new alice_sk ? "This is Alice's secret key. It is a random number less than p, and gcd(sk,p) = 1";
+    Alice -> Bob: mod(exp(g,alice_sk),p); ? "Alice sends Bob her public key"
     Bob: new r; ? "This is nonce (a random number between 0 and p)"
     Bob -> Alice: mod(exp(g,r),p); ? "Bob sends Alice his first ciphertext component"
-    Bob -> Alice: {msgB}mod(exp(mod(exp(g,_sk),p),r),p); ? "Bob sends Alice his first ciphertext component"
+    Bob -> Alice: {msgB}mod(exp(mod(exp(g,alice_sk),p),r),p); ? "Bob sends Alice his second ciphertext component"
 };

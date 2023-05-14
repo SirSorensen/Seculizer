@@ -8,7 +8,7 @@ import path from "path";
 import { Tex } from "../src/lib/models/Tex";
 import { fileURLToPath } from "url";
 import { FormatMap } from "$lib/models/FormatMap";
-import { Equal } from "$lib/models/Equal";
+import { Equation } from "$lib/models/Equation";
 import type { ParticipantKnowledge, RawParticipantKnowledge } from "src/types/participant";
 import { Participant } from "$lib/models/Participant";
 import { getStringFromType } from "$lib/utils/stringUtil";
@@ -317,13 +317,13 @@ test("Make FormatMap and call a function with embedded function", () => {
   expect(result).toBe("$Based_{XXX}({Hash(\\text{z}||5||\\text{z})}&&\\text{Jesus})$");
 });
 
-test("Construct an Equal and call generateEqual", () => {
+test("Construct an Equation and call generateEqual", () => {
   const init_param1: Type = { type: "id", value: "x" };
   const init_param2: Type = { type: "id", value: "y" };
   const init_func1: FunctionCall = { type: "function", id: "Hash", params: [init_param1, init_param2] };
   const init_func2: FunctionCall = { type: "function", id: "Base", params: [init_param2, init_param1] };
 
-  const equality = new Equal(init_func1, init_func2);
+  const equality = new Equation(init_func1, init_func2);
 
   const param1: Type = { type: "id", value: "z" };
   const param2: Type = { type: "id", value: "v" };
@@ -340,7 +340,7 @@ test("Construct an Equal and call generateEqual", () => {
   expect(result.params[1]).toBe(expected.params[1]);
 });
 
-test("Construct an Equal and call generateEqual with embedded functions", () => {
+test("Construct an Equation and call generateEqual with embedded functions", () => {
   const init_param1: Type = { type: "id", value: "x" };
   const init_param2: Type = { type: "id", value: "y" };
   const init_param3: Type = { type: "id", value: "z" };
@@ -351,7 +351,7 @@ test("Construct an Equal and call generateEqual with embedded functions", () => 
   const init_func3: FunctionCall = { type: "function", id: "exp", params: [init_param3, init_param2] };
   const init_func4: FunctionCall = { type: "function", id: "exp", params: [init_param1, init_func3] };
 
-  const equality = new Equal(init_func2, init_func4);
+  const equality = new Equation(init_func2, init_func4);
 
   const param1: Type = { type: "id", value: "a" };
   const param2: Type = { type: "id", value: "b" };
